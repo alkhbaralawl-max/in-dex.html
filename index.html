@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0B1E3A">
+<title>ركن الغرب</title>
+<style>
+:root{--b:#1677D2;--bd:#0B1E3A;--b2:#245A91;--bg:#F3F6FA;--card:#fff;--tx:#172B45;--tx2:#718096;--ok:#20A464;--er:#E5484D;--yl:#FFC83D;--line:#E1E8F0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:15px}
+[hidden]{display:none!important}
+.app{max-width:560px;margin:0 auto;min-height:100vh}
+#shell{padding-bottom:84px}
+.top{position:sticky;top:0;z-index:20;background:linear-gradient(90deg,var(--bd),var(--b2));color:#fff;padding:9px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.hr{display:flex;align-items:center;gap:10px;min-width:0}
+.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.lg{width:38px;height:38px;border-radius:12px;background:var(--b);display:flex;align-items:center;justify-content:center;font-weight:bold;font-size:20px;border:2px solid #ffffff44;flex-shrink:0}
+.lg.big{width:64px;height:64px;font-size:34px;margin:0 auto 8px;border-radius:18px}
+.brand b{font-size:16px;display:block;white-space:nowrap}.brand small{font-size:11px;opacity:.8;white-space:nowrap}
+.usd{width:40px;height:40px;border-radius:50%;border:0;background:var(--ok);color:#fff;font-size:22px;font-weight:bold;flex-shrink:0;box-shadow:0 0 0 3px #ffffff30}
+.bal{background:#00000066;border:0;border-radius:20px;padding:8px 13px;font-weight:bold;color:var(--yl);font-size:14px;min-height:38px;flex-shrink:0}
+.ribbon{background:#FFF6D6;color:#7a5a00;font-size:12px;text-align:center;padding:6px 10px;border-bottom:1px solid #f0e2a8}
+.btn{border:0;border-radius:12px;padding:12px 14px;font-weight:bold;font-size:15px;min-height:46px;cursor:pointer;color:#fff;background:var(--b)}
+.btn.ok{background:var(--ok)}.btn.y{background:var(--yl);color:var(--bd)}.btn.er{background:var(--er)}.btn.g{background:#E8EEF6;color:var(--tx)}
+.btn:disabled{opacity:.45}.btn.full{width:100%}
+.ban{margin:12px;border-radius:18px;padding:18px;color:#fff;background:linear-gradient(120deg,var(--b),var(--bd));position:relative;overflow:hidden;min-height:130px}
+.ban:before{content:"";position:absolute;width:150px;height:150px;border-radius:50%;background:#ffffff14;left:-40px;top:-50px}
+.ban h2{margin:0 0 6px;font-size:20px;position:relative}.ban p{margin:0 0 12px;font-size:13px;opacity:.95;max-width:70%;position:relative;line-height:1.7}
+.ban .em{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:64px}
+.ban .btn{position:relative}
+.warn{margin:12px;background:#FDECEC;border:1px solid #f6c3c5;color:#9b1c22;border-radius:14px;padding:11px 13px;font-size:13px;line-height:1.8;white-space:pre-line}
+.search{margin:0 12px 10px;position:relative}
+.search input{width:100%;height:46px;border-radius:14px;border:1px solid var(--line);background:#fff;padding:0 44px 0 12px;font-size:15px;color:var(--tx)}
+.search span{position:absolute;right:14px;top:11px;font-size:18px;opacity:.6}
+.cats{display:flex;gap:8px;margin:0 12px 12px;overflow-x:auto;padding-bottom:2px}
+.chip{border:1px solid var(--line);background:#fff;color:var(--tx);border-radius:20px;padding:8px 14px;font-size:13px;font-weight:bold;white-space:nowrap;flex-shrink:0}
+.chip.on{background:var(--b);color:#fff;border-color:var(--b)}
+.sec{margin:14px 14px 8px;font-weight:bold;font-size:17px;display:flex;justify-content:space-between;align-items:center}
+.sec small{color:var(--tx2);font-weight:normal;font-size:12px}
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 12px}
+.gcard{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 2px 8px #0b1e3a14;cursor:pointer}
+.art{aspect-ratio:16/8;display:flex;align-items:center;justify-content:center;font-size:62px;position:relative;color:#fff}
+.feat .art{aspect-ratio:1/.8;font-size:52px}
+.tag{position:absolute;top:8px;right:8px;background:#0000005c;border-radius:10px;padding:3px 9px;font-size:11px;font-weight:bold;color:#fff}
+.gi{padding:11px 12px 12px}.gi b{font-size:16px;display:block}.gi p{margin:4px 0 10px;color:var(--tx2);font-size:12.5px;line-height:1.7}
+.feat .gi p{display:none}.feat .gi{padding:9px 10px}.feat .gi b{font-size:14px}
+.list{display:grid;gap:12px;margin:0 12px}
+.empty{margin:20px;text-align:center;color:var(--tx2)}
+.edu{margin:10px 14px;color:var(--tx2);font-size:11.5px;line-height:1.8;text-align:center}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:#fff;border-top:1px solid var(--line);display:flex;max-width:560px;margin:0 auto;padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;background:none;border:0;color:var(--tx2);font-size:11px;padding:8px 2px;min-height:58px}
+.nav button span{display:block;font-size:22px;line-height:1.2}.nav button.on{color:var(--b);font-weight:bold}
+.gh{display:flex;align-items:center;gap:10px;margin:12px}
+.back{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:#fff;font-size:20px}
+.gh h1{margin:0;font-size:19px;flex:1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px;margin:0 12px 12px;box-shadow:0 2px 8px #0b1e3a0f}
+.row{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+.row:last-child{border:0}.up{color:var(--ok);font-weight:bold}.dn{color:var(--er);font-weight:bold}
+.mrow{display:flex;justify-content:space-between;align-items:center;width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:8px;font-size:15px;font-weight:bold;color:var(--tx);text-align:right}
+.prof{text-align:center}.av{width:70px;height:70px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:6px auto}
+.idb{display:inline-block;background:#E8F1FB;color:var(--b2);border-radius:12px;padding:6px 14px;font-weight:bold;letter-spacing:2px;margin:6px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.sb{background:#F3F6FA;border-radius:12px;padding:10px 4px;font-size:12px;color:var(--tx2)}.sb b{display:block;font-size:17px;color:var(--tx)}
+.note{background:#FFF6D6;color:#7a5a00;border-radius:12px;padding:9px;font-size:12px;text-align:center;margin:0 12px 10px;line-height:1.7}
+.authw{padding:24px 14px;max-width:460px;margin:0 auto}
+.alogo{text-align:center;margin-bottom:12px}.alogo h1{margin:4px 0;font-size:24px}.alogo small{color:var(--tx2)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1;border:1px solid var(--line);background:#F3F6FA;border-radius:12px;padding:12px;font-weight:bold;color:var(--tx)}.tabs button.on{background:var(--b);color:#fff;border-color:var(--b)}
+.fi{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);padding:0 12px;font-size:16px;margin-bottom:10px;background:#fff;color:var(--tx)}
+textarea.fi{height:auto;padding:10px;min-height:80px}
+.err{color:var(--er);font-weight:bold;margin-top:8px;font-size:14px;min-height:20px}
+.lnk{background:none;border:0;color:var(--b);font-size:13px;margin-top:8px;padding:6px}
+.msg{text-align:center;font-weight:bold;min-height:22px;margin-top:8px;font-size:14px}
+.amsgbox{background:#E8F1FB;border:1px solid #bcd6f2;color:var(--bd);border-radius:14px;padding:12px;margin-bottom:12px;line-height:1.9;white-space:pre-wrap;font-size:14px}
+.plb{display:block;font-size:13px;color:var(--tx2);margin:8px 0 4px;font-weight:bold}
+.pm{font-weight:bold;margin-bottom:6px;line-height:1.8}
+.fakewarn{color:var(--er);font-size:12px;font-weight:bold;margin:-6px 0 10px;line-height:1.7}
+.upbox{border:2px dashed var(--line);border-radius:14px;padding:14px;text-align:center;margin-bottom:10px;color:var(--tx2);font-size:13px}
+.upbox img{max-width:100%;max-height:160px;border-radius:10px;margin-top:8px}
+.toast{position:fixed;bottom:76px;left:50%;transform:translateX(-50%);background:var(--bd);color:#fff;padding:11px 16px;border-radius:14px;z-index:200;max-width:90%;text-align:center;font-size:14px;box-shadow:0 4px 14px #0006}
+#fatal{background:#b00;color:#fff;padding:10px;margin:8px;border-radius:8px;font-size:13px;direction:ltr;text-align:left}
+.gl{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;color:#fff}
+.gtop{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;padding-top:calc(10px + env(safe-area-inset-top));background:#00000055}
+.gt{font-size:17px;flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gb{background:#00000066;border-radius:20px;padding:7px 12px;font-weight:bold;color:var(--yl);font-size:13px;white-space:nowrap}
+.gx{width:44px;height:44px;border-radius:50%;border:0;background:#ffffff2e;color:#fff;font-size:20px;flex-shrink:0}
+.gbody{flex:1;overflow-y:auto;padding:12px 12px 28px;max-width:560px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch}
+.gc{background:#ffffff14;border:1px solid #ffffff26;border-radius:16px;padding:12px;margin-bottom:12px}
+.gmsg{text-align:center;font-weight:bold;min-height:26px;margin-bottom:8px;font-size:15px;line-height:1.7}
+.gmsg.ok{color:#5BE39A}.gmsg.er{color:#FF8A8F}
+.sm2{font-size:12px;color:#cfe1f5;text-align:center;line-height:1.8;margin-bottom:6px}
+.bar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+.bar button{flex:1 1 52px;border:1px solid #ffffff33;background:#ffffff1f;border-radius:10px;padding:10px 4px;font-weight:bold;font-size:13px;color:#fff;min-height:42px}
+.fld{display:flex;gap:8px;margin-bottom:10px}.fld>div{flex:1;min-width:0}
+.fld label{font-size:12px;color:#cfe1f5;display:block;margin-bottom:4px}
+.fld input{width:100%;height:46px;border-radius:12px;border:0;padding:0 10px;font-size:16px;color:var(--tx);background:#fff}
+.two{display:flex;gap:8px}.two .btn{flex:1}
+.gd{background:#ffffff12;border:1px solid #ffffff22;border-radius:14px;padding:12px;margin-bottom:12px}.gd summary{font-weight:bold}.gd p,.gd .row2{color:#cfe1f5;font-size:13px;line-height:1.9}
+.row2{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #ffffff14}
+.hr2{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #ffffff1a;font-size:13px}
+.hr2 .up{color:#5BE39A}.hr2 .dn{color:#FF8A8F}
+.strip{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;min-height:28px}
+.cp{border-radius:10px;padding:4px 9px;font-size:12px;font-weight:bold}.cp.lo{background:#E5484D33;color:#FF8A8F}.cp.hi{background:#20A46433;color:#5BE39A}
+canvas{display:block;width:100%}
+.reels{direction:ltr;display:flex;gap:8px;justify-content:center;margin:8px 0 12px}
+.reel{width:30%;max-width:100px;aspect-ratio:.9;background:#fff;color:#000;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:clamp(40px,14vw,60px);box-shadow:inset 0 0 10px #0006,0 0 0 3px #f0b429}
+.reel.spin{animation:jit .14s infinite}
+@keyframes jit{0%{transform:translateY(-4px)}50%{transform:translateY(4px)}100%{transform:translateY(-4px)}}
+.aprow{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.apm{width:62px;text-align:center;font-weight:bold;font-size:13px;line-height:1.3}.apm small{display:block;font-size:10px;opacity:.75;font-weight:normal}
+.ap{flex:1;height:46px;border-radius:12px;border:0;background:#ffffff26;font-size:22px;color:#fff;min-width:0;padding:0}
+.ap.act{background:#ffffff55;box-shadow:0 0 0 2px #FFC83D}.ap.safe{background:#20A464}.ap.bad{background:#E5484D}.ap.dim{opacity:.35}
+.wheelwrap{position:relative;width:min(86vw,320px);margin:10px auto 14px}
+.pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:32px;color:var(--yl);z-index:2;text-shadow:0 2px 4px #000}
+.wrot{width:100%;transition:transform 4s cubic-bezier(.12,.75,.15,1)}
+</style></head>
+<body><div class="app">
+<div id="fatal" hidden></div>
+
+<div id="v_auth" class="authw" hidden>
+  <div class="alogo"><div class="lg big">R</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد وهمي</small></div>
+  <div class="warn" style="margin:0 0 12px" data-t="notice"></div>
+  <div class="card" style="margin:0">
+    <div class="tabs"><button id="t_login" class="on">تسجيل الدخول</button><button id="t_reg">حساب جديد</button></div>
+    <input class="fi" id="u" placeholder="اسم المستخدم (حروف إنجليزي أو أرقام)" autocomplete="username">
+    <input class="fi" id="p" type="password" placeholder="كلمة السر (6 أحرف على الأقل)" autocomplete="current-password">
+    <input class="fi" id="p2" type="password" placeholder="أعد كتابة كلمة السر" autocomplete="new-password" hidden>
+    <button class="btn full" id="agb">دخول</button>
+    <div class="err" id="aerr"></div>
+    <div style="text-align:center"><button class="lnk" id="forgot">نسيت كلمة السر؟</button></div>
+  </div>
+</div>
+
+<div id="shell" hidden>
+<header class="top">
+  <div class="hr"><button class="usd" id="usd">$</button>
+    <div class="brand"><div class="lg">R</div><div><b data-t="title"></b><small>تجربة توعوية</small></div></div></div>
+  <button class="bal" id="hbal"></button>
+</header>
+<div class="ribbon">🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي</div>
+
+<main id="v_home">
+  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">🚀</div></div>
+  <div class="warn" data-t="notice"></div>
+  <div class="search"><input id="q" placeholder="ابحث عن لعبة..."><span>🔎</span></div>
+  <div class="cats" id="cats"></div>
+  <div id="featbox"><div class="sec">⭐ ألعاب مميزة</div><div class="feat" id="feat"></div></div>
+  <div class="sec" id="alltop">🎮 كل الألعاب <small id="cnt"></small></div>
+  <div class="list" id="list"></div><div class="empty" id="empty" hidden>مفيش لعبة بالاسم ده</div>
+  <div class="edu">الألعاب هنا من تنفيذنا بنفس فكرة الألعاب المعروفة، وليست النسخ الأصلية المرخّصة. نسب الربح للمنصة زي المواقع الحقيقية.</div>
+</main>
+
+<main id="v_act" hidden><div class="gh"><h1>🕘 النشاط</h1></div><div class="card" id="hist2"></div></main>
+<main id="v_more" hidden><div class="gh"><h1>⋯ المزيد</h1></div><div style="margin:0 12px" id="morelist"></div><div class="empty" id="moreempty" hidden>لا توجد صفحات بعد</div></main>
+<main id="v_page" hidden>
+  <div class="gh"><button class="back" id="pgback">→</button><h1 id="pgT"></h1></div>
+  <div class="card"><img id="pgI" hidden style="width:100%;border-radius:12px;margin-bottom:10px"><div id="pgB" style="white-space:pre-wrap;line-height:1.9"></div></div>
+</main>
+
+<main id="v_pay" hidden>
+  <div class="gh"><button class="back" id="payback">→</button><h1 data-t="payTitle"></h1></div>
+  <div class="card">
+    <div id="adminmsg" class="amsgbox" hidden></div>
+    <div id="paylist"></div>
+    <div id="paymsgbox" hidden>
+      <div class="pm" id="pmethod"></div>
+      <label class="plb">📱 رقم الهاتف</label>
+      <input class="fi" id="pphone" inputmode="tel" maxlength="20" placeholder="اكتب أرقامًا فقط">
+      <div class="fakewarn">⚠️ اكتب أرقام وهمية فقط — لا تكتب رقمك الحقيقي أبدًا.</div>
+      <label class="plb">💰 المبلغ (حتى 50,000 جنيه)</label>
+      <input class="fi" id="pamt" type="text" inputmode="numeric" placeholder="مثال: 500">
+      <label class="plb">🧾 صورة إيصال وهمية (اختياري)</label>
+      <div class="upbox" id="upbox">اضغط لرفع صورة وهمية<input type="file" id="pfile" accept="image/*" hidden><img id="pprev" hidden></div>
+      <button class="btn full" id="psend">تحويل</button><div class="msg" id="payres"></div>
+      <div class="edu" style="margin:10px 0 0">🔒 تجربة توعوية. لا تُستخدم بيانات حقيقية ولا تحويلات حقيقية.</div>
+      <button class="btn g full" id="payagain" style="margin-top:8px">رجوع للطرق</button>
+    </div>
+  </div>
+</main>
+
+<main id="v_me" hidden>
+  <div class="gh"><h1>👤 حسابي</h1></div>
+  <div class="card prof"><div class="av">👤</div><b id="mname" style="font-size:18px"></b><br><div class="idb">ID: <span id="mid"></span></div>
+    <div class="note" style="margin:8px 0" id="mscn" hidden></div>
+    <div class="grid3"><div class="sb"><b id="m1">0</b>جولات</div><div class="sb"><b id="m2">0</b>كسب</div><div class="sb"><b id="m3">0</b>خسر</div>
+      <div class="sb"><b id="m4">0</b>إجمالي الرهان</div><div class="sb"><b id="m5">0</b>إجمالي العائد</div><div class="sb"><b id="m6">0</b>الخسارة الصافية</div></div>
+    <div style="margin-top:12px;color:var(--tx2)">الرصيد (وهمي)</div><div style="font-size:26px;font-weight:bold;color:var(--b)" id="mbal"></div>
+    <div class="note" style="margin-top:10px" id="mrtp"></div></div>
+  <div style="margin:0 12px 12px"><button class="btn er full" id="mout">تسجيل الخروج</button></div>
+</main>
+
+<nav class="nav">
+  <button data-v="home" class="on"><span>🏠</span>الرئيسية</button>
+  <button data-v="games"><span>🎮</span>الألعاب</button>
+  <button data-v="act"><span>🕘</span>النشاط</button>
+  <button data-v="more" hidden><span>⋯</span>المزيد</button>
+  <button data-v="me"><span>👤</span>حسابي</button>
+</nav>
+</div>
+</div>
+
+<div id="gl" class="gl" hidden></div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+<script>
+window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
+firebase.initializeApp({
+  apiKey:"AIzaSyC0WWJQgh4lEYbOqfKFMcI1vLgwJS5DwCQ",
+  authDomain:"xtra-f3087.firebaseapp.com",
+  databaseURL:"https://xtra-f3087-default-rtdb.firebaseio.com",
+  projectId:"xtra-f3087",
+  storageBucket:"xtra-f3087.firebasestorage.app",
+  messagingSenderId:"122881932496",
+  appId:"1:122881932496:web:cf63664e63e38176d332d5"
+});
+const DB=firebase.database();
+const $=id=>document.getElementById(id);
+const nd=s=>String(s==null?"":s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
+const f=n=>Number(n).toLocaleString("en",{maximumFractionDigits:2});
+const r2=n=>Math.round(n*100)/100;
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const rnd=()=>crypto.getRandomValues(new Uint32Array(1))[0]/4294967296;
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const lines=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
+const SESS="ws_sess2";
+
+const BASE={slot:96.46,apple:96,rocket:96,crash:96,wheel:95};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡"};
+const DEFG=[
+{id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات وجوائز كبيرة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
+{id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
+{id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
+{id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز حتى ×5",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
+{id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5}];
+const DEFT={title:"ركن الغرب",
+notice:"⚠️ المراهنات خطر حقيقي على الفرد والمجتمع. هذه تجربة توعوية: الألعاب مضبوطة لصالح المنصة كما في منصات المراهنات الحقيقية.",
+banT:"ألعاب جديدة 🔥",banD:"جرّب 5 ألعاب برصيد وهمي، واعرف بنفسك إزاي الخسارة هي النتيجة المتوقعة.",banBtn:"ابدأ اللعب",banImg:"",
+payTitle:"💳 الدفع",
+payMethods:"📱 فودافون كاش\n📱 اتصالات كاش\n📱 أورنج كاش\n⚡ إنستاباي\n🏪 فوري\n💳 بطاقة بنكية",
+payWarn:"📢 رسالة من المشرف: لا يوجد شحن حاليًا. لو محتاج رصيد تجريبي اكتب رسالتك والمبلغ اللي عايزه، وهيراجعها المشرف ويضيفه لك.",
+msgWin:"كسبت {amount} 🎉",msgLost:"خسرت {amount}",noBal:"الرصيد مش كفاية",closedMsg:"هذا الحساب مغلق",regClosed:"التسجيل مغلق حاليًا"};
+const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"};
+const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000};
+let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{}};
+function merge(c){
+  c=c||{};
+  const t=Object.assign({},DEFT,c.texts||{});
+  ["notice"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{}};
+}
+function games(){
+  const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));
+  const o=C.games||{};
+  for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
+  return Object.values(m).filter(g=>g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
+}
+const gOn=g=>g.on!==false;
+const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
+const gById=id=>games().find(g=>g.id===id);
+function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
+
+let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",apLast=null,crLock=false,crFinal=null,raf=0,betSet=false,toastT=0,wRot=0,payM="",payImg="";
+const scU=()=>U?(U.scale||100)/100:1;
+const histArr=()=>Array.isArray(U.hist)?U.hist:Object.values(U.hist||{});
+function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2800);}
+function tpl(s,amt){return String(s||"").replace(/\{amount\}/g,amt==null?"":f(amt)).replace(/\{name\}/g,name||"");}
+function applyCfg(){
+  for(const k in DEFCOL)document.documentElement.style.setProperty("--"+k,C.colors[k]||DEFCOL[k]);
+  document.querySelectorAll("[data-t]").forEach(e=>{e.textContent=tpl(C.texts[e.dataset.t]);});
+  document.title=C.texts.title;
+}
+async function hash(n,p){
+  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("ws2:"+n+":"+p));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+async function newId(n){
+  for(let i=0;i<40;i++){
+    const id=String(100000000+Math.floor(rnd()*900000000));
+    const t=await DB.ref("ids/"+id).transaction(c=>c===null?n:undefined);
+    if(t.committed)return id;
+  }
+  throw new Error("id");
+}
+
+function show(v){
+  view=v;["home","act","more","page","pay","me"].forEach(x=>$("v_"+x).hidden=x!==v);
+  const nv=v==="page"?"more":v==="pay"?"":v;
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
+  window.scrollTo(0,0);
+}
+function gcard(g){
+  const th=THEME[g.engine],d=el("div","gcard"),art=el("div","art");
+  if(isUrl(g.img)){art.style.backgroundImage='url("'+String(g.img).replace(/["()\s]/g,"")+'")';art.style.backgroundSize="cover";art.style.backgroundPosition="center";}
+  else{art.style.background="linear-gradient(135deg,"+th[0]+","+th[1]+")";art.textContent=EMO[g.engine];}
+  art.appendChild(el("span","tag",g.tag||g.cat||"لعبة"));
+  const gi=el("div","gi");gi.appendChild(el("b","",g.name));gi.appendChild(el("p","",g.desc||""));gi.appendChild(el("button","btn full","افتح اللعبة"));
+  d.appendChild(art);d.appendChild(gi);d.onclick=()=>openGame(g.id);return d;
+}
+function renderHome(){
+  const L=games().filter(gOn);
+  const cats=["الكل"].concat([...new Set(L.map(g=>g.cat).filter(Boolean))]);
+  if(!cats.includes(cat))cat="الكل";
+  const c=$("cats");c.innerHTML="";
+  cats.forEach(x=>{const b=el("button","chip"+(x===cat?" on":""),x);b.onclick=()=>{cat=x;renderHome();};c.appendChild(b);});
+  const q=$("q").value.trim().toLowerCase();
+  const F=L.filter(g=>(cat==="الكل"||g.cat===cat)&&(!q||(g.name+" "+(g.desc||"")+" "+(g.tag||"")).toLowerCase().includes(q)));
+  $("list").innerHTML="";F.forEach(g=>$("list").appendChild(gcard(g)));
+  $("empty").hidden=F.length>0;$("cnt").textContent=F.length+" لعبة";
+  $("featbox").hidden=!!q||cat!=="الكل";
+  $("feat").innerHTML="";L.slice(0,2).forEach(g=>$("feat").appendChild(gcard(g)));
+  const bn=$("ban"),im=String(C.texts.banImg||"").trim();
+  bn.style.backgroundImage=isUrl(im)?'linear-gradient(120deg,#0B1E3Acc,#1677D299),url("'+im.replace(/["()\s]/g,"")+'")':"";
+  bn.style.backgroundSize="cover";bn.style.backgroundPosition="center";
+}
+function renderAct(){
+  const box=$("hist2");box.innerHTML="";
+  const h=histArr().slice(-30).reverse();
+  if(!h.length){box.innerHTML='<div class="empty" style="margin:10px">لا توجد جولات بعد</div>';return;}
+  h.forEach(x=>{const n=r2(x.win-x.bet),g=gById(x.g),d=el("div","row");
+    d.appendChild(el("span","",(g?EMO[g.engine]+" "+g.name:"🎮 لعبة")+" • رهان "+f(x.bet)));
+    d.appendChild(el("span",n>0?"up":n<0?"dn":"",n>0?"+"+f(n):n<0?"-"+f(-n):"تعادل"));box.appendChild(d);});
+}
+function renderMore(){
+  const box=$("morelist");box.innerHTML="";const L=pagesList();
+  L.forEach(p=>{const b=el("button","mrow");b.innerHTML="<span>"+esc(p.emo||"📄")+" "+esc(p.title)+"</span><span>‹</span>";b.onclick=()=>openPage(p);box.appendChild(b);});
+  $("moreempty").hidden=L.length>0;
+  const mb=document.querySelector('.nav button[data-v="more"]');
+  mb.hidden=L.length===0;
+  if(L.length===0&&(view==="more"||view==="page"))show("home");
+}
+function openPage(p){
+  $("pgT").textContent=(p.emo||"📄")+" "+p.title;$("pgB").textContent=p.body||"";
+  const im=$("pgI");if(isUrl(p.img)){im.src=p.img;im.hidden=false;}else im.hidden=true;
+  show("page");
+}
+function renderMe(){
+  $("mname").textContent=name;$("mid").textContent=U.id||"—";$("mbal").textContent=f(U.balance);
+  const w=U.wagered||0,r=U.returned||0;
+  $("m1").textContent=U.rounds||0;$("m2").textContent=U.wins||0;$("m3").textContent=U.losses||0;
+  $("m4").textContent=f(w);$("m5").textContent=f(r);$("m6").textContent=f(Math.max(0,w-r));
+  $("mrtp").textContent="عائدك الفعلي: "+(w?(r/w*100).toFixed(1)+"%":"—")+" من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.";
+  const sc=scU(),n=$("mscn");n.hidden=sc>=1;n.textContent="ℹ️ فرصة الفوز على حسابك مخفّضة بقرار المشرف ("+Math.round((1-sc)*100)+"% خسارة إضافية).";
+}
+function render(){
+  applyCfg();
+  $("hbal").textContent="💰 "+f(U.balance);
+  renderHome();renderAct();renderMore();renderMe();updAdminMsg();
+  if(cur)cur.upd();
+}
+function showAuth(t){
+  U=null;crStop();$("gl").hidden=true;cur=null;document.body.style.overflow="";
+  $("shell").hidden=true;$("v_auth").hidden=false;$("aerr").textContent=t||"";applyCfg();
+}
+function showApp(){$("v_auth").hidden=true;$("shell").hidden=false;}
+
+/* ---------- صفحة الدفع (شكل فقط، مفيش دفع حقيقي) ---------- */
+function updAdminMsg(){
+  const am=String(C.texts.payWarn||"").trim(),b=$("adminmsg");
+  b.hidden=!am;b.textContent=am;
+}
+function renderPay(){
+  updAdminMsg();
+  const box=$("paylist");box.innerHTML="";
+  $("paymsgbox").hidden=true;box.hidden=false;
+  box.appendChild(el("div","plb","اختار طريقة الدفع"));
+  lines(C.texts.payMethods).forEach(l=>{const b=el("button","mrow");b.innerHTML="<span>"+esc(l)+"</span><span>‹</span>";b.onclick=()=>payClick(l);box.appendChild(b);});
+}
+function payClick(m){
+  payM=m;payImg="";
+  DB.ref("paylog").push({t:Date.now(),id:U.id,name:name,m:m,type:"click"});
+  $("paylist").hidden=true;$("paymsgbox").hidden=false;
+  $("pmethod").textContent="طريقة الدفع: "+m;
+  $("pphone").value="";$("pamt").value="";$("psend").textContent="تحويل";$("payres").textContent="";
+  $("pprev").hidden=true;$("pfile").value="";
+  $("upbox").querySelector("img")?.remove();
+  $("upbox").firstChild.textContent="اضغط لرفع صورة وهمية";
+}
+$("upbox").onclick=()=>$("pfile").click();
+$("pfile").onchange=()=>{
+  const f0=$("pfile").files[0];if(!f0)return;
+  const r=new FileReader();
+  r.onload=()=>{
+    payImg=r.result;
+    let img=$("upbox").querySelector("img");
+    if(!img){img=document.createElement("img");$("upbox").appendChild(img);}
+    img.src=payImg;img.hidden=false;$("upbox").firstChild.textContent="✅ تم اختيار الصورة (اضغط لتغييرها)";
+  };
+  r.readAsDataURL(f0);
+};
+$("psend").onclick=async()=>{
+  const phone=$("pphone").value.trim(),amt=parseFloat(nd($("pamt").value)),res=$("payres");
+  const bad=s=>{res.textContent=s;res.style.color="var(--er)";};
+  if(!phone)return bad("اكتب رقم الهاتف (وهمي)");
+  if(!(amt>0))return bad("اكتب مبلغ صحيح");
+  if(amt>50000)return bad("❌ أقصى مبلغ 50,000 جنيه");
+  $("psend").disabled=true;res.textContent="جاري الإرسال...";res.style.color="";
+  await DB.ref("paylog").push({t:Date.now(),id:U.id,name:name,m:payM,type:"req",phone:phone.slice(0,30),amt:r2(amt),img:payImg?payImg.slice(0,300000):"",status:"pending"});
+  $("psend").disabled=false;
+  res.textContent="✅ وصل طلبك للمشرف، وبيراجعه دلوقتي";res.style.color="var(--ok)";
+  $("pphone").value="";$("pamt").value="";payImg="";$("pprev").hidden=true;$("pfile").value="";
+  $("upbox").firstChild.textContent="اضغط لرفع صورة وهمية";
+};
+$("payagain").onclick=renderPay;
+$("usd").onclick=()=>{renderPay();show("pay");};
+$("payback").onclick=()=>show("home");
+
+/* ---------- منطق عام للعب ---------- */
+async function run(fn){
+  let out={};
+  const res=await ref.transaction(u=>{
+    if(!u)return u;
+    out={};
+    if(u.closed){out.err=C.texts.closedMsg;return;}
+    try{return fn(u,out);}catch(e){out.err=e.message;return;}
+  });
+  if(!res.committed)return {err:out.err||"حصلت مشكلة، جرّب تاني"};
+  return out;
+}
+function chk(u,bet){
+  if(!(bet>=C.settings.minBet))throw new Error("اكتب رهان صحيح (على الأقل "+C.settings.minBet+")");
+  if(C.settings.maxBet>0&&bet>C.settings.maxBet)throw new Error("أقصى رهان "+f(C.settings.maxBet));
+  if(bet>u.balance)throw new Error(C.texts.noBal);
+}
+function stake(u,b){u.balance=r2(u.balance-b);u.wagered=r2((u.wagered||0)+b);u.last=Date.now();}
+function payout(u,bet,win,g,info){
+  win=r2(win);u.balance=r2(u.balance+win);u.returned=r2((u.returned||0)+win);u.rounds=(u.rounds||0)+1;
+  if(win>bet)u.wins=(u.wins||0)+1;else if(win<bet)u.losses=(u.losses||0)+1;
+  u.last=Date.now();
+  u.hist=(Array.isArray(u.hist)?u.hist:Object.values(u.hist||{})).concat([{g:g,bet:r2(bet),win:win,t:u.last,i:info==null?0:info}]).slice(-30);
+}
+const getBet=()=>r2(parseFloat(nd(($("bet")||{}).value)));
+function gmsg(t,k){const m=$("gmsg");if(m){m.textContent=t;m.className="gmsg "+(k||"");}}
+function result(win,bet,extra){
+  const net=r2(win-bet);let t,k;
+  if(net>0){t=tpl(C.texts.msgWin,net);k="ok";}
+  else if(net<0){t=tpl(C.texts.msgLost,-net);k="er";}
+  else{t="تعادل: رجعلك رهانك";k="";}
+  gmsg((extra?extra+" • ":"")+t,k);
+}
+function base(){const e=$("gbal");if(e)e.textContent="💰 "+f(U.balance);}
+function histHTML(g){
+  const h=histArr().filter(x=>x.g===g.id).slice(-8).reverse();
+  if(!h.length)return '<div class="sm2">لا توجد جولات بعد</div>';
+  const lab=g.engine==="crash"||g.engine==="rocket"?"انفجر ×":g.engine==="apple"?"صف ":"×";
+  return h.map(x=>{const n=r2(x.win-x.bet);return '<div class="hr2"><span>رهان '+f(x.bet)+(x.i?" • "+lab+(+x.i).toFixed(x.i%1?2:0):"")+'</span><span class="'+(n>0?"up":n<0?"dn":"")+'">'+(n>0?"+"+f(n):n<0?"-"+f(-n):"تعادل")+'</span></div>';}).join("");
+}
+const betBox=(ex,btns)=>'<div class="gc"><div class="gmsg" id="gmsg">حط رهانك واضغط ابدأ</div><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+(ex||"")+'</div>'+btns+'</div>';
+const rulesBox=t=>'<details class="gd"><summary>📖 قواعد اللعبة</summary><p>'+t+'</p></details>';
+const histBox='<div class="gc"><b>🕘 سجل جولاتك</b><div id="hist" style="margin-top:6px"></div></div>';
+function bindBet(b){b.querySelectorAll("[data-bv]").forEach(x=>x.onclick=()=>{const i=$("bet"),v=parseFloat(nd(i.value))||0,k=x.dataset.bv;i.value=k==="h"?Math.max(1,r2(v/2)):k==="d"?r2(v*2):k;});}
+
+const ENG={};
+function openGame(id){
+  const g=gById(id);if(!g||!gOn(g))return;
+  const th=THEME[g.engine],gl=$("gl");
+  gl.style.background="linear-gradient(180deg,"+th[2]+",#000)";
+  gl.innerHTML='<div class="gtop"><span class="gb" id="gbal"></span><b class="gt">'+esc(g.name)+'</b><button class="gx" id="gx">✕</button></div><div class="gbody" id="gbody"></div>';
+  gl.hidden=false;document.body.style.overflow="hidden";
+  cur={g:g,upd:function(){}};apLast=null;
+  ENG[g.engine].open(g,$("gbody"));
+  $("gx").onclick=closeGame;
+  cur.upd();
+}
+function closeGame(){
+  if(busy||hold)return toast("استنى لحد ما الجولة تخلص");
+  crStop();$("gl").hidden=true;document.body.style.overflow="";cur=null;if(U)render();
+}
+const upd=()=>{if(cur)cur.upd();};
+
+const SYM=[["🌵",.28,8],["🐎",.24,13],["🔫",.20,19],["🍺",.14,40],["⭐",.09,95],["💰",.05,320]];
+function pickSym(){const r=rnd();let a=0;for(let i=0;i<SYM.length;i++){a+=SYM[i][1];if(r<a)return i;}return SYM.length-1;}
+const slotPay=(g,a,b,c)=>{const s=rtpOf(g)/BASE.slot;if(a===b&&b===c)return r2(SYM[a][2]*s);if(a===b)return r2(1.5*s);return 0;};
+ENG.slot={open(g,b){
+  const pt=SYM.map((s,i)=>'<div class="row2"><span>'+s[0]+s[0]+s[0]+'</span><b>×'+slotPay(g,i,i,i)+'</b></div>').join("")+'<div class="row2"><span>رمزين متشابهين من اليسار</span><b>×'+slotPay(g,0,0,1)+'</b></div>';
+  b.innerHTML='<div class="gc"><div class="reels"><div class="reel" id="r0">🌵</div><div class="reel" id="r1">🐎</div><div class="reel" id="r2">🔫</div></div></div>'+
+    betBox("",'<button class="btn y full" id="spin">🎰 لف</button>')+
+    rulesBox("ثلاث رموز متشابهة بتدفع حسب الجدول، ورمزين متشابهين من اليسار بيدفعوا ×"+slotPay(g,0,0,1)+". نسبة العائد النظرية "+rtpOf(g)+"% (ميزة المنصة "+r2(100-rtpOf(g))+"%).")+
+    '<div class="gd"><b>💎 جدول الجوائز</b>'+pt+'</div>'+histBox;
+  bindBet(b);$("spin").onclick=()=>slotSpin(g);
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("spin").disabled=busy;};
+}};
+async function slotSpin(g){
+  if(busy)return;const bet=getBet();
+  try{chk(U,bet);}catch(e){return gmsg(e.message,"er");}
+  busy=true;hold=true;$("spin").disabled=true;
+  const lp=1-scU(),rf=rnd();
+  const rs=[0,1,2].map(i=>$("r"+i));
+  const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[Math.floor(Math.random()*6)][0];},70));
+  rs.forEach(r=>r.classList.add("spin"));gmsg("...");
+  const pr=run((u,o)=>{
+    chk(u,bet);let a,b,c,p,t=0;
+    do{a=pickSym();b=pickSym();c=pickSym();p=slotPay(g,a,b,c);t++;}while(rf<lp&&p>=1&&t<80);
+    const win=r2(bet*p);stake(u,bet);payout(u,bet,win,g.id,p);o.s=[a,b,c];o.win=win;return u;});
+  const res=await Promise.all([pr,sleep(900)]);const o=res[0];
+  if(o.err){iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));hold=false;busy=false;upd();return gmsg(o.err,"er");}
+  for(let i=0;i<3;i++){clearInterval(iv[i]);rs[i].textContent=SYM[o.s[i]][0];rs[i].classList.remove("spin");await sleep(450);}
+  hold=false;busy=false;render();result(o.win,bet);
+}
+
+const AP_ROWS=5,AP_P=.8;
+const apM=(g,k)=>r2(rtpOf(g)/100*Math.pow(1.25,k));
+ENG.apple={open(g,b){
+  b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">حط رهانك واضغط ابدأ</div><div class="sm2" id="arisk"></div><div id="aboard"></div></div>'+
+    '<div class="gc"><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div></div><div class="two"><button class="btn" id="astart">▶ ابدأ</button><button class="btn ok" id="acash" disabled>اسحب</button></div></div>'+
+    rulesBox("5 صفوف، وفي كل صف 5 تفاح واحدة منهم فاسدة. اختار تفاحة في كل صف: لو سليمة تطلع للصف اللي بعده والمضاعف يزيد، ولو فاسدة بتخسر رهانك. اسحب في أي وقت بعد أول صف. العائد النظري "+rtpOf(g)+"%.")+histBox;
+  bindBet(b);$("astart").onclick=()=>apStart(g);$("acash").onclick=()=>apCash(g);
+  cur.upd=()=>{base();const a=U.ap&&U.ap.k===g.id;$("hist").innerHTML=histHTML(g);$("astart").disabled=busy||a;$("acash").disabled=busy||!(a&&U.ap.level>=1);
+    $("acash").textContent=a&&U.ap.level>=1?"اسحب "+f(U.ap.bet*apM(g,U.ap.level)):"اسحب";apDraw(g);};
+}};
+function apDraw(g){
+  const a=U.ap&&U.ap.k===g.id?U.ap:null,L=apLast,bet=a?a.bet:(r2(parseFloat(nd(($("bet")||{}).value)))||0);
+  $("arisk").textContent=a?("⚠️ لو غلطت تخسر "+f(a.bet)+" • لو نجحت تكسب "+f(a.bet*apM(g,a.level+1))+(a.level>=1?" • لو سحبت الآن "+f(a.bet*apM(g,a.level)):"")):"فرصة النجاة في كل صف "+Math.round(AP_P*scU()*1000)/10+"% • غلطة واحدة وتخسر رهانك";
+  const bd=$("aboard");bd.innerHTML="";
+  const picks=a?(a.picks||[]):(L?L.picks:[]);
+  for(let r=AP_ROWS-1;r>=0;r--){
+    const row=el("div","aprow"),m=el("div","apm");m.innerHTML="×"+apM(g,r+1)+"<small>"+f(bet*apM(g,r+1))+"</small>";row.appendChild(m);
+    for(let c=0;c<5;c++){
+      const x=el("button","ap","🍎");x.disabled=true;
+      const lvl=a?a.level:(L?L.row:-1);
+      if(a||L){
+        if(r<lvl){if(picks[r]===c){x.classList.add("safe");x.textContent="✅";}else x.classList.add("dim");}
+        else if(r===lvl){
+          if(a){x.disabled=false;x.classList.add("act");x.onclick=()=>apPick(g,c);}
+          else if(c===L.col){x.classList.add("bad");x.textContent="🐛";}
+        }
+      }
+      row.appendChild(x);
+    }
+    bd.appendChild(row);
+  }
+}
+async function apStart(g){
+  if(busy)return;const bet=getBet();
+  const o=await run(u=>{chk(u,bet);if(u.ap)throw new Error("عندك جولة شغالة");stake(u,bet);u.ap={k:g.id,bet:bet,level:0};return u;});
+  if(o.err)return gmsg(o.err,"er");
+  apLast=null;gmsg("اختار تفاحة في الصف الأول");
+}
+async function apPick(g,c){
+  if(busy)return;busy=true;hold=true;
+  document.querySelectorAll("#aboard .ap").forEach(x=>{if(x.classList.contains("act")&&x===document.activeElement)x.textContent="⏳";x.disabled=true;});
+  $("acash").disabled=true;
+  const r=rnd();
+  const pr=run((u,o)=>{
+    const a=u.ap;if(!a||a.k!==g.id)throw new Error("مفيش جولة شغالة");
+    const row=a.level,pk=a.picks||[];
+    if(r>=AP_P*scU()){o.lost={row:row,col:c,picks:pk};o.bet=a.bet;u.ap=null;payout(u,a.bet,0,g.id,row);return u;}
+    a.level++;a.picks=pk.concat([c]);
+    if(a.level>=AP_ROWS){const w=r2(a.bet*apM(g,a.level));u.ap=null;payout(u,a.bet,w,g.id,a.level);o.won=w;o.bet=a.bet;}
+    return u;});
+  const res=await Promise.all([pr,sleep(750)]);const o=res[0];
+  hold=false;busy=false;
+  if(o.err){render();return gmsg(o.err,"er");}
+  if(o.lost){apLast=o.lost;render();result(0,o.bet);}
+  else if(o.won){apLast=null;render();result(o.won,o.bet);}
+  else{render();gmsg("✅ تفاحة سليمة! كمّل أو اسحب","ok");}
+}
+async function apCash(g){
+  if(busy)return;busy=true;
+  const o=await run((u,o)=>{const a=u.ap;if(!a||a.k!==g.id||a.level<1)throw new Error("مينفعش تسحب دلوقتي");
+    const w=r2(a.bet*apM(g,a.level));u.ap=null;payout(u,a.bet,w,g.id,a.level);o.won=w;o.bet=a.bet;return u;});
+  busy=false;if(o.err)return gmsg(o.err,"er");
+  apLast=null;render();result(o.won,o.bet);
+}
+
+const K=0.1;
+const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
+function genCp(g){const r=rnd();let c=Math.floor(rtpOf(g)/(1-r))/100;if(c<1)c=1;if(c>1000)c=1000;return c;}
+function drawCr(skin,t,m,st){
+  const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,H=cv.height;
+  x.clearRect(0,0,W,H);
+  const g=x.createLinearGradient(0,0,0,H);
+  if(skin==="rocket"){g.addColorStop(0,"#1a0508");g.addColorStop(1,"#5a0f1c");}else{g.addColorStop(0,"#0B1E3A");g.addColorStop(1,"#154a80");}
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  if(skin==="rocket"){x.fillStyle="#ffffff99";STARS.forEach(s=>{x.beginPath();x.arc(s[0]*W,s[1]*H,s[2],0,7);x.fill();});}
+  else{x.strokeStyle="#ffffff18";x.lineWidth=1;for(let i=1;i<6;i++){x.beginPath();x.moveTo(0,H*i/6);x.lineTo(W,H*i/6);x.stroke();}}
+  const tx=Math.max(8,t*1.15),my=Math.max(2,m*1.25),L=18,B=22;
+  const px=a=>L+(a/tx)*(W-2*L),py=a=>H-B-((a-1)/(my-1))*(H-B-34);
+  x.beginPath();x.moveTo(px(0),py(1));
+  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.exp(K*a)));}
+  x.lineWidth=4;x.strokeStyle=st==="crash"?"#E5484D":(skin==="rocket"?"#ff8a3d":"#FFC83D");x.stroke();
+  if(skin!=="rocket"){x.lineTo(px(t),H-B);x.lineTo(px(0),H-B);x.closePath();x.fillStyle=st==="crash"?"#E5484D33":"#FFC83D26";x.fill();}
+  x.font="32px serif";x.textBaseline="middle";x.textAlign="start";
+  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.exp(K*t))-4);
+  x.textAlign="center";x.font="bold 46px Tahoma";x.fillStyle=st==="crash"?"#ff7b80":"#fff";x.fillText("×"+m.toFixed(2),W/2,H/2-6);
+  x.font="14px Tahoma";x.fillStyle="#cfe1f5";x.fillText(st==="crash"?"انفجر!":st==="run"?"اسحب قبل الانفجار":"جاهز",W/2,H/2+34);x.textAlign="start";
+}
+function crStop(){if(raf)cancelAnimationFrame(raf);raf=0;}
+function crLoop(){
+  if(raf)return;
+  const loop=()=>{
+    const c=U&&U.cr;
+    if(!c||!cur||cur.g.id!==c.k||$("gl").hidden){raf=0;return;}
+    const t=(Date.now()-c.t0)/1000,raw=Math.exp(K*t),m=Math.floor(raw*100)/100;
+    if(raw>=c.cp){raf=0;crSettle("crash");return;}
+    if(c.auto>1&&m>=c.auto&&c.auto<c.cp){raf=0;crSettle("auto");return;}
+    drawCr(cur.g.engine,t,m,"run");
+    const cb=$("ccash");if(cb)cb.textContent="اسحب "+f(c.bet*m);
+    raf=requestAnimationFrame(loop);
+  };
+  raf=requestAnimationFrame(loop);
+}
+const crashEng={open(g,b){
+  b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="360" height="240"></canvas></div><div class="strip" id="cstrip"></div>'+
+    betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">▶ ابدأ</button><button class="btn ok" id="ccash" disabled>اسحب</button></div>')+
+    rulesBox("اضغط ابدأ فيبدأ المضاعف يرتفع. اضغط اسحب في أي لحظة وتاخد رهانك × المضاعف الحالي. لو انفجر قبل ما تسحب، بتخسر رهانك. ممكن تحدد سحب تلقائي عند رقم معين. العائد النظري "+rtpOf(g)+"% (ميزة المنصة "+r2(100-rtpOf(g))+"%).")+histBox;
+  bindBet(b);$("cgo").onclick=()=>crStart(g);$("ccash").onclick=()=>crSettle("cash");
+  cur.upd=()=>{
+    base();const mine=U.cr&&U.cr.k===g.id;
+    $("cgo").disabled=!!U.cr;$("ccash").disabled=!mine;if(!mine)$("ccash").textContent="اسحب";
+    const S=$("cstrip");S.innerHTML="";
+    histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
+    $("hist").innerHTML=histHTML(g);
+    if(mine){crLoop();}
+    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle");}
+  };
+}};
+ENG.crash=crashEng;ENG.rocket=crashEng;
+async function crStart(g){
+  if(busy||crLock)return;const bet=getBet();
+  let auto=parseFloat(nd($("auto").value));if(!(auto>=1.01))auto=0;
+  const lp=1-scU(),rf=rnd(),r3=rnd();
+  const o=await run(u=>{
+    if(u.cr)throw new Error("عندك جولة شغالة");chk(u,bet);stake(u,bet);
+    let cp=genCp(g);if(rf<lp)cp=Math.min(cp,r2(1+r3*0.4));
+    u.cr={k:g.id,bet:bet,cp:cp,t0:Date.now(),auto:auto};return u;});
+  if(o.err)return gmsg(o.err,"er");
+  crFinal=null;gmsg("الجولة بدأت: اسحب قبل الانفجار!");
+}
+async function crSettle(mode){
+  if(crLock)return;crLock=true;
+  const o=await run((u,o)=>{
+    const c=u.cr;if(!c)throw new Error("x");
+    const t=(Date.now()-c.t0)/1000,mt=Math.floor(Math.exp(K*t)*100)/100;let m=0;
+    if(mode==="cash"){if(mt<c.cp)m=mt;}else if(c.auto>1&&c.auto<c.cp)m=c.auto;
+    const win=m>=1?r2(c.bet*m):0;payout(u,c.bet,win,c.k,c.cp);u.cr=null;
+    o.k=c.k;o.cp=c.cp;o.bet=c.bet;o.win=win;o.m=m;return u;});
+  crLock=false;crStop();
+  if(o.err||!o.k)return;
+  crFinal={k:o.k,cp:o.cp};
+  const net=r2(o.win-o.bet);
+  const t=net>0?"🚀 سحبت عند ×"+o.m.toFixed(2)+" • كسبت "+f(net)+" (انفجر عند ×"+o.cp.toFixed(2)+")":net<0?"💥 انفجر عند ×"+o.cp.toFixed(2)+" • خسرت "+f(o.bet):"تعادل: رجعلك رهانك";
+  render();
+  if(cur&&cur.g.id===o.k){drawCr(cur.g.engine,Math.log(o.cp)/K,o.cp,"crash");gmsg(t,net>0?"ok":net<0?"er":"");}else toast(t);
+}
+setInterval(()=>{
+  if(!U||hold||crLock)return;const c=U.cr;if(!c)return;
+  if(cur&&cur.g.id===c.k&&!$("gl").hidden)return;
+  const raw=Math.exp(K*(Date.now()-c.t0)/1000);
+  if(raw>=c.cp)crSettle("crash");else if(c.auto>1&&raw>=c.auto&&c.auto<c.cp)crSettle("auto");
+},700);
+
+const WH=[0,1,.5,2,0,1,.5,0,1.5,0,1,3,0,.5,1,5,0,1.5,0,.5];
+const WC={0:"#2b3a52",.5:"#8a5a1a",1:"#245A91",1.5:"#1f9e8f",2:"#20A464",3:"#8e44ad",5:"#d49a10"};
+const wv=g=>WH.map(v=>r2(v*rtpOf(g)/BASE.wheel));
+function wheelDraw(g){
+  const cv=$("wcv"),x=cv.getContext("2d"),S=cv.width,c=S/2,R=c-6,n=20,a=2*Math.PI/n,V=wv(g);
+  x.clearRect(0,0,S,S);
+  for(let i=0;i<n;i++){
+    x.beginPath();x.moveTo(c,c);x.arc(c,c,R,-Math.PI/2+i*a,-Math.PI/2+(i+1)*a);x.closePath();
+    x.fillStyle=WC[WH[i]];x.fill();x.strokeStyle="#0b1623";x.lineWidth=2;x.stroke();
+    x.save();x.translate(c,c);x.rotate(-Math.PI/2+(i+.5)*a);x.fillStyle="#fff";x.font="bold 15px Tahoma";x.textAlign="right";x.textBaseline="middle";
+    x.fillText(V[i]?"×"+V[i]:"0",R-12,0);x.restore();
+  }
+  x.beginPath();x.arc(c,c,26,0,7);x.fillStyle="#0B1E3A";x.fill();x.lineWidth=4;x.strokeStyle="#FFC83D";x.stroke();
+}
+ENG.wheel={open(g,b){
+  wRot=0;
+  b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div>'+
+    betBox("",'<button class="btn y full" id="wgo">🎡 لف</button>')+
+    rulesBox("العجلة فيها 20 خانة بمضاعفات مختلفة. بتلف وبتقف على خانة، ومضاعفها × رهانك هو اللي بترجعه. الخانات اللي أقل من ×1 معناها خسارة جزئية، وخانة 0 خسارة كاملة. العائد النظري "+rtpOf(g)+"% (ميزة المنصة "+r2(100-rtpOf(g))+"%).")+histBox;
+  wheelDraw(g);bindBet(b);$("wgo").onclick=()=>wheelSpin(g);
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("wgo").disabled=busy;};
+}};
+async function wheelSpin(g){
+  if(busy)return;const bet=getBet();
+  try{chk(U,bet);}catch(e){return gmsg(e.message,"er");}
+  busy=true;hold=true;$("wgo").disabled=true;gmsg("العجلة بتلف...");
+  const lp=1-scU(),rf=rnd(),ri=rnd(),V=wv(g);
+  const o=await run((u,o)=>{
+    chk(u,bet);let i=Math.floor(ri*20);
+    if(rf<lp){const L=[];V.forEach((v,k)=>{if(v<1)L.push(k);});if(L.length)i=L[Math.floor(ri*L.length)];}
+    const win=r2(bet*V[i]);stake(u,bet);payout(u,bet,win,g.id,V[i]);o.i=i;o.win=win;return u;});
+  if(o.err){hold=false;busy=false;upd();return gmsg(o.err,"er");}
+  wRot=(Math.floor(wRot/360)+5)*360+(360-(o.i*18+9))+(Math.random()*10-5);
+  $("wrot").style.transform="rotate("+wRot+"deg)";
+  await sleep(4300);
+  hold=false;busy=false;render();result(o.win,bet,V[o.i]?"×"+V[o.i]:"0");
+}
+
+function attach(n,h){
+  name=n;ref=DB.ref("users/"+n);
+  ref.on("value",s=>{
+    const u=s.val();
+    if(!u||u.pw!==h){logout("سجّل دخول من جديد");return;}
+    if(u.closed){logout(C.texts.closedMsg);return;}
+    U=u;
+    if(hold)return;
+    showApp();render();
+  });
+}
+function logout(t){
+  if(ref)ref.off();ref=null;name=null;hold=false;busy=false;
+  localStorage.removeItem(SESS);show("home");showAuth(t);
+}
+function setAuth(m){
+  authMode=m;$("p2").hidden=m!=="reg";
+  $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
+  $("agb").textContent=m==="reg"?"إنشاء حساب":"دخول";$("aerr").textContent="";
+}
+async function auth(){
+  const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
+  if(!/^[a-z0-9_]{3,20}$/.test(n))return err("اسم المستخدم من 3 إلى 20 حرف إنجليزي أو أرقام أو _ بدون مسافات");
+  if(p.length<6)return err("كلمة السر 6 أحرف على الأقل");
+  if(reg){
+    if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");
+    if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");
+  }
+  err("...");
+  const h=await hash(n,p),r=DB.ref("users/"+n),snap=await r.get();
+  if(reg){
+    if(!C.settings.registration)return err(C.texts.regClosed);
+    if(snap.exists())return err("اسم المستخدم مستخدم، اختار اسم تاني");
+    let id;try{id=await newId(n);}catch(e){return err("حصلت مشكلة، جرّب تاني");}
+    const s0=C.settings.newZero?0:Number(C.settings.initial);
+    await r.set({id:id,pw:h,balance:s0,regBonus:s0,rounds:0,wins:0,losses:0,wagered:0,returned:0,closed:false,created:Date.now(),last:0});
+  }else{
+    const u=snap.val();
+    if(!u||u.pw!==h)return err("اسم المستخدم أو كلمة السر غلط");
+    if(u.closed)return err(C.texts.closedMsg);
+  }
+  err("");$("p").value="";$("p2").value="";
+  localStorage.setItem(SESS,JSON.stringify({n:n,h:h}));
+  show("home");attach(n,h);
+}
+
+$("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
+$("agb").onclick=auth;
+$("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
+$("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent="لإعادة تعيين كلمة السر تواصل مع المشرف، وهو بيغيّرها لك من لوحته.";setTimeout(()=>$("aerr").style.color="",5000);};
+$("mout").onclick=()=>logout();
+$("pgback").onclick=()=>show("more");
+$("q").oninput=renderHome;
+$("banbtn").onclick=()=>{const g=games().filter(gOn)[0];if(g)openGame(g.id);};
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
+  const v=b.dataset.v;
+  if(v==="games"){show("home");setTimeout(()=>$("alltop").scrollIntoView({behavior:"smooth"}),60);}else show(v);
+});
+DB.ref("config").on("value",s=>{
+  merge(s.val());
+  if(!betSet){betSet=true;}
+  applyCfg();if(U&&!hold)render();
+});
+setAuth("login");applyCfg();
+try{
+  const sv=JSON.parse(localStorage.getItem(SESS));
+  if(sv&&sv.n&&sv.h)attach(sv.n,sv.h);else showAuth();
+}catch(e){showAuth();}
+</script></body></html>
+<!-- END -->
