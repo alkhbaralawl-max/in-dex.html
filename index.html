@@ -88,6 +88,9 @@ textarea.fi{height:auto;padding:10px;min-height:80px}
 .gbody{flex:1;overflow-y:auto;padding:12px 12px 28px;max-width:560px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch}
 .gc{background:#ffffff14;border:1px solid #ffffff26;border-radius:16px;padding:12px;margin-bottom:12px}
 .gmsg{text-align:center;font-weight:bold;min-height:26px;margin-bottom:8px;font-size:15px;line-height:1.7}
+.result-chip{margin:0 0 10px;padding:8px 12px;border-radius:10px;background:#d9efff;color:#15558a;border:1px solid #8fc8ef;font-size:13px;font-weight:800;text-align:center;line-height:1.5;box-shadow:0 2px 8px #0002}
+.result-chip.loss{background:#e5f1ff;color:#174b78;border-color:#a7cbe9}
+.result-chip.win{background:#e1f5ec;color:#17633e;border-color:#9dd8b8}
 .gmsg.ok{color:#5BE39A}.gmsg.er{color:#FF8A8F}
 .sm2{font-size:12px;color:#cfe1f5;text-align:center;line-height:1.8;margin-bottom:6px}
 .bar{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
@@ -107,6 +110,8 @@ canvas{display:block;width:100%}
 .reels{direction:ltr;display:flex;gap:8px;justify-content:center;margin:8px 0 12px}
 .reel{width:30%;max-width:100px;aspect-ratio:.9;background:#fff;color:#000;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:clamp(40px,14vw,60px);box-shadow:inset 0 0 10px #0006,0 0 0 3px #f0b429}
 .reel.spin{animation:jit .14s infinite}
+.reel-stop{animation:reelStop .24s ease-out}
+@keyframes reelStop{0%{transform:translateY(-5px) scale(1.03)}100%{transform:translateY(0) scale(1)}}
 @keyframes jit{0%{transform:translateY(-4px)}50%{transform:translateY(4px)}100%{transform:translateY(-4px)}}
 .aprow{display:flex;gap:6px;align-items:center;margin-bottom:6px}
 .apm{width:62px;text-align:center;font-weight:bold;font-size:13px;line-height:1.3}.apm small{display:block;font-size:10px;opacity:.75;font-weight:normal}
@@ -117,7 +122,8 @@ canvas{display:block;width:100%}
 .wrot{width:100%;transition:transform 4s cubic-bezier(.12,.75,.15,1)}
 .plbd{position:relative;height:260px;background:#00000022;border-radius:14px;margin-bottom:10px;overflow:hidden}
 .plpeg{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffffff55}
-.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--yl);box-shadow:0 0 8px #FFC83D;left:50%;top:2%;z-index:2;transition:top .16s ease-in,left .16s ease-in}
+.plrope{position:absolute;left:50%;top:0;width:2px;height:18px;background:linear-gradient(#ffffffaa,#ffffff35);transform:translateX(-50%);z-index:1;transform-origin:top}
+.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5b8,var(--yl) 42%,#d18a00);box-shadow:0 0 8px #FFC83D;left:50%;top:2%;z-index:2;transition:top .24s cubic-bezier(.2,.7,.2,1),left .24s cubic-bezier(.2,.7,.2,1),transform .24s ease}
 .plbuckets{display:flex;gap:2px}
 .plbk{flex:1;text-align:center;font-size:10.5px;font-weight:bold;border-radius:6px;padding:5px 1px;background:#ffffff1f;color:#fff;transition:transform .2s,background .2s}
 .plbk.hit{background:var(--yl);color:var(--bd);transform:scale(1.15)}
@@ -357,8 +363,11 @@ canvas{display:block;width:100%}
     <div id="paylist"></div>
     <div id="paymsgbox" hidden>
       <div class="pm" id="pmethod"></div>
-      <label class="plb" id="amtLbl">مبلغ الرصيد الافتراضي</label>
-      <input class="fi" id="pamt" type="text" inputmode="numeric" placeholder="اكتب قيمة الرصيد الافتراضي">
+      <label class="plb">📱 رقم الهاتف الوهمي</label>
+      <input class="fi" id="pphone" type="text" inputmode="numeric" maxlength="20" placeholder="أرقام تجريبية فقط">
+      <div class="fakewarn">للتجربة فقط: لا تكتب رقمك الحقيقي ولا تنفّذ أي تحويل مالي.</div>
+      <label class="plb" id="amtLbl">💰 المبلغ</label>
+      <input class="fi" id="pamt" type="text" inputmode="numeric" placeholder="مثال: 500">
       <button class="btn full" id="psend" data-t="transferBtn"></button><div class="msg" id="payres"></div>
       <div class="edu" style="margin:10px 0 0" data-t="payFooter"></div>
       <button class="btn g full" id="payagain" style="margin-top:8px" data-t="backMethods"></button>
@@ -505,7 +514,7 @@ const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];
 const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
-let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",gameCat="الكل",apLast=null,crLock=false,crFinal=null,raf=0,crPollTimer=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false,sportsPick=null,sportsSettleBusy=false,sportsSettleQueued=false,sportScoreStarted=false,sportScoreTimer=0,chatPollTimer=0;
+let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",gameCat="الكل",apLast=null,crLock=false,crFinal=null,crFlight=null,raf=0,crPollTimer=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false,sportsPick=null,sportsSettleBusy=false,sportsSettleQueued=false,sportScoreStarted=false,sportScoreTimer=0,chatPollTimer=0;
 const scU=()=>U?(U.scale||100)/100:1;
 const histArr=()=>Array.isArray(U.hist)?U.hist:Object.values(U.hist||{});
 function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2800);}
@@ -782,22 +791,30 @@ function updAdminMsg(){
 }
 function renderPay(){
   updAdminMsg();const box=$("paylist");box.innerHTML="";$("paymsgbox").hidden=true;box.hidden=false;
-  box.appendChild(el("div","plb","هذه الصفحة مخصصة لطلبات الرصيد الافتراضي فقط. لا تستقبل إيداعات أو تحويلات حقيقية."));
-  const b=el("button","mrow");b.innerHTML="<span>➕ طلب رصيد افتراضي</span><span>‹</span>";b.onclick=()=>payClick("رصيد افتراضي");box.appendChild(b);
+  box.appendChild(el("div","plb","اختار طريقة طلب الرصيد الافتراضي. طرق الدفع القديمة معروضة كخيارات تجريبية فقط."));
+  lines(C.texts.payMethods).forEach(method=>{
+    const b=el("button","mrow");b.innerHTML="<span>"+esc(method)+"</span><span>‹</span>";
+    b.onclick=()=>payClick(method);box.appendChild(b);
+  });
 }
-function payClick(m){
-  payM="virtual";payImg="";$("paylist").hidden=true;$("paymsgbox").hidden=false;
-  $("pmethod").textContent="طلب رصيد افتراضي";$("amtLbl").textContent="مبلغ الرصيد الافتراضي";
-  $("pamt").value="";$("psend").textContent="إرسال الطلب";$("payres").textContent="";
+function payClick(method){
+  payM=String(method||"").slice(0,80);$("paylist").hidden=true;$("paymsgbox").hidden=false;
+  $("pmethod").textContent="الطريقة المختارة: "+payM;
+  $("pphone").value="";$("pamt").value="";$("payres").textContent="";
+  $("psend").textContent="إرسال طلب الرصيد الافتراضي";
 }
 $("psend").onclick=async()=>{
-  const amt=parseFloat(nd($("pamt").value)),res=$("payres");
+  const phone=nd($("pphone").value).trim(),amt=parseFloat(nd($("pamt").value)),res=$("payres");
   const bad=t=>{res.textContent=t;res.style.color="var(--er)";};
+  if(!payM)return bad("اختار طريقة الطلب أولًا");
+  if(!/^\d{6,20}$/.test(phone))return bad("اكتب رقمًا تجريبيًا من 6 إلى 20 رقمًا");
   if(!(amt>0))return bad(C.texts.errBetVal);if(amt>50000)return bad("أقصى طلب رصيد افتراضي 50,000");
   $("psend").disabled=true;res.textContent="جارٍ إرسال الطلب...";res.style.color="";
   try{
-    await apiCall("credit_request",{amount:r2(amt),note:"طلب رصيد افتراضي من صفحة الحساب"});
-    res.textContent="✅ تم إرسال طلب الرصيد الافتراضي للمشرف. لا توجد تحويلات مالية فعلية.";res.style.color="var(--ok)";$("pamt").value="";
+    const note=("الطريقة: "+payM+" | رقم تجريبي: "+phone+" | طلب من واجهة الدفع القديمة").slice(0,500);
+    await apiCall("credit_request",{amount:r2(amt),note});
+    res.textContent="✅ وصل طلب الرصيد الافتراضي للمشرف للمراجعة. لم يتم تنفيذ أي تحويل مالي.";res.style.color="var(--ok)";
+    $("pphone").value="";$("pamt").value="";
   }catch(e){bad(e.message||C.texts.errNet);}
   finally{$("psend").disabled=false;}
 };
@@ -813,13 +830,19 @@ function payout(){throw new Error("تعديل العائد متاح للخادم
 const getBet=()=>r2(parseFloat(nd(($("bet")||{}).value)));
 function gmsg(t,k){const m=$("gmsg");if(m){m.textContent=t;m.className="gmsg "+(k||"");}}
 function result(win,bet,extra){
-  const net=r2(win-bet);let t,k;
-  if(net>0){t=tpl(C.texts.msgWin,{amount:f(net)});k="ok";}
-  else if(net<0){t=tpl(C.texts.msgLost,{amount:f(-net)});k="er";}
-  else{t=C.texts.msgTie;k="";}
-  gmsg((extra?extra+" • ":"")+t,k);
+  const net=r2(win-bet);let t,k,kind;
+  if(net>0){t=tpl(C.texts.msgWin,{amount:f(net)});k="ok";kind="win";}
+  else if(net<0){t=tpl(C.texts.msgLost,{amount:f(-net)});k="er";kind="loss";}
+  else{t=C.texts.msgTie;k="";kind="";}
+  const label=(extra?extra+" — ":"")+t;
+  gmsg(label,k);
+  const chip=el("div","result-chip "+kind,label);
+  const field=document.querySelector("#gbody .fld");
+  const old=document.querySelector("#gbody .result-chip");
+  if(old)old.remove();
+  if(field)field.parentNode.insertBefore(chip,field);
+  else{const body=$("gbody");if(body)body.prepend(chip);}
   fxBal(net>=0);
-  overlay(net>=0,net>=0?net:-net,(extra?extra+"\n":"")+t);
 }
 function fxBal(win){
   const b=$("hbal");b.classList.remove("fxw","fxl");void b.offsetWidth;b.classList.add(win?"fxw":"fxl");
@@ -898,9 +921,13 @@ async function slotSpin(g,scale){
   rs.forEach(r=>r.classList.add("spin"));gmsg("جارٍ تنفيذ الجولة بأمان...");
   try{
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
-    iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));
     const symbols=data.outcome.symbols||[0,0,0];
-    for(let i=0;i<3;i++){await sleep(180);rs[i].textContent=SYM[symbols[i]][0];}
+    for(let i=0;i<3;i++){
+      await sleep(520);
+      clearInterval(iv[i]);rs[i].classList.remove("spin");
+      rs[i].textContent=SYM[symbols[i]][0];
+      rs[i].classList.add("reel-stop");
+    }
     U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet);refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
@@ -1053,23 +1080,59 @@ function drawCr(skin,t,m,st){
 }
 function crStop(){if(raf)cancelAnimationFrame(raf);raf=0;if(crPollTimer)clearTimeout(crPollTimer);crPollTimer=0;}
 function crLoop(){
-  if(crPollTimer||!U?.cr)return;
-  const tick=async()=>{
-    if(!U?.cr){crStop();return;}
-    const c=U.cr,visible=!!(cur&&cur.g.id===c.k&&!$("gl").hidden);
-    try{
-      const data=await apiCall("crash_tick",{roundId:c.roundId},false);
-      if(data.active){if(visible){drawCr(c.k,data.elapsed,data.multiplier,"run");const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*data.multiplier);}crPollTimer=setTimeout(tick,500);}
-      else{
-        crPollTimer=0;crFinal={k:c.k,cp:Number(data.crashPoint)||Number(data.multiplier)||1,m:Number(data.multiplier)||0,status:data.cashedOut||data.autoSettled?"cash":"crash"};U.cr=null;busy=false;hold=false;
-        await refreshMe(false);if(visible)render();else toast(data.autoSettled?"تم السحب التلقائي":"انتهت جولة الكراش");
-        const net=r2(Number(data.payout||0)-Number(data.stake||c.bet));
-        if(visible){const message=data.autoSettled?"تم السحب التلقائي عند ×"+Number(data.multiplier).toFixed(2):data.cashedOut?"تم السحب عند ×"+Number(data.multiplier).toFixed(2):"انفجر الصاروخ عند ×"+Number(data.crashPoint||1).toFixed(2);gmsg(message,net>0?"ok":net<0?"er":"");}
-        fxBal(net>=0);
+  if(raf)return;
+  const frame=()=>{
+    const c=crFlight||U?.cr;
+    if(!c){raf=0;return;}
+    const elapsed=Math.max(0,(Date.now()-Number(c.t0))/1000);
+    const multiplier=Math.min(Math.exp(.35*elapsed),20);
+    const visible=!!(cur&&cur.g.id===c.k&&!$("gl").hidden);
+    if(visible)drawCr(c.k,elapsed,multiplier,"run");
+    if(crFlight){
+      const crashAt=Math.log(Math.max(1.001,Number(crFlight.cp)))/.35;
+      if(elapsed>=crashAt){
+        const done=crFlight;crFlight=null;crFinal={k:done.k,cp:done.cp,m:done.cp,status:"crash"};
+        if(visible){drawCr(done.k,crashAt,done.cp,"crash");gmsg("انفجرت الطيارة عند ×"+Number(done.cp).toFixed(2));}
+        else toast("انتهت جولة الطيارة عند ×"+Number(done.cp).toFixed(2));
+        busy=false;hold=false;raf=0;
+        if(visible)render();
+        return;
       }
-    }catch(e){crPollTimer=setTimeout(tick,1200);}
+    }
+    raf=requestAnimationFrame(frame);
   };
-  tick();
+  raf=requestAnimationFrame(frame);
+  if(U?.cr&&!crPollTimer){
+    const tick=async()=>{
+      if(!U?.cr){crPollTimer=0;return;}
+      const c=U.cr;
+      try{
+        const data=await apiCall("crash_tick",{roundId:c.roundId},false);
+        if(data.active){
+          const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*data.multiplier);
+          crPollTimer=setTimeout(tick,500);
+        }else{
+          crPollTimer=0;U.cr=null;
+          const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
+          if(data.cashedOut||data.autoSettled){
+            crFlight={k:c.k,t0:c.t0,cp,bet:c.bet};
+            const net=r2(Number(data.payout||0)-Number(data.stake||c.bet));
+            if(cur&&cur.g.id===c.k){result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"سحب تلقائي":"تم السحب");}
+            U.balance=Number(data.balance??U.balance);base();
+            if(cur&&cur.g.id===c.k){$("ccash").disabled=true;$("cgo").disabled=true;}
+            refreshMe(false).catch(()=>{});
+            crLoop();
+          }else{
+            crFinal={k:c.k,cp,m:cp,status:"crash"};busy=false;hold=false;
+            await refreshMe(false);if(cur&&cur.g.id===c.k)result(0,Number(data.stake||c.bet),"انفجرت الطيارة عند ×"+cp.toFixed(2));
+            if(cur&&cur.g.id===c.k)render();else toast("انتهت جولة الطيارة");
+            if(raf)cancelAnimationFrame(raf);raf=0;
+          }
+        }
+      }catch(e){crPollTimer=setTimeout(tick,1000);}
+    };
+    tick();
+  }
 }
 const crashEng={open(g,b){
   b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="600" height="400"></canvas></div><div class="strip" id="cstrip"></div>'+
@@ -1082,7 +1145,7 @@ const crashEng={open(g,b){
     const S=$("cstrip");S.innerHTML="";
     histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
     $("hist").innerHTML=histHTML(g);
-    if(mine){crLoop();}
+    if(mine||crFlight&&crFlight.k===g.id){crLoop();}
     else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?(crFinal.status||"crash"):"idle");}
   };
 }};
@@ -1094,7 +1157,7 @@ async function crStart(g){
   try{
     const data=await apiCall("active_start",{gameId:g.id,stake:bet,auto: auto,idempotencyKey:crypto.randomUUID()});
     U.balance=Number(data.balance);U.cr={k:g.id,bet:bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version};
-    crFinal=null;busy=false;render();gmsg("الجولة بدأت: اسحب قبل الانفجار!");crLoop();
+    crFinal=null;crFlight=null;busy=false;render();gmsg("الجولة بدأت: الطيارة هتفضل طالعة لحد الانفجار حتى بعد السحب.");crLoop();
   }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 async function crSettle(mode){
@@ -1103,11 +1166,20 @@ async function crSettle(mode){
     const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",{roundId:c.roundId});
     crLock=false;
     if(data.active){gmsg("استمر المضاعف في الارتفاع. اسحب قبل الانفجار.");return;}
-    crStop();U.cr=null;busy=false;hold=false;crFinal={k:c.k,cp:Number(data.crashPoint)||Number(data.multiplier)||1,m:Number(data.multiplier)||0,status:data.cashedOut||data.autoSettled?"cash":"crash"};
-    await refreshMe(false);render();
-    const payout=Number(data.payout)||0,net=r2(payout-Number(data.stake||c.bet));
-    const msg=data.cashedOut?"تم السحب عند ×"+Number(data.multiplier).toFixed(2):data.autoSettled?"تم السحب التلقائي":"انفجر الصاروخ عند ×"+Number(data.crashPoint||1).toFixed(2);
-    gmsg(msg,net>0?"ok":net<0?"er":"");fxBal(net>=0);
+    U.cr=null;
+    const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
+    const payout=Number(data.payout)||0,stake=Number(data.stake)||c.bet;
+    U.balance=Number(data.balance??U.balance);base();
+    if(data.cashedOut||data.autoSettled){
+      crFlight={k:c.k,t0:c.t0,cp,bet:c.bet};busy=true;hold=true;
+      const msg=data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier).toFixed(2);
+      result(payout,stake,msg);
+      if($("ccash"))$("ccash").disabled=true;if($("cgo"))$("cgo").disabled=true;
+      refreshMe(false).catch(()=>{});crLoop();
+    }else{
+      crFinal={k:c.k,cp,m:cp,status:"crash"};busy=false;hold=false;
+      result(0,stake,"انفجرت الطيارة عند ×"+cp.toFixed(2));render();
+    }
   }catch(e){crLock=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 setInterval(()=>{if(U?.cr&&!crPollTimer&&!crLock&&!(cur&&cur.g.id===U.cr.k&&!$("gl").hidden))crLoop();},700);
@@ -1147,7 +1219,7 @@ async function wheelSpin(g){
 }
 
 /* ======== Plinko ======== */
-const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[6.21,3.5,2.5,1.5,.45,.35,.2,.1,.05];
+const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[6.21,.45,3.5,.35,2.5,.2,1.5,.1,.05];
 const multText=n=>Number(n).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:4});
 function plMults(g){
   const scale=rtpOf(g)/96;
@@ -1155,9 +1227,10 @@ function plMults(g){
 }
 function resetBall(){
   const ball=$("plball");if(!ball)return;
-  ball.style.transition="none";ball.style.left="50%";ball.style.top="3%";
+  ball.style.transition="none";ball.style.left="50%";ball.style.top="3%";ball.style.transform="rotate(0deg)";
+  const rope=$("plrope");if(rope){rope.style.left="50%";rope.style.height="18px";}
   void ball.offsetWidth;
-  ball.style.transition="left .17s cubic-bezier(.2,.7,.2,1),top .17s cubic-bezier(.2,.7,.2,1)";
+  ball.style.transition="left .24s cubic-bezier(.2,.7,.2,1),top .24s cubic-bezier(.2,.7,.2,1),transform .24s ease";
 }
 function makePlinkoPath(targetK){
   const path=Array(targetK).fill(1).concat(Array(PL_ROWS-targetK).fill(0));
@@ -1166,7 +1239,7 @@ function makePlinkoPath(targetK){
 }
 ENG.plinko={open(g,b){
   const M=plMults(g);
-  b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="plbd" id="plbd"><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+multText(m)+'</div>').join("")+'</div></div>'+
+  b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="plbd" id="plbd"><div class="plrope" id="plrope"></div><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+multText(m)+'</div>').join("")+'</div></div>'+
     betBox("",'<button class="btn y full" id="pldrop">'+C.texts.btnDrop+'</button>')+
     rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}))+histBox;
   bindBet(b);
@@ -1190,15 +1263,22 @@ async function plDrop(g,M){
 }
 function plAnimate(path){
   return new Promise(res=>{
-    const ball=$("plball");if(!ball){res();return;}
+    const ball=$("plball"),rope=$("plrope");if(!ball){res();return;}
     const step=100/(PL_ROWS+1)/2;
-    let x=50,pos=0;
+    let x=50,pos=0,angle=0;
     const tick=()=>{
-      if(pos>=PL_ROWS){ball.style.left=x+"%";ball.style.top="91%";setTimeout(res,220);return;}
-      x+=(path[pos]?1:-1)*step;pos++;
-      ball.style.left=x+"%";ball.style.top=(10+pos*9.6)+"%";
-      setTimeout(tick,175);
+      if(pos>=PL_ROWS){
+        ball.style.left=x+"%";ball.style.top="91%";ball.style.transform="rotate("+angle+"deg)";
+        if(rope){rope.style.left=x+"%";rope.style.height="91%";}
+        setTimeout(res,420);return;
+      }
+      const dir=path[pos]?1:-1;x+=dir*step;pos++;angle+=dir*105;
+      const y=10+pos*9.6;
+      ball.style.left=x+"%";ball.style.top=y+"%";ball.style.transform="rotate("+angle+"deg)";
+      if(rope){rope.style.left=x+"%";rope.style.height=y+"%";}
+      setTimeout(tick,250);
     };
+    if(rope){rope.style.left="50%";rope.style.height="3%";}
     tick();
   });
 }
