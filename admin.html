@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0d1728">
+<title>إدارة ركن الغرب</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--panel2:#19263b;--line:#273750;--txt:#eef4ff;--muted:#9fb0c9;--blue:#2876c7;--green:#1c9c6b;--red:#cf4e5a;--gold:#dfa832}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(140deg,#0b1220,#111c2e);color:var(--txt);font-family:Tahoma,Arial,sans-serif;min-height:100vh}
+button,input,textarea,select{font:inherit}button{cursor:pointer;border:0;border-radius:10px;padding:11px 14px;background:var(--blue);color:white;font-weight:700}button:disabled{opacity:.55;cursor:not-allowed}
+input,textarea,select{width:100%;border:1px solid var(--line);background:#0d1728;color:var(--txt);padding:11px;border-radius:9px;outline:none}textarea{min-height:130px;resize:vertical}
+label{display:block;color:var(--muted);font-size:13px;margin:0 0 6px}.field{display:grid;gap:6px;margin-bottom:12px}
+.shell{max-width:1380px;margin:auto;padding:22px}.hidden{display:none!important}
+.login{max-width:420px;margin:8vh auto;background:var(--panel);padding:26px;border:1px solid var(--line);border-radius:20px;box-shadow:0 20px 60px #0005}
+.logo{font-size:25px;font-weight:900;margin:0 0 6px}.muted{color:var(--muted)}.hint{font-size:13px;color:var(--muted);line-height:1.8}
+.msg{margin-top:12px;min-height:22px;color:#ff9aa3}.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.layout{display:grid;grid-template-columns:220px minmax(0,1fr);gap:18px}.nav{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:10px;height:max-content;position:sticky;top:15px}
+.nav button{width:100%;text-align:right;background:transparent;color:var(--muted);margin:3px 0}.nav button.active,.nav button:hover{background:var(--panel2);color:white}
+.content{min-width:0}.card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px;margin-bottom:14px}
+h1{font-size:22px;margin:0}h2{font-size:17px;margin:0 0 14px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.metric{background:var(--panel2);border-radius:12px;padding:15px}.metric b{font-size:22px;display:block;margin-top:8px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.spacer{flex:1}.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:right;padding:10px;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap}th{color:var(--muted);font-weight:600}
+.small{font-size:12px;color:var(--muted)}.pill{display:inline-block;border-radius:50px;padding:4px 9px;background:#22324a;font-size:11px}.good{color:#5bdaa6}.bad{color:#ff929b}
+.btn-green{background:var(--green)}.btn-red{background:var(--red)}.btn-muted{background:#33445d}.btn-gold{background:#a87618}
+.actions{display:flex;gap:7px;flex-wrap:wrap}.actions button{padding:8px 10px;font-size:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}.tabs button{background:var(--panel2)}
+.notice{padding:12px;border:1px solid #735d2b;background:#322a18;border-radius:11px;color:#f5d99e;font-size:13px;line-height:1.8;margin-bottom:14px}
+.chat{display:grid;grid-template-columns:250px minmax(0,1fr);gap:12px}.rooms,.messages{background:#0d1728;border:1px solid var(--line);border-radius:12px;padding:10px;min-height:360px}
+.room{display:block;width:100%;background:transparent;text-align:right;border-bottom:1px solid var(--line);border-radius:0;color:var(--txt)}
+.bubble{max-width:80%;padding:10px 12px;background:#1c2d45;border-radius:13px;margin:8px 0;line-height:1.7;overflow-wrap:anywhere}.bubble.admin{background:#164c48;margin-right:auto}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.nav{position:static;display:grid;grid-template-columns:repeat(3,1fr)}.nav button{text-align:center}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.chat{grid-template-columns:1fr}.rooms{min-height:100px}}
+@media(max-width:520px){.shell{padding:12px}.grid,.two{grid-template-columns:1fr}.nav{grid-template-columns:repeat(2,1fr)}.brand{align-items:flex-start}.brand .actions{justify-content:flex-end}}
+</style>
+</head>
+<body>
+<div id="loginView" class="login">
+  <div class="logo">ركن الغرب</div><div class="muted" style="margin-bottom:20px">لوحة الإدارة الآمنة</div>
+  <div class="field"><label for="username">اسم المدير</label><input id="username" autocomplete="username" maxlength="20"></div>
+  <div class="field"><label for="password">كلمة المرور</label><input id="password" type="password" autocomplete="current-password" maxlength="128"></div>
+  <button id="loginBtn" style="width:100%">تسجيل الدخول</button>
+  <div id="loginMsg" class="msg"></div>
+  <p class="hint">الدخول يتم من خلال السيرفر. لا يوجد رقم سري ثابت أو كلمة مرور محفوظة في الصفحة.</p>
+</div>
+<div id="appView" class="shell hidden">
+  <header class="brand">
+    <div><div class="logo">ركن الغرب</div><div class="small">لوحة الإدارة • الرصيد الافتراضي فقط</div></div>
+    <div class="actions"><span id="adminName" class="pill"></span><button id="changePasswordBtn" class="btn-muted">تغيير كلمة المرور</button><button id="logoutBtn" class="btn-red">خروج</button></div>
+  </header>
+  <div class="notice">كل التعديلات تتم من خلال السيرفر وتُسجل في سجل التدقيق. هذه المنصة تستخدم أرصدة افتراضية للتجربة فقط؛ لا توجد تحويلات أو مدفوعات مالية حقيقية.</div>
+  <div class="layout">
+    <nav class="nav">
+      <button class="active" data-page="overview">نظرة عامة</button>
+      <button data-page="accounts">العملاء</button>
+      <button data-page="requests">طلبات الرصيد</button>
+      <button data-page="ledger">سجل الأرصدة</button>
+      <button data-page="matches">المباريات</button>
+      <button data-page="chat">الدعم</button>
+      <button data-page="settings">إعدادات الموقع</button>
+    </nav>
+    <main class="content">
+      <section id="page-overview">
+        <div class="grid" id="metrics"></div>
+        <div class="card"><h2>آخر حركات الرصيد</h2><div id="recentLedger" class="table-wrap"></div></div>
+      </section>
+      <section id="page-accounts" class="hidden">
+        <div class="card"><div class="row"><h2>حسابات العملاء</h2><span class="spacer"></span><button id="reloadAccounts" class="btn-muted">تحديث</button></div><div id="accountsTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-requests" class="hidden">
+        <div class="card"><div class="row"><h2>طلبات الرصيد الافتراضي</h2><span class="spacer"></span><button id="reloadRequests" class="btn-muted">تحديث</button></div><div id="requestsTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-ledger" class="hidden">
+        <div class="card"><div class="row"><h2>سجل حركات الأرصدة</h2><span class="spacer"></span><button id="reloadLedger" class="btn-muted">تحديث</button></div><div id="ledgerTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-matches" class="hidden">
+        <div class="card"><h2>إضافة / تحديث مباراة</h2>
+          <div class="two">
+            <div class="field"><label>معرّف المباراة (إنجليزي)</label><input id="matchId" placeholder="match_001"></div>
+            <div class="field"><label>عنوان المباراة</label><input id="matchTitle" placeholder="مباراة اليوم"></div>
+            <div class="field"><label>الفريق الأول</label><input id="team1" placeholder="الفريق الأول"></div>
+            <div class="field"><label>الفريق الثاني</label><input id="team2" placeholder="الفريق الثاني"></div>
+            <div class="field"><label>موعد البداية المحلي</label><input id="kickoff" type="datetime-local"></div>
+            <div class="field"><label>نسبة معامل الربح %</label><input id="profitPercent" type="number" min="10" max="500" value="100"></div>
+          </div>
+          <div class="field"><label>اختيار الفريق الأول — معامل</label><input id="homeOdds" type="number" min="1.01" max="1000" step=".01" value="2"></div>
+          <div class="field"><label>اختيار الفريق الثاني — معامل</label><input id="awayOdds" type="number" min="1.01" max="1000" step=".01" value="2"></div>
+          <button id="saveMatch">حفظ المباراة</button><div id="matchMsg" class="msg"></div>
+        </div>
+        <div class="card"><h2>المباريات المسجلة</h2><div id="matchesTable" class="table-wrap"></div></div>
+      </section>
+      <section id="page-chat" class="hidden">
+        <div class="card"><h2>الدعم المباشر</h2><div class="chat"><div id="rooms" class="rooms"></div><div><div id="messages" class="messages"></div><div class="row" style="margin-top:9px"><input id="chatMessage" maxlength="2000" placeholder="اكتب ردك"><button id="sendChat">إرسال</button></div></div></div></div>
+      </section>
+      <section id="page-settings" class="hidden">
+        <div class="card"><h2>إعدادات الموقع العامة</h2><div class="field"><label>القسم</label><select id="configSection"><option value="settings">الإعدادات والحدود</option><option value="games">الألعاب</option><option value="texts">النصوص</option><option value="colors">الألوان</option></select></div>
+          <div class="field"><label>محتوى القسم بصيغة JSON</label><textarea id="configJson" spellcheck="false"></textarea></div><button id="saveConfig">حفظ الإعدادات</button><div id="configMsg" class="msg"></div>
+        </div>
+      </section>
+      <div id="globalMsg" class="msg"></div>
+    </main>
+  </div>
+</div>
+<div id="modal" class="login hidden" style="position:fixed;inset:0;margin:auto;z-index:20;max-height:90vh;overflow:auto">
+  <h2 id="modalTitle">تأكيد</h2><div id="modalBody"></div><div class="actions"><button id="modalOk">تأكيد</button><button id="modalCancel" class="btn-muted">إلغاء</button></div><div id="modalMsg" class="msg"></div>
+</div>
+<script>
+const PROJECT_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
+const PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
+const AUTH_API=PROJECT_URL+"/functions/v1/auth-api";
+const APP_API=PROJECT_URL+"/functions/v1/app-api";
+const $=id=>document.getElementById(id);
+let csrfToken="",admin=null,accounts=[],requests=[],ledger=[],matches={},rooms=[],activeRoom=null,modalAction=null,siteConfig={};
+const money=v=>Number(v||0).toLocaleString("en",{maximumFractionDigits:2});
+const esc=v=>String(v==null?"":v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function api(url,action,payload={},csrf=true){
+  const headers={"content-type":"application/json","apikey":PUBLISHABLE_KEY};
+  if(csrf&&csrfToken)headers["x-csrf-token"]=csrfToken;
+  return fetch(url,{method:"POST",headers,credentials:"include",body:JSON.stringify({action,...payload})})
+    .then(async r=>{let d={};try{d=await r.json();}catch{}if(!r.ok)throw new Error(d.error||("HTTP "+r.status));return d;});
+}
+const authApi=(action,payload={})=>api(AUTH_API,action,payload,action!=="login");
+const appApi=(action,payload={},csrf=true)=>api(APP_API,action,payload,csrf);
+function say(id,msg,good=false){$(id).textContent=msg||"";$(id).className="msg "+(good?"good":"");}
+function fmtDate(v){return v?new Date(v).toLocaleString("ar-EG"):"—";}
+function table(headers,rows){return '<table><thead><tr>'+headers.map(x=>'<th>'+x+'</th>').join("")+'</tr></thead><tbody>'+rows.join("")+'</tbody></table>';}
+async function login(){
+  const b=$("loginBtn");b.disabled=true;say("loginMsg","جارٍ التحقق...");
+  try{
+    const d=await authApi("login",{username:$("username").value.trim(),password:$("password").value});
+    if(d.user?.role!=="admin"){
+      csrfToken=d.csrfToken||"";
+      try{await authApi("logout",{});}catch{}
+      csrfToken="";throw new Error("هذا الحساب لا يملك صلاحية الإدارة");
+    }
+    csrfToken=d.csrfToken||"";admin=d.user;$("password").value="";
+    $("loginView").classList.add("hidden");$("appView").classList.remove("hidden");
+    $("adminName").textContent=admin.display_name||admin.username;
+    await loadOverview();
+  }catch(e){say("loginMsg",e.message||"تعذر تسجيل الدخول");}
+  finally{b.disabled=false;}
+}
+async function logout(){
+  try{await authApi("logout",{});}catch{}
+  csrfToken="";admin=null;$("appView").classList.add("hidden");$("loginView").classList.remove("hidden");
+}
+async function ensureAdmin(){
+  if(!admin)throw new Error("انتهت الجلسة، سجّل الدخول مرة أخرى");
+}
+function switchPage(page){
+  document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  document.querySelectorAll("main section").forEach(s=>s.classList.toggle("hidden",s.id!=="page-"+page));
+  const actions={overview:loadOverview,accounts:loadAccounts,requests:loadRequests,ledger:loadLedger,matches:loadMatches,chat:loadRooms,settings:loadSettings};
+  Promise.resolve(actions[page]?.()).catch(e=>say("globalMsg",e.message));
+}
+async function loadOverview(){
+  await ensureAdmin();
+  const [a,l]=await Promise.all([appApi("admin_accounts"),appApi("admin_ledger")]);
+  accounts=a.accounts||[];ledger=l.ledger||[];
+  const total=accounts.reduce((s,x)=>s+Number(x.wallet?.balance||0),0);
+  const pending=accounts.filter(x=>x.status==="active").length;
+  $("metrics").innerHTML=[
+    ["عدد الحسابات",accounts.length],["الحسابات النشطة",pending],["إجمالي الرصيد الافتراضي",money(total)]
+  ].map(([t,n])=>'<div class="metric"><span class="muted">'+t+'</span><b>'+n+'</b></div>').join("");
+  $("recentLedger").innerHTML=renderLedgerRows(ledger.slice(0,10));
+}
+function renderLedgerRows(data){
+  return table(["التاريخ","العميل","النوع","التغيير","الرصيد بعد العملية"],data.map(x=>'<tr><td>'+fmtDate(x.created_at)+'</td><td>'+esc(x.username)+'</td><td>'+esc(x.event_type)+'</td><td>'+money(x.amount_delta)+'</td><td>'+money(x.balance_after)+'</td></tr>'));
+}
+async function loadAccounts(){
+  await ensureAdmin();const d=await appApi("admin_accounts");accounts=d.accounts||[];
+  const rows=accounts.map(x=>'<tr><td>'+esc(x.username)+'</td><td>'+esc(x.legacy_user_id||"—")+'</td><td>'+money(x.wallet?.balance)+'</td><td><span class="pill">'+esc(x.status)+'</span></td><td>'+esc(x.role)+'</td><td><div class="actions"><button data-adjust="'+x.id+'">تعديل رصيد</button><button class="btn-muted" data-status="'+x.id+'" data-next="'+(x.status==="active"?"locked":"active")+'">'+(x.status==="active"?"قفل":"تفعيل")+'</button></div></td></tr>');
+  $("accountsTable").innerHTML=table(["المستخدم","المعرف القديم","الرصيد الافتراضي","الحالة","الدور","إجراءات"],rows);
+  $("accountsTable").querySelectorAll("[data-adjust]").forEach(b=>b.onclick=()=>openAdjust(accounts.find(x=>x.id===b.dataset.adjust)));
+  $("accountsTable").querySelectorAll("[data-status]").forEach(b=>b.onclick=()=>changeStatus(b.dataset.status,b.dataset.next));
+}
+function openAdjust(account){
+  if(!account)return;
+  const body=document.createElement("div");
+  body.innerHTML='<div class="field"><label>التغيير (موجب للإضافة، سالب للخصم)</label><input id="adjustDelta" type="number" step=".01"></div><div class="field"><label>سبب التعديل</label><input id="adjustReason" maxlength="500"></div>';
+  openModal("تعديل رصيد "+account.username,body,async()=>{
+    const delta=Number($("adjustDelta").value),reason=$("adjustReason").value.trim();
+    if(!Number.isFinite(delta)||delta===0)throw new Error("اكتب مبلغًا غير صفر");
+    await appApi("admin_adjust",{userId:account.id,delta,reason,idempotencyKey:crypto.randomUUID()});
+    await loadAccounts();await loadOverview();
+  });
+}
+async function changeStatus(id,status){
+  if(!confirm(status==="locked"?"تأكيد قفل الحساب؟":"تأكيد إعادة تفعيل الحساب؟"))return;
+  await appApi("admin_status",{userId:id,status});await loadAccounts();
+}
+async function loadRequests(){
+  await ensureAdmin();const d=await appApi("admin_credit_requests");requests=d.requests||[];
+  const rows=requests.map(x=>'<tr><td>'+fmtDate(x.created_at)+'</td><td>'+esc(x.username)+'</td><td>'+money(x.requested_amount)+'</td><td>'+esc(x.status)+'</td><td>'+esc(x.note||"")+'</td><td>'+(x.status==="pending"?'<div class="actions"><button class="btn-green" data-review="'+x.id+'" data-approve="true">موافقة</button><button class="btn-red" data-review="'+x.id+'" data-approve="false">رفض</button></div>':"—")+'</td></tr>');
+  $("requestsTable").innerHTML=table(["التاريخ","العميل","القيمة الافتراضية","الحالة","الطلب","إجراء"],rows);
+  $("requestsTable").querySelectorAll("[data-review]").forEach(b=>b.onclick=async()=>{
+    if(!confirm(b.dataset.approve==="true"?"اعتماد إضافة الرصيد الافتراضي؟":"رفض الطلب؟"))return;
+    await appApi("admin_credit_review",{requestId:b.dataset.review,approve:b.dataset.approve==="true"});
+    await loadRequests();await loadOverview();
+  });
+}
+async function loadLedger(){
+  await ensureAdmin();const d=await appApi("admin_ledger");ledger=d.ledger||[];$("ledgerTable").innerHTML=renderLedgerRows(ledger);
+}
+async function loadMatches(){
+  await ensureAdmin();const d=await appApi("config");siteConfig=d;matches=d.matches||{};
+  const rows=Object.entries(matches).map(([id,m])=>{
+    const markets=m.markets||{},marketRows=Object.entries(markets).map(([mid,market])=>{
+      const options=Object.entries(market.options||{}).map(([oid,opt])=>'<option value="'+esc(oid)+'">'+esc(opt.label)+" (×"+esc(opt.odds)+")</option>").join("");
+      const select='<select data-result="'+esc(id)+'|'+esc(mid)+'"><option value="">اختر الفائز</option>'+options+'</select>';
+      return '<div style="margin-top:7px"><b>'+esc(market.title||mid)+'</b> <span class="pill">'+esc(market.status||"open")+'</span> '+select+' <button class="btn-gold" data-settle="'+esc(id)+'|'+esc(mid)+'">تسوية السوق</button></div>';
+    }).join("");
+    return '<tr><td>'+esc(id)+'</td><td>'+esc(m.title||"—")+'</td><td>'+esc(m.team1?.name||"—")+' × '+esc(m.team2?.name||"—")+'</td><td>'+fmtDate(m.kickoffAt)+'</td><td>'+esc(m.status)+'</td><td>'+marketRows+'</td></tr>';
+  });
+  $("matchesTable").innerHTML=table(["المعرف","المباراة","الفريقان","البداية","الحالة","الأسواق"],rows);
+  $("matchesTable").querySelectorAll("[data-settle]").forEach(b=>b.onclick=async()=>{
+    const [id,mid]=b.dataset.settle.split("|"),select=$("matchesTable").querySelector('[data-result="'+CSS.escape(id+"|"+mid)+'"]');
+    const optionId=select?.value;if(!optionId)return alert("حدد الاختيار الفائز");
+    if(!confirm("تأكيد تسوية السوق؟ لا يمكن تعديل التذاكر بعد التسوية."))return;
+    const result=await appApi("admin_market_settle",{matchId:id,marketId:mid,resultOptionId:optionId});
+    alert("تمت تسوية "+result.settled+" تذكرة. عدد الفائزين: "+result.winners);
+    await loadMatches();await loadOverview();
+  });
+}
+$("saveMatch").onclick=async()=>{
+  try{
+    const id=$("matchId").value.trim(),title=$("matchTitle").value.trim(),team1=$("team1").value.trim(),team2=$("team2").value.trim();
+    const profitPercent=Number($("profitPercent").value),homeOdds=Number($("homeOdds").value),awayOdds=Number($("awayOdds").value);
+    if(!/^[a-zA-Z0-9_-]{2,120}$/.test(id)||!title||!team1||!team2)throw new Error("أكمل معرف المباراة والعنوان والفريقين");
+    if(!(profitPercent>=10&&profitPercent<=500&&homeOdds>=1.01&&awayOdds>=1.01))throw new Error("راجع النسب والمعاملات");
+    const kickoff=$("kickoff").value?new Date($("kickoff").value).toISOString():null;
+    const payload={title,team1:{name:team1},team2:{name:team2},profitPercent,status:"open",visible:true,markets:{
+      winner:{title:"الفائز بالمباراة",status:"open",resultOptionId:null,options:{home:{label:"فوز "+team1,odds:homeOdds},away:{label:"فوز "+team2,odds:awayOdds}}}
+    }};
+    await appApi("admin_match_save",{matchId:id,payload,status:"open",kickoffAt:kickoff});
+    say("matchMsg","تم حفظ المباراة",true);await loadMatches();
+  }catch(e){say("matchMsg",e.message);}
+};
+async function loadRooms(){
+  await ensureAdmin();const d=await appApi("admin_chat_rooms");rooms=d.rooms||[];
+  $("rooms").innerHTML=rooms.map(r=>'<button class="room" data-room="'+r.userId+'">'+esc(r.username)+' <span class="small">('+r.messages.length+')</span></button>').join("")||'<div class="muted">لا توجد محادثات</div>';
+  $("rooms").querySelectorAll("[data-room]").forEach(b=>b.onclick=()=>selectRoom(b.dataset.room));
+  if(activeRoom&&rooms.some(r=>r.userId===activeRoom))selectRoom(activeRoom);
+  else if(rooms[0])selectRoom(rooms[0].userId);else{$("messages").innerHTML="";}
+}
+function selectRoom(id){
+  activeRoom=id;const room=rooms.find(x=>x.userId===id);if(!room)return;
+  $("messages").innerHTML=room.messages.map(m=>'<div class="bubble '+(m.sender_role==="admin"?"admin":"")+'"><div>'+esc(m.message)+'</div><div class="small">'+fmtDate(m.created_at)+'</div></div>').join("");
+}
+$("sendChat").onclick=async()=>{
+  try{if(!activeRoom)throw new Error("اختر محادثة أولًا");const message=$("chatMessage").value.trim();if(!message)return;
+    await appApi("admin_chat_send",{userId:activeRoom,message});$("chatMessage").value="";await loadRooms();
+  }catch(e){say("globalMsg",e.message);}
+};
+async function loadSettings(){
+  await ensureAdmin();const d=await appApi("config");siteConfig=d;showConfigEditor();
+}
+function showConfigEditor(){
+  const section=$("configSection").value,value=siteConfig[section]||{};
+  $("configJson").value=JSON.stringify(value,null,2);
+}
+$("configSection").onchange=showConfigEditor;
+$("saveConfig").onclick=async()=>{
+  try{const value=JSON.parse($("configJson").value);if(!value||typeof value!=="object"||Array.isArray(value))throw new Error("يجب أن يكون JSON كائنًا");
+    await appApi("admin_config_save",{section:$("configSection").value,value});siteConfig={...siteConfig,[$("configSection").value]:value};say("configMsg","تم حفظ الإعدادات",true);
+  }catch(e){say("configMsg",e.message);}
+};
+function openModal(title,body,onOk){
+  $("modalTitle").textContent=title;$("modalBody").replaceChildren(body);$("modalMsg").textContent="";
+  $("modal").classList.remove("hidden");
+  modalAction=async()=>{const b=$("modalOk");b.disabled=true;try{await onOk();$("modal").classList.add("hidden");}catch(e){$("modalMsg").textContent=e.message||"تعذر تنفيذ العملية";}finally{b.disabled=false;}};
+}
+$("modalOk").onclick=()=>modalAction?.();$("modalCancel").onclick=()=>{$("modal").classList.add("hidden");modalAction=null;};
+$("loginBtn").onclick=login;$("password").onkeydown=e=>{if(e.key==="Enter")login();};
+$("logoutBtn").onclick=logout;
+$("changePasswordBtn").onclick=()=>{
+  const body=document.createElement("div");body.innerHTML='<div class="field"><label>كلمة المرور الحالية</label><input id="oldPass" type="password" autocomplete="current-password"></div><div class="field"><label>كلمة المرور الجديدة (10 أحرف على الأقل)</label><input id="newPass" type="password" autocomplete="new-password"></div>';
+  openModal("تغيير كلمة المرور",body,async()=>{
+    await authApi("change_password",{currentPassword:$("oldPass").value,newPassword:$("newPass").value});
+    csrfToken="";admin=null;$("appView").classList.add("hidden");$("loginView").classList.remove("hidden");
+    say("loginMsg","تم تغيير كلمة المرور. سجّل الدخول بكلمة المرور الجديدة.",true);
+  });
+};
+document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>switchPage(b.dataset.page));
+$("reloadAccounts").onclick=loadAccounts;$("reloadRequests").onclick=loadRequests;$("reloadLedger").onclick=loadLedger;
+$("reloadRequests").onclick=loadRequests;$("reloadLedger").onclick=loadLedger;
+</script>
+</body></html>
