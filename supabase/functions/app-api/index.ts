@@ -158,6 +158,7 @@ function publicActive(round:Obj) {
   if(round.game_id==="apple") return {
     id:round.id,gameId:round.game_id,stake:Number(round.stake),level:Number(s.level)||0,
     safeN:Number(s.safeN)||4,picks:Array.isArray(s.picks)?s.picks:[],
+    revealedHazards:Array.isArray(s.hazards)?s.hazards.slice(0,Number(s.level)||0):[],
     version:Number(round.version)
   };
   if(round.game_id==="crash"||round.game_id==="rocket") return {
@@ -212,6 +213,14 @@ async function main(req:Request) {
   let body:Obj;try{body=await parseBody(req);}catch{return response({error:"invalid_request"},400);}
   try {
     const db=dbClient(),action=String(body.action||"");
+    if(action==="public_config") {
+      const config=await appConfig(db);
+      const {data:matchRows,error}=await db.from("matches").select("id,payload,status,kickoff_at").order("updated_at",{ascending:false}).limit(200);
+      if(error) throw new HttpError(500,"matches_unavailable");
+      const matches:Obj={};
+      for(const m of matchRows||[]) matches[m.id]={...m.payload,id:m.id,status:m.status,kickoffAt:m.kickoff_at?new Date(m.kickoff_at).getTime():0};
+      return response({...config,matches});
+    }
     const writes=new Set([
       "logout","play","active_start","apple_pick","apple_cash","crash_tick","crash_cash",
       "sports_bet","chat_send","credit_request","admin_adjust","admin_status","admin_match_save",
@@ -227,7 +236,8 @@ async function main(req:Request) {
       ]);
       if(hist.error||bets.error) throw new HttpError(500,"account_history_unavailable");
       return response({
-        user:{id:user.id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{},scale:Number(user.customer_data?.scale)||100},
+        user:{id:user.id,legacyUserId:user.legacy_user_id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{},scale:Number(user.customer_data?.scale)||100},
+        csrfToken:session.csrf_token,
         wallet,history:(hist.data||[]).map((x:any)=>({g:x.game_id,bet:Number(x.stake),win:Number(x.payout),t:new Date(x.created_at).getTime(),i:x.outcome?.multiplier??x.outcome?.level??x.outcome?.index??0})),
         active:active.data?publicActive(active.data):null,
         sportsBets:(bets.data||[]).map((x:any)=>({...x,matchTitle:x.match_snapshot?.title||"مباراة",team1:x.match_snapshot?.team1,team2:x.match_snapshot?.team2,marketTitle:x.match_snapshot?.market_title,optionLabel:x.match_snapshot?.option_label}))
