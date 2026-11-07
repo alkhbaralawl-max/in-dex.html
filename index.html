@@ -320,15 +320,6 @@ canvas{display:block;width:100%}
   <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">🚀</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
-  <section class="sportscore-section" id="sportscoreSection">
-    <div class="sportscore-heading"><b>⚽ نتائج المباريات المباشرة والحديثة</b><small>تُجهّز خدمة النتائج المباشرة لتعمل من الخادم مع حد موحّد للطلبات.</small></div>
-    <div class="sportscore-panel">
-      <div id="sportscoreStatus" class="sportscore-status">جارٍ تحميل آخر بيانات المباريات المحفوظة...</div>
-      <div id="sportscoreList" class="sportscore-list"><div class="sportscore-empty">سيتم عرض النتائج المتاحة هنا.</div></div>
-      <div class="sportscore-footer"><a href="https://sportscore.com/" rel="dofollow" title="Sports data by SportScore">Powered by SportScore</a></div>
-    </div>
-    <div class="sportscore-note">بيانات التوقعات الرسمية تُدار من قاعدة بيانات الموقع، وسيتم تفعيل تغذية النتائج المباشرة بعد إتمام ربط مزود البيانات.</div>
-  </section>
   <section class="matches-section">
     <div class="matches-heading"><div><b>⚽ مباريات اليوم</b><small>اختر نتيجة في تجربة برصيد افتراضي</small></div><span id="matchesCount" class="matches-count">0 مباراة</span></div>
     <div id="matchesList" class="matches-list"></div>
@@ -645,12 +636,7 @@ function renderMatches(){
   });
 }
 
-/* Live provider feed is temporarily disabled while its shared server-side quota is being moved. */
-function initSportScoreFeed(){
-  if(sportScoreStarted)return;sportScoreStarted=true;
-  const status=$("sportscoreStatus");if(status)status.textContent="تحديث النتائج المباشرة سيعود بعد استكمال خدمة المصدر الآمنة.";
-  const list=$("sportscoreList");if(list)list.innerHTML='<div class="sportscore-empty">خدمة النتائج المباشرة قيد التجهيز. بيانات مباريات الموقع وإدارة التوقعات تعمل من الخادم.</div>';
-}
+function initSportScoreFeed(){}
 
 function openSportsModal(match,market,marketId,optionId,option){
   if((match.status||"open")!=="open"||(market.status||"open")!=="open"||matchKickoffPassed(match))return toast("بدأت المباراة أو أُغلقت التوقعات");
