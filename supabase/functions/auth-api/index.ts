@@ -99,9 +99,15 @@ Deno.serve(async (req: Request) => {
       const username=usernameOf(body.username), password=String(body.password ?? "");
       if(!validUsername(username)) return reply({error:"invalid_username"},400);
       if(password.length<10 || password.length>128) return reply({error:"password_policy"},400);
+      const ip=(req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim(), ipHash=await secretHash(ip);
+      const {data:attemptId,error:claimError}=await db.rpc("claim_auth_attempt",{p_username:username,p_ip_hash:ipHash});
+      if(claimError) throw new Error("registration_rate_limit_failed");
+      if(!attemptId) return reply({error:"too_many_attempts"},429,{"retry-after":"900"});
       const {data:userId,error}=await db.rpc("create_player_account",{p_username:username,p_password_hash:await passwordHash(password)});
       if(error) { if(error.message.includes("duplicate key")) return reply({error:"username_taken"},409);
         if(error.message.includes("registration_closed")) return reply({error:"registration_closed"},403); throw error; }
+      const {error:attemptUpdateError}=await db.from("auth_attempts").update({succeeded:true}).eq("id",attemptId);
+      if(attemptUpdateError) throw new Error("registration_attempt_update_failed");
       const s=await newSession(db,userId,req); await audit(db,userId,"auth.registered");
       return reply({...await safeAccount(db,userId),csrfToken:s.csrf,expiresAt:s.expires},201,{"set-cookie":cookie(s.token,SESSION_SECONDS)});
     }
