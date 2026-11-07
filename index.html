@@ -812,7 +812,7 @@ function crLoop(){
         if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
         const multiplier=Number(status.multiplier)||1;
         const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
-        if(status.crashPending){
+        if(status.autoDue){
           if(crLock){crPollTimer=setTimeout(tick,100);return;}
           crLock=true;
           try{
@@ -820,7 +820,18 @@ function crLoop(){
             if(final.active){crPollTimer=setTimeout(tick,120);return;}
             await crResolve(final,c);
           }finally{crLock=false;}
-        }else crPollTimer=setTimeout(tick,250);
+        }else if(status.crashed){
+          c.crashDetectedAt=c.crashDetectedAt||Date.now();
+          const remaining=Math.max(0,850-(Date.now()-c.crashDetectedAt));
+          if(remaining>0){crPollTimer=setTimeout(tick,Math.min(remaining,150));return;}
+          if(crLock){crPollTimer=setTimeout(tick,100);return;}
+          crLock=true;
+          try{
+            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
+            if(final.active){crPollTimer=setTimeout(tick,120);return;}
+            await crResolve(final,c);
+          }finally{crLock=false;}
+        }else{c.crashDetectedAt=0;crPollTimer=setTimeout(tick,250);}
       }catch(e){
         if(U?.cr&&U.cr.roundId===c.roundId)crPollTimer=setTimeout(tick,500);
         else crPollTimer=0;
@@ -862,7 +873,7 @@ async function crSettle(mode){
   if(crLock||!U?.cr)return;
   crLock=true;lastAction=Date.now();
   try{
-    const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",{roundId:c.roundId});
+    const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",mode==="cash"?{roundId:c.roundId,cashClickAt:Date.now()}:{roundId:c.roundId});
     if(data.active){gmsg("المضاعف ما زال يرتفع. اسحب قبل الانفجار.");return;}
     await crResolve(data,c);
   }catch(e){gmsg(e.message||C.texts.errNet,"er");}
@@ -1099,5 +1110,5 @@ setAuth("login");applyCfg();loadPublicConfig();
 })();
 setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden"){refreshMe(true).catch(()=>{});loadMyCreditRequests().catch(()=>{});}},12000);
 
-</script></body></html></script></body></html>
+</script></body></html>
 <!-- END -->
