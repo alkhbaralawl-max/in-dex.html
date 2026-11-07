@@ -91,6 +91,15 @@ function cleanNumber(v:any,min:number,max:number) {
   const n=Number(v); if(!Number.isFinite(n)||n<min||n>max) throw new HttpError(400,"invalid_number"); return n;
 }
 function money(v:number) { return Math.round((v+Number.EPSILON)*100)/100; }
+async function validatedStake(db:Client,value:any) {
+  const stake=money(cleanNumber(value,.01,10000000));
+  const {data,error}=await db.from("app_settings").select("min_virtual_stake,max_virtual_stake").eq("singleton",true).single();
+  if(error||!data) throw new HttpError(500,"settings_unavailable");
+  const min=Number(data.min_virtual_stake)||.01,max=Number(data.max_virtual_stake)||0;
+  if(stake<min) throw new HttpError(400,"below_minimum_stake");
+  if(max>0&&stake>max) throw new HttpError(400,"above_maximum_stake");
+  return stake;
+}
 
 async function passwordHash(password:string) {
   const salt=crypto.getRandomValues(new Uint8Array(16));
@@ -275,7 +284,7 @@ async function main(req:Request) {
       return response({ok:true},200,{"set-cookie":COOKIE+"=; Path=/; HttpOnly; Secure; SameSite=None; Partitioned; Max-Age=0"});
     }
     if(action==="play") {
-      const gameId=String(body.gameId||""),stake=money(cleanNumber(body.stake,.01,10000000));
+      const gameId=String(body.gameId||""),stake=await validatedStake(db,body.stake);
       const idempotency=String(body.idempotencyKey||"");
       if(idempotency.length<12||idempotency.length>100) throw new HttpError(400,"invalid_idempotency_key");
       const cfg=await appConfig(db),games=cfg.games||{};
@@ -327,7 +336,7 @@ async function main(req:Request) {
       return response({ok:true,gameId,stake,payout,outcome,balance:Number(result.balance),duplicate:!!result.duplicate});
     }
     if(action==="active_start") {
-      const gameId=String(body.gameId||""),stake=money(cleanNumber(body.stake,.01,10000000));
+      const gameId=String(body.gameId||""),stake=await validatedStake(db,body.stake);
       const key=String(body.idempotencyKey||"");
       if(key.length<12||key.length>100) throw new HttpError(400,"invalid_idempotency_key");
       const cfg=await appConfig(db),game=gameConfig(cfg,gameId),rtp=rtpOf(game,{apple:96,crash:96,rocket:96});
@@ -515,7 +524,7 @@ async function main(req:Request) {
       const username=String(body.username||"").trim().toLowerCase();
       const password=String(body.password||"");
       if(!/^[a-z0-9_]{3,20}$/.test(username)) throw new HttpError(400,"invalid_username");
-      if(password.length<10||password.length>128||password.toLowerCase()===username) throw new HttpError(400,"password_policy");
+      if(password.length<6||password.length>128||password.toLowerCase()===username) throw new HttpError(400,"password_policy");
       let balance:number;
       if(body.initialBalance===null||body.initialBalance===undefined||String(body.initialBalance).trim()==="") {
         const {data:s,error}=await db.from("app_settings").select("initial_virtual_balance,new_accounts_start_at_zero").eq("singleton",true).single();
@@ -545,7 +554,7 @@ async function main(req:Request) {
       const wallet=body.wallet;
       if(!target||!/^\\d{9}$/.test(legacyId)||!wallet||typeof wallet!=="object") throw new HttpError(400,"invalid_account_data");
       const pw=String(body.password||"");
-      if(pw&&(pw.length<10||pw.length>128)) throw new HttpError(400,"password_policy");
+      if(pw&&(pw.length<6||pw.length>128)) throw new HttpError(400,"password_policy");
       const values={
         balance:money(cleanNumber(wallet.balance,0,1000000000000)),
         registration_bonus:money(cleanNumber(wallet.registration_bonus,0,1000000000000)),
