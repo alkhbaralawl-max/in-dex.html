@@ -98,12 +98,12 @@ const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
 const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SUPABASE_URL+"/functions/v1/app-api";
-const ADMIN_ALLOWED_ORIGIN="https://alkhbaralawl-max.github.io";
+const ADMIN_ALLOWED_ORIGINS=new Set(["https://alkhbaralawl-max.github.io","https://rukn-algharb-preview.vercel.app"]);
 const $=id=>document.getElementById(id);
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
 async function sendApi(url,action,payload={},csrf=true){
-  if(window.location.origin!==ADMIN_ALLOWED_ORIGIN) throw new ApiError("أنت تفتح نسخة معاينة أو رابطًا غير منشور على الموقع. افتح لوحة المشرف من نطاق الموقع المنشور فقط حتى يسمح السيرفر بالاتصال.",0);
+  if(!ADMIN_ALLOWED_ORIGINS.has(window.location.origin)) throw new ApiError("أنت تفتح نسخة معاينة أو رابطًا غير منشور على الموقع. افتح لوحة المشرف من نطاق الموقع المنشور فقط حتى يسمح السيرفر بالاتصال.",0);
   const headers={"content-type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
   if(csrf&&csrfToken)headers["x-csrf-token"]=csrfToken;
   let res,data;
