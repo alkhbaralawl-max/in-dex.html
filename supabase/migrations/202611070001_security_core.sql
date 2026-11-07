@@ -96,7 +96,7 @@ create index if not exists auth_attempts_name_idx on public.auth_attempts(userna
 create index if not exists auth_attempts_ip_idx on public.auth_attempts(ip_hash,created_at desc);
 
 create or replace function public.create_player_account(p_username text,p_password_hash text)
-returns uuid language plpgsql security definer set search_path='' as $$
+returns uuid language plpgsql security invoker set search_path='' as $$
 declare v_id uuid; v_balance numeric(14,2);
 begin
   if p_username is null or p_username !~ '^[a-zA-Z0-9_]{3,20}$' or p_password_hash is null or length(p_password_hash)<40 then
@@ -120,7 +120,7 @@ end; $$;
 -- Server-only transaction. Never expose a client endpoint accepting arbitrary payout values.
 create or replace function public.record_virtual_game_round(
   p_user_id uuid,p_game_id text,p_stake numeric,p_payout numeric,p_outcome jsonb,p_idempotency_key text
-) returns jsonb language plpgsql security definer set search_path='' as $$
+) returns jsonb language plpgsql security invoker set search_path='' as $$
 declare w public.wallets%rowtype; v_min numeric(14,2); v_max numeric(14,2); v_before numeric(14,2); v_after numeric(14,2); v_round uuid;
 begin
   if p_stake<=0 or p_payout<0 or p_game_id is null or length(p_game_id)>40 or p_idempotency_key is null then
