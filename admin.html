@@ -176,7 +176,7 @@ async function refreshAll(){
   });
   merge(c);
   TX=(t.ledger||[]).map(x=>({t:x.created_at,id:x.legacyUserId||"",name:x.username||"—",type:x.event_type,amt:Math.abs(Number(x.amount_delta)||0),after:Number(x.balance_after)||0,delta:Number(x.amount_delta)||0}));
-  PL=(p.requests||[]).map(x=>({_key:x.id,userId:x.user_id,id:x.legacyUserId||"—",name:x.username||"—",amt:Number(x.requested_amount)||0,status:x.status,t:x.created_at,note:x.note||""}));
+  PL=(p.requests||[]).map(x=>({_key:x.id,userId:x.user_id,id:x.legacyUserId||"—",name:x.username||"—",amt:Number(x.requested_amount)||0,status:x.status,t:x.created_at,note:x.note||"",method:x.method||"",userNumber:x.userNumber||"",destinationNumber:x.destinationNumber||"",proofUrl:x.proofUrl||""}));
   chatRooms={};(h.rooms||[]).forEach(r=>{const key=String(r.legacyUserId||r.userId);const last=(r.messages||[]).slice(-1)[0];chatRooms[key]={userId:r.userId,legacyUserId:r.legacyUserId,username:r.username,messages:r.messages||[],last:last?new Date(last.created_at).getTime():0,lastMsg:last?.message||"",unread:last?.sender_role==="player"};});
   drawAll();
 }
@@ -450,7 +450,7 @@ function pagesForm(){
 
 async function payAct(key,approve){
   const x=PL.find(p=>p._key===key);if(!x)return;
-  if(!confirm(approve?"الموافقة ستضيف رصيدًا افتراضيًا فقط. هل تريد المتابعة؟":"هل تريد رفض طلب الرصيد الافتراضي؟"))return;
+  if(!confirm(approve?"تأكيد الدفع وإضافة الرصيد الافتراضي لهذا الحساب؟":"تأكيد رفض الطلب؟"))return;
   try{await apiCall("admin_credit_review",{requestId:x._key,approve:!!approve});await refreshAll();}catch(e){alert(displayError(e));}
 }
 function payRender(){
