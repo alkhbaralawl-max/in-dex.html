@@ -552,7 +552,7 @@ async function main(req:Request) {
       const target=String(body.userId||"");
       const legacyId=String(body.legacyUserId||"").trim();
       const wallet=body.wallet;
-      if(!target||!/^\\d{9}$/.test(legacyId)||!wallet||typeof wallet!=="object") throw new HttpError(400,"invalid_account_data");
+      if(!target||!/^\d{9}$/.test(legacyId)||!wallet||typeof wallet!=="object") throw new HttpError(400,"invalid_account_data");
       const pw=String(body.password||"");
       if(pw&&(pw.length<6||pw.length>128)) throw new HttpError(400,"password_policy");
       const values={
