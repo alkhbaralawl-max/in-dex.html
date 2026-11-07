@@ -86,6 +86,10 @@ textarea.fi{height:auto;padding:10px;min-height:80px}
 .gb{background:#00000066;border-radius:20px;padding:7px 12px;font-weight:bold;color:var(--yl);font-size:13px;white-space:nowrap}
 .gx{width:44px;height:44px;border-radius:50%;border:0;background:#ffffff2e;color:#fff;font-size:20px;flex-shrink:0}
 .gbody{flex:1;overflow-y:auto;padding:12px 12px 28px;max-width:560px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch}
+.gbody.embed-body{display:flex;flex-direction:column;gap:8px;padding:8px;max-width:none;min-height:0;overflow:hidden}
+.embed-note{font-size:11px;line-height:1.7;color:#dce5ff;text-align:center;padding:4px 2px}
+.embed-note a{color:#ffe08a;text-decoration:underline;font-weight:bold}
+.embed-frame-wrap{flex:1;min-height:0;overflow:hidden;border-radius:14px;border:1px solid #ffffff30;background:#03060c;box-shadow:0 8px 28px #0008}
 .gc{background:#ffffff14;border:1px solid #ffffff26;border-radius:16px;padding:12px;margin-bottom:12px}
 .gmsg{text-align:center;font-weight:bold;min-height:26px;margin-bottom:8px;font-size:15px;line-height:1.7}
 .gmsg.ok{color:#5BE39A}.gmsg.er{color:#FF8A8F}
@@ -277,9 +281,9 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess3";
 const CAP=20;
 
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,dice:96,cards:95};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#123b52","#37a6be","#061d2a"],cards:["#54243a","#d14c70","#240b18"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"🎲",cards:"🃏"};
+const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,embed:96};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],embed:["#3b2d70","#8f75e8","#17112e"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯",embed:"🕹️"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
@@ -287,15 +291,64 @@ const DEFG=[
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
 {id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
-{id:"dice",name:"سباق النرد",desc:"اختار نطاق مجموع حجرَي النرد وشاهد الرمية",engine:"dice",cat:"نرد",tag:"نرد",order:7},
-{id:"cards",name:"ورقة حمراء أم سوداء",desc:"توقّع لون الورقة قبل كشفها",engine:"cards",cat:"ورق",tag:"ورق",order:8}];
+{"id":"lib_2048","name":"2048","desc":"دمج الأرقام المتشابهة حتى تصل إلى 2048.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":7,"on":true,"embedPath":"games/puzzle/2048/index.html","source":"sausi-7/games"},
+{"id":"lib_sudoku","name":"سودوكو","desc":"حل شبكة 9×9 بأرقام من 1 إلى 9 دون تكرار.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":8,"on":true,"embedPath":"games/puzzle/sudoku/index.html","source":"sausi-7/games"},
+{"id":"lib_cargo-stack","name":"رصّ الشحنات","desc":"رتّب الصناديق بحذر حتى لا تسقط الحمولة.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":9,"on":true,"embedPath":"games/puzzle/cargo-stack/index.html","source":"sausi-7/games"},
+{"id":"lib_circuit-bulb","name":"وصّل الدائرة","desc":"دوّر ووصل الأسلاك حتى يضيء المصباح.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":10,"on":true,"embedPath":"games/puzzle/circuit-bulb/index.html","source":"sausi-7/games"},
+{"id":"lib_colour-pour","name":"فرز الألوان","desc":"اسكب الألوان بين الأنابيب حتى يتجمع كل لون وحده.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":11,"on":true,"embedPath":"games/puzzle/colour-pour/index.html","source":"sausi-7/games"},
+{"id":"lib_connected","name":"وصّل النقاط","desc":"اربط النقاط من دون تقاطع المسارات.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":12,"on":true,"embedPath":"games/puzzle/connected/index.html","source":"sausi-7/games"},
+{"id":"lib_hex-puzzle","name":"لغز السداسيات","desc":"ضع القطع السداسية واملأ المساحات.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":13,"on":true,"embedPath":"games/puzzle/hex-puzzle/index.html","source":"sausi-7/games"},
+{"id":"lib_laser-bounce","name":"ارتداد الليزر","desc":"وجّه انعكاسات الليزر حتى تصيب الأهداف.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":14,"on":true,"embedPath":"games/puzzle/laser-bounce/index.html","source":"sausi-7/games"},
+{"id":"lib_memory","name":"لعبة الذاكرة","desc":"اقلب البطاقات وابحث عن الأزواج المتطابقة.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":15,"on":true,"embedPath":"games/puzzle/memory/index.html","source":"sausi-7/games"},
+{"id":"lib_number-merge","name":"دمج الأرقام","desc":"ادمج الأرقام المتشابهة واصنع أرقامًا أكبر.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":16,"on":true,"embedPath":"games/puzzle/number-merge/index.html","source":"sausi-7/games"},
+{"id":"lib_pathfinder","name":"اعثر على المسار","desc":"اعثر على طريق المتاهة وتجنب الطرق المسدودة.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":17,"on":true,"embedPath":"games/puzzle/pathfinder/index.html","source":"sausi-7/games"},
+{"id":"lib_slide-puzzle","name":"ترتيب المربعات","desc":"حرّك القطع حتى تعيد اللوحة إلى ترتيبها.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":18,"on":true,"embedPath":"games/puzzle/slide-puzzle/index.html","source":"sausi-7/games"},
+{"id":"lib_tetris","name":"مكعبات متساقطة","desc":"رتّب القطع المتساقطة وامنع امتلاء اللوحة.","engine":"embed","cat":"ألغاز","tag":"ألغاز","order":19,"on":true,"embedPath":"games/puzzle/tetris/index.html","source":"sausi-7/games"},
+{"id":"lib_rock-paper-scissors","name":"حجر ورقة مقص","desc":"تحدَّ الكمبيوتر في لعبة الاختيارات السريعة.","engine":"embed","cat":"لوحية","tag":"لوحية","order":20,"on":true,"embedPath":"games/board/rock-paper-scissors/index.html","source":"sausi-7/games"},
+{"id":"lib_chess","name":"الشطرنج","desc":"العب مباراة شطرنج ضد الكمبيوتر.","engine":"embed","cat":"لوحية","tag":"لوحية","order":21,"on":true,"embedPath":"games/board/chess/index.html","source":"sausi-7/games"},
+{"id":"lib_ludo","name":"لودو","desc":"العب لودو ضد ثلاثة خصوم افتراضيين.","engine":"embed","cat":"لوحية","tag":"لوحية","order":22,"on":true,"embedPath":"games/board/ludo/index.html","source":"sausi-7/games"},
+{"id":"lib_carrom","name":"كاروم","desc":"صوّب الأقراص وأدخلها في الجيوب.","engine":"embed","cat":"لوحية","tag":"لوحية","order":23,"on":true,"embedPath":"games/board/carrom/index.html","source":"sausi-7/games"},
+{"id":"lib_snake-and-ladder","name":"السلم والثعبان","desc":"ارمِ النرد وتسلق السلالم وتجنب الثعابين.","engine":"embed","cat":"لوحية","tag":"لوحية","order":24,"on":true,"embedPath":"games/board/snake-and-ladder/index.html","source":"sausi-7/games"},
+{"id":"lib_tic-tac-toe","name":"إكس أو","desc":"كوّن ثلاثة رموز متتالية قبل خصمك.","engine":"embed","cat":"لوحية","tag":"لوحية","order":25,"on":true,"embedPath":"games/board/tic-tac-toe/index.html","source":"sausi-7/games"},
+{"id":"lib_balance-stack","name":"برج التوازن","desc":"رصّ القطع فوق بعضها وحافظ على توازن البرج.","engine":"embed","cat":"أركيد","tag":"أركيد","order":26,"on":true,"embedPath":"games/arcade/balance-stack/index.html","source":"sausi-7/games"},
+{"id":"lib_boom-dots","name":"تفجير النقاط","desc":"ابدأ سلسلة انفجارات لإزالة النقاط.","engine":"embed","cat":"أركيد","tag":"أركيد","order":27,"on":true,"embedPath":"games/arcade/boom-dots/index.html","source":"sausi-7/games"},
+{"id":"lib_breakoid","name":"كسر الحواجز","desc":"وجّه المضرب واكسر الحواجز المتتابعة.","engine":"embed","cat":"أركيد","tag":"أركيد","order":28,"on":true,"embedPath":"games/arcade/breakoid/index.html","source":"sausi-7/games"},
+{"id":"lib_collector","name":"جامع العملات","desc":"اجمع أكبر عدد من العملات قبل انتهاء الوقت.","engine":"embed","cat":"أركيد","tag":"أركيد","order":29,"on":true,"embedPath":"games/arcade/collector/index.html","source":"sausi-7/games"},
+{"id":"lib_color-dash","name":"بوابات الألوان","desc":"طابق لونك مع البوابة الصحيحة لتكمل الطريق.","engine":"embed","cat":"أركيد","tag":"أركيد","order":30,"on":true,"embedPath":"games/arcade/color-dash/index.html","source":"sausi-7/games"},
+{"id":"lib_crossy-road","name":"اعبر الطريق","desc":"اقفز عبر الطرق والأنهار دون اصطدام.","engine":"embed","cat":"أركيد","tag":"أركيد","order":31,"on":true,"embedPath":"games/arcade/crossy-road/index.html","source":"sausi-7/games"},
+{"id":"lib_flappy","name":"الطائر الطائر","desc":"اضغط للقفز ومر بين العوائق.","engine":"embed","cat":"أركيد","tag":"أركيد","order":32,"on":true,"embedPath":"games/arcade/flappy/index.html","source":"sausi-7/games"},
+{"id":"lib_snake","name":"الثعبان","desc":"كبّر الثعبان واجمع الطعام وتجنب الاصطدام.","engine":"embed","cat":"أركيد","tag":"أركيد","order":33,"on":true,"embedPath":"games/arcade/snake/index.html","source":"sausi-7/games"},
+{"id":"lib_whack-a-bug","name":"اضرب الحشرات","desc":"اضرب الحشرات بسرعة قبل أن تختفي.","engine":"embed","cat":"أركيد","tag":"أركيد","order":34,"on":true,"embedPath":"games/arcade/whack-a-bug/index.html","source":"sausi-7/games"},
+{"id":"lib_red-light-green-light","name":"إشارة المرور","desc":"تحرك أثناء الإشارة الخضراء وتوقف عند الحمراء.","engine":"embed","cat":"أركيد","tag":"أركيد","order":35,"on":true,"embedPath":"games/arcade/red-light-green-light/index.html","source":"sausi-7/games"},
+{"id":"lib_basketball","name":"كرة السلة","desc":"وجّه الكرة نحو السلة واجمع النقاط.","engine":"embed","cat":"رياضة","tag":"رياضة","order":36,"on":true,"embedPath":"games/sports/basketball/index.html","source":"sausi-7/games"},
+{"id":"lib_bowling","name":"البولينج","desc":"وجّه الكرة وأسقط أكبر عدد من القوارير.","engine":"embed","cat":"رياضة","tag":"رياضة","order":37,"on":true,"embedPath":"games/sports/bowling/index.html","source":"sausi-7/games"},
+{"id":"lib_cricket-123","name":"الكريكيت","desc":"اضرب الكرات وسجل أكبر عدد من النقاط.","engine":"embed","cat":"رياضة","tag":"رياضة","order":38,"on":true,"embedPath":"games/sports/cricket-123/index.html","source":"sausi-7/games"},
+{"id":"lib_football","name":"كرة القدم","desc":"تحكم باللاعب وسجل الأهداف.","engine":"embed","cat":"رياضة","tag":"رياضة","order":39,"on":true,"embedPath":"games/sports/football/index.html","source":"sausi-7/games"},
+{"id":"lib_table-tennis","name":"تنس الطاولة","desc":"بادل الكرة وحاول التغلب على الخصم.","engine":"embed","cat":"رياضة","tag":"رياضة","order":40,"on":true,"embedPath":"games/sports/table-tennis/index.html","source":"sausi-7/games"},
+{"id":"lib_penalty","name":"ركلات الجزاء","desc":"سدّد ركلات الجزاء وحاول خداع الحارس.","engine":"embed","cat":"رياضة","tag":"رياضة","order":41,"on":true,"embedPath":"games/sports/penalty/index.html","source":"sausi-7/games"},
+{"id":"lib_car-race","name":"سباق السيارات ثلاثي الأبعاد","desc":"قد السيارة وتفاد السيارات والعوائق.","engine":"embed","cat":"سباق","tag":"سباق","order":42,"on":true,"embedPath":"games/racing/car-race/index.html","source":"sausi-7/games"},
+{"id":"lib_one-car","name":"سيارة واحدة","desc":"قد سيارتك بين المسارات وتفاد حركة المرور.","engine":"embed","cat":"سباق","tag":"سباق","order":43,"on":true,"embedPath":"games/racing/one-car/index.html","source":"sausi-7/games"},
+{"id":"lib_two-cars","name":"سيارتان","desc":"تحكم في سيارتين معًا واجمع الأهداف وتجنب العوائق.","engine":"embed","cat":"سباق","tag":"سباق","order":44,"on":true,"embedPath":"games/racing/two-cars/index.html","source":"sausi-7/games"},
+{"id":"lib_endless-runner","name":"الجري بلا نهاية","desc":"استمر في الجري وتفاد العوائق مع زيادة السرعة.","engine":"embed","cat":"سباق","tag":"سباق","order":45,"on":true,"embedPath":"games/racing/endless-runner/index.html","source":"sausi-7/games"},
+{"id":"lib_doodle-jump","name":"القافز العمودي","desc":"اقفز بين المنصات وحاول الوصول لأعلى مسافة.","engine":"embed","cat":"منصات","tag":"منصات","order":46,"on":true,"embedPath":"games/platformer/doodle-jump/index.html","source":"sausi-7/games"},
+{"id":"lib_cool-platformer","name":"مغامرة المنصات","desc":"اركض واقفز وتجاوز العقبات في مراحل متتابعة.","engine":"embed","cat":"منصات","tag":"منصات","order":47,"on":true,"embedPath":"games/platformer/cool-platformer/index.html","source":"sausi-7/games"},
+{"id":"lib_flip-jump","name":"القفز والجاذبية","desc":"اقلب اتجاه الجاذبية للهبوط بأمان.","engine":"embed","cat":"منصات","tag":"منصات","order":48,"on":true,"embedPath":"games/platformer/flip-jump/index.html","source":"sausi-7/games"},
+{"id":"lib_parkour","name":"باركور","desc":"اقفز وتسلق وانزلق عبر مسار مليء بالعقبات.","engine":"embed","cat":"منصات","tag":"منصات","order":49,"on":true,"embedPath":"games/platformer/parkour/index.html","source":"sausi-7/games"},
+{"id":"lib_bubble-pop","name":"فرقعة الفقاعات","desc":"فرقع الفقاعات المتشابهة وحقق أعلى نتيجة.","engine":"embed","cat":"خفيفة","tag":"خفيفة","order":50,"on":true,"embedPath":"games/casual/bubble-pop/index.html","source":"sausi-7/games"},
+{"id":"lib_bubble-shooter","name":"تصويب الفقاعات","desc":"صوّب الفقاعات واجمع ثلاثة ألوان متطابقة أو أكثر.","engine":"embed","cat":"خفيفة","tag":"خفيفة","order":51,"on":true,"embedPath":"games/casual/bubble-shooter/index.html","source":"sausi-7/games"},
+{"id":"lib_cooking","name":"مطبخ سريع","desc":"حضّر الطلبات قبل أن ينتهي الوقت.","engine":"embed","cat":"خفيفة","tag":"خفيفة","order":52,"on":true,"embedPath":"games/casual/cooking/index.html","source":"sausi-7/games"},
+{"id":"lib_fruit-basket","name":"سلة الفواكه","desc":"التقط الفواكه المتساقطة ولا تدعها تفلت.","engine":"embed","cat":"خفيفة","tag":"خفيفة","order":53,"on":true,"embedPath":"games/casual/fruit-basket/index.html","source":"sausi-7/games"},
+{"id":"lib_math-quest","name":"تحدي الحساب","desc":"حل مسائل سريعة واجمع النقاط.","engine":"embed","cat":"كلمات","tag":"كلمات","order":54,"on":true,"embedPath":"games/word-quiz/math-quest/index.html","source":"sausi-7/games"},
+{"id":"lib_wordle","name":"تخمين الكلمة","desc":"خمن الكلمة الصحيحة في عدد محدود من المحاولات.","engine":"embed","cat":"كلمات","tag":"كلمات","order":55,"on":true,"embedPath":"games/word-quiz/wordle/index.html","source":"sausi-7/games"},
+{"id":"lib_stack-tower","name":"برج المكعبات ثلاثي الأبعاد","desc":"رصّ المكعبات بدقة وابنِ أعلى برج.","engine":"embed","cat":"ثلاثي الأبعاد","tag":"ثلاثي الأبعاد","order":56,"on":true,"embedPath":"games/3d/stack-tower/index.html","source":"sausi-7/games"}
+];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
-notice:"⚠️ المراهنات خطر حقيقي على الفرد والمجتمع. هذه تجربة توعوية: الألعاب مضبوطة لصالح المنصة كما في منصات المراهنات الحقيقية.",
+notice:"⚠️ المراهنات خطر حقيقي. الرصيد هنا افتراضي فقط، والألعاب الـ50 الجديدة ألعاب مهارة مجانية بلا رهان أو خصم رصيد أو جوائز مالية.",
 banT:"ألعاب جديدة 🔥",banD:"جرّب الألعاب برصيد وهمي، واعرف بنفسك إزاي الخسارة هي النتيجة المتوقعة.",banBtn:"ابدأ اللعب",banImg:"",
 searchPh:"ابحث عن لعبة...",featTitle:"⭐ ألعاب مميزة",allTitle:"🎮 كل الألعاب",noGames:"مفيش لعبة بالاسم ده",
-eduNote:"الألعاب هنا من تنفيذنا بنفس فكرة الألعاب المعروفة، وليست النسخ الأصلية المرخّصة. نسب الربح للمنصة زي المواقع الحقيقية.",
+eduNote:"🎮 أضيفت مكتبة من 50 لعبة متصفح مفتوحة المصدر بتصميماتها الأصلية وحركاتها. الألعاب الجديدة مجانية ولا تخصم من رصيدك. المصدر: sausi-7/games (MIT).",
 actTitle:"🕘 النشاط",moreTitle:"⋯ المزيد",noPages:"لا توجد صفحات بعد",supTitle:"💬 الدعم المباشر",chatPh:"اكتب رسالتك...",
 meTitle:"👤 حسابي",lblRounds:"جولات",lblWins:"كسب",lblLoss:"خسر",lblWager:"إجمالي الرهان",lblReturn:"إجمالي العائد",lblNet:"الخسارة الصافية",lblBal:"الرصيد (وهمي)",
 navHome:"الرئيسية",navGames:"الألعاب",navSup:"الدعم",navAct:"النشاط",navMore:"المزيد",navMe:"حسابي",
@@ -330,7 +383,7 @@ let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
-  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko","ruleDice","ruleCards"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{}};
 }
 function games(){
@@ -613,6 +666,22 @@ function bindBet(b){b.querySelectorAll("[data-bv]").forEach(x=>x.onclick=()=>{co
 function safeClick(btn,fn){btn.onclick=async()=>{if(btn.disabled)return;try{await fn();}catch(e){toast(C.texts.errNet);busy=false;hold=false;upd();}};}
 
 const ENG={};
+const EMBED_BASE="https://sausi-7.github.io/games/";
+function validEmbedPath(p){return /^games\/[a-z0-9-]+\/[a-z0-9-]+\/index\.html$/.test(String(p||""));}
+ENG.embed={open(g,b){
+  const path=String(g.embedPath||"");
+  if(!validEmbedPath(path)){b.innerHTML='<div class="gc">مسار اللعبة غير صالح.</div>';return;}
+  b.classList.add("embed-body");
+  b.innerHTML='<div class="embed-note">🎮 لعبة مهارة مجانية من مكتبة مفتوحة المصدر — لا يوجد رهان ولا خصم من رصيدك. <a href="https://github.com/sausi-7/games" target="_blank" rel="noopener">المصدر والترخيص</a></div><div class="embed-frame-wrap" id="embedWrap"></div>';
+  const frame=document.createElement("iframe");
+  frame.id="externalGameFrame";frame.title=g.name;frame.src=EMBED_BASE+path;frame.loading="eager";
+  frame.referrerPolicy="strict-origin-when-cross-origin";frame.allow="fullscreen; autoplay; gamepad; clipboard-read; clipboard-write";frame.allowFullscreen=true;
+  frame.setAttribute("sandbox","allow-scripts allow-same-origin allow-forms allow-pointer-lock allow-popups");
+  frame.style.cssText="display:block;width:100%;height:100%;border:0;background:#070b16;";
+  $("embedWrap").appendChild(frame);
+  const bal=$("gbal");if(bal)bal.textContent="مجانية";
+  cur.upd=()=>{const el=$("gbal");if(el)el.textContent="مجانية";};
+}};
 function openGame(id){
   const g=gById(id);if(!g||!gOn(g))return;
   const th=THEME[g.engine],gl=$("gl");
@@ -626,6 +695,7 @@ function openGame(id){
 }
 function closeGame(){
   if(busy||hold)return toast(C.texts.errBusy);
+  const frame=$("externalGameFrame");if(frame)frame.src="about:blank";
   crStop();$("gl").hidden=true;document.body.style.overflow="";cur=null;if(U)render();
 }
 const upd=()=>{if(cur)cur.upd();};
