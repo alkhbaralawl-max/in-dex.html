@@ -435,10 +435,9 @@ function renderPayBanner(){
   const box=$("payreqbanner");box.innerHTML="";
   const x=(myCreditRequests||[])[0];
   if(!x||x.id===dismissedCreditRequestId)return;
-  const labels={pending:"⏳ طلب الرصيد الافتراضي قيد المراجعة",approved:"✅ تمت الموافقة على الطلب",rejected:"❌ لم تتم الموافقة على الطلب"};
-  const cls=x.status==="approved"?"ap":x.status==="rejected"?"rj":"";
-  const d=el("div","resbox "+cls,labels[x.status]||"حالة الطلب: "+x.status);
-  d.appendChild(el("div","line","المبلغ: "+f(Number(x.requested_amount)||0)));
+  if(x.status==="pending")return;
+  const approved=x.status==="approved";
+  const d=el("div","resbox "+(approved?"ap":"rj"),approved?tpl(C.texts.payApprovedTpl,{amount:f(Number(x.requested_amount)||0)}):C.texts.payRejectedTpl);
   const b=el("button","btn g full",C.texts.ackBtn);b.style.marginTop="8px";
   b.onclick=()=>{dismissedCreditRequestId=x.id;renderPayBanner();};
   d.appendChild(b);box.appendChild(d);
@@ -538,7 +537,7 @@ $("psend").onclick=async()=>{
   const phone=nd($("pphone").value).trim(),amt=parseFloat(nd($("pamt").value)),res=$("payres");
   const bad=s=>{res.textContent=s;res.style.color="var(--er)";};
   if(!payM)return bad("اختار طريقة الدفع أولًا");
-  if(!/^\d{6,20}$/.test(phone))return bad("اكتب رقمًا تجريبيًا من 6 إلى 20 رقمًا");
+  if(!phone||phone.length>30)return bad(C.texts.phoneLbl);
   if(!(amt>0))return bad(C.texts.errBetVal);
   if(amt>50000)return bad("❌ أقصى مبلغ 50,000 جنيه");
   $("psend").disabled=true;res.textContent="جاري إرسال الطلب...";res.style.color="";
@@ -1023,7 +1022,7 @@ setAuth("login");applyCfg();loadPublicConfig();
   try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;attach(name);}
   catch(e){showAuth();}
 })();
-setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
+setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden"){refreshMe(true).catch(()=>{});loadMyCreditRequests().catch(()=>{});}},12000);
 
 </script></body></html></script></body></html>
 <!-- END -->
