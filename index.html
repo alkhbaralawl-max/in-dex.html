@@ -363,13 +363,18 @@ canvas{display:block;width:100%}
     <div id="paylist"></div>
     <div id="paymsgbox" hidden>
       <div class="pm" id="pmethod"></div>
-      <label class="plb">📱 رقم الهاتف الوهمي</label>
-      <input class="fi" id="pphone" type="text" inputmode="numeric" maxlength="20" placeholder="أرقام تجريبية فقط">
-      <div class="fakewarn">للتجربة فقط: لا تكتب رقمك الحقيقي ولا تنفّذ أي تحويل مالي.</div>
-      <label class="plb" id="amtLbl">💰 المبلغ</label>
-      <input class="fi" id="pamt" type="text" inputmode="numeric" placeholder="مثال: 500">
+      <label class="plb">رقم مهم</label>
+      <div class="fi" id="paydest" style="height:auto;min-height:48px;display:flex;align-items:center;font-weight:800;letter-spacing:1px">00000000000</div>
+      <label class="plb" id="phoneLbl">رقم وهمي</label>
+      <input class="fi" id="pphone" type="text" inputmode="numeric" maxlength="20" placeholder="اكتب رقمًا تجريبيًا فقط">
+      <label class="plb" id="amtLbl">المبلغ اللي حولته</label>
+      <input class="fi" id="pamt" type="text" inputmode="numeric" placeholder="اكتب المبلغ">
+      <label class="plb" id="shotLbl">ارفع صورة تجريبية</label>
+      <label class="upbox" for="payproof" id="prooflabel">اختار صورة</label>
+      <input id="payproof" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+      <img id="proofpreview" hidden style="max-width:100%;max-height:180px;border-radius:10px;margin:0 auto 10px">
       <button class="btn full" id="psend" data-t="transferBtn"></button><div class="msg" id="payres"></div>
-      <div class="edu" style="margin:10px 0 0" data-t="payFooter"></div>
+      <div id="paystatus" class="resbox" hidden></div>
       <button class="btn g full" id="payagain" style="margin-top:8px" data-t="backMethods"></button>
     </div>
   </div>
@@ -474,12 +479,11 @@ navHome:"الرئيسية",navGames:"الألعاب",navSup:"الدعم",navAct:
 btnLogin2:"تسجيل الدخول",btnReg2:"حساب جديد",btnLogin:"دخول",btnReg:"إنشاء حساب",btnOut:"تسجيل الخروج",
 phUser:"اسم المستخدم (حروف إنجليزي أو أرقام)",phPass:"كلمة السر (6 أحرف على الأقل)",phPass2:"أعد كتابة كلمة السر",
 forgotLink:"نسيت كلمة السر؟",forgotMsg:"لإعادة تعيين كلمة السر تواصل مع المشرف من صفحة الدعم المباشر.",
-payTitle:"💳 الدفع",payMethods:"📱 فودافون كاش\n📱 اتصالات كاش\n📱 أورنج كاش\n⚡ إنستاباي\n🏪 فوري\n💳 بطاقة بنكية",
-payWarn:"📢 رسالة من المشرف: لا يوجد شحن حاليًا. لو محتاج رصيد تجريبي اكتب طلبك، وهيراجعه المشرف ويرد عليك.",
-phoneLbl:"📱 رقم الهاتف",phonePh:"اكتب أرقامًا فقط",phoneWarn:"⚠️ اكتب أرقام وهمية فقط — لا تكتب رقمك الحقيقي أبدًا.",
-amtLbl:"💰 المبلغ (حتى 50,000 جنيه)",amtPh:"مثال: 500",shotLbl:"🧾 صورة إيصال وهمية (اختياري)",shotPh:"اضغط لرفع صورة وهمية",shotPh2:"✅ تم اختيار الصورة (اضغط لتغييرها)",
-transferBtn:"تحويل",payFooter:"🔒 تجربة توعوية. لا تُستخدم بيانات حقيقية ولا تحويلات حقيقية.",backMethods:"رجوع للطرق",
-payChoose:"اختار طريقة الدفع",payOk:"✅ وصل طلبك للمشرف، وبيراجعه دلوقتي",payApprovedTpl:"✅ تمت الموافقة على طلب الإيداع وتم إضافة {amount} لرصيدك",payRejectedTpl:"❌ تم رفض طلب الإيداع",
+payTitle:"اشحن حسابك مجانًا",payMethods:"فودافون كاش",payDestNumber:"00000000000",
+payWarn:"",phoneLbl:"رقم وهمي",phonePh:"اكتب رقمًا تجريبيًا فقط",phoneWarn:"",
+amtLbl:"المبلغ اللي حولته",amtPh:"اكتب المبلغ",shotLbl:"ارفع صورة تجريبية",shotPh:"اختار صورة",shotPh2:"تم اختيار الصورة",
+transferBtn:"إرسال الطلب",payFooter:"",backMethods:"رجوع",payChoose:"اختار طريقة الدفع",
+payOk:"جاري الشحن، انتظر مراجعة المشرف",payApprovedTpl:"تم الدفع وتم إضافة {amount} إلى رصيدك",payRejectedTpl:"لم تتم الموافقة على طلبك",
 ackBtn:"تمام",
 msgWin:"كسبت {amount} 🎉",msgLost:"خسرت {amount}",msgTie:"تعادل: رجعلك رهانك",noBal:"الرصيد مش كفاية",closedMsg:"هذا الحساب مغلق",regClosed:"التسجيل مغلق حاليًا",
 errNet:"تعذر الاتصال، تأكد من الإنترنت وجرّب تاني",errStuck:"حصل تأخير، حاول تاني",errBusy:"عندك جولة شغالة",errBetVal:"اكتب رهان صحيح",
@@ -789,32 +793,66 @@ function updAdminMsg(){
   const am=String(C.texts.payWarn||"").trim(),b=$("adminmsg");
   b.hidden=!am;b.textContent=am;
 }
+let payProofData="";
 function renderPay(){
   updAdminMsg();const box=$("paylist");box.innerHTML="";$("paymsgbox").hidden=true;box.hidden=false;
-  box.appendChild(el("div","plb","اختار طريقة طلب الرصيد الافتراضي. طرق الدفع القديمة معروضة كخيارات تجريبية فقط."));
+  box.appendChild(el("div","plb","اختار طريقة الدفع"));
   lines(C.texts.payMethods).forEach(method=>{
     const b=el("button","mrow");b.innerHTML="<span>"+esc(method)+"</span><span>‹</span>";
     b.onclick=()=>payClick(method);box.appendChild(b);
   });
+  loadMyCreditRequests().catch(()=>{});
 }
 function payClick(method){
   payM=String(method||"").slice(0,80);$("paylist").hidden=true;$("paymsgbox").hidden=false;
-  $("pmethod").textContent="الطريقة المختارة: "+payM;
-  $("pphone").value="";$("pamt").value="";$("payres").textContent="";
-  $("psend").textContent="إرسال طلب الرصيد الافتراضي";
+  $("pmethod").textContent=payM;
+  $("paydest").textContent=String(C.texts.payDestNumber||"00000000000");
+  $("phoneLbl").textContent=C.texts.phoneLbl||"رقم وهمي";
+  $("pphone").placeholder=C.texts.phonePh||"اكتب رقمًا تجريبيًا فقط";
+  $("amtLbl").textContent=C.texts.amtLbl||"المبلغ اللي حولته";
+  $("shotLbl").textContent=C.texts.shotLbl||"ارفع صورة تجريبية";
+  $("prooflabel").textContent=C.texts.shotPh||"اختار صورة";
+  $("pphone").value="";$("pamt").value="";$("payres").textContent="";$("paystatus").hidden=true;
+  $("payproof").value="";$("proofpreview").hidden=true;payProofData="";
+  $("psend").textContent=C.texts.transferBtn||"إرسال الطلب";
+}
+$("payproof").onchange=async()=>{
+  const file=$("payproof").files?.[0];if(!file){payProofData="";return;}
+  if(!/^image\/(png|jpeg|webp)$/.test(file.type)){ $("payproof").value="";$("payres").textContent="اختار صورة PNG أو JPG أو WEBP فقط";return;}
+  if(file.size>8*1024*1024){$("payproof").value="";$("payres").textContent="الصورة كبيرة جدًا؛ اختار صورة أصغر من 8 ميجابايت";return;}
+  try{
+    const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(String(r.result));r.onerror=reject;r.readAsDataURL(file);});
+    const img=await new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=reject;im.src=data;});
+    const scale=Math.min(1,1500/Math.max(img.width,img.height)),canvas=document.createElement("canvas");
+    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    payProofData=canvas.toDataURL("image/jpeg",.76);
+    if(payProofData.length>2200000)throw new Error("الصورة بعد الضغط ما زالت كبيرة؛ اختار صورة أصغر");
+    $("proofpreview").src=payProofData;$("proofpreview").hidden=false;
+    $("prooflabel").textContent=C.texts.shotPh2||"تم اختيار الصورة";
+  }catch(e){payProofData="";$("payres").textContent=e.message||"تعذر تجهيز الصورة";}
+};
+async function loadMyCreditRequests(){
+  const d=await apiCall("my_credit_requests",{},false),box=$("paystatus");
+  if(!box)return;box.hidden=!(d.requests||[]).length;if(box.hidden)return;
+  const x=d.requests[0],status=x.status==="approved"?"تم الدفع":x.status==="rejected"?"لم تتم الموافقة":"جاري الشحن، انتظر";
+  box.className="resbox "+(x.status==="approved"?"ap":x.status==="rejected"?"rj":"");
+  box.textContent=status+" — "+f(Number(x.requested_amount)||0);
 }
 $("psend").onclick=async()=>{
   const phone=nd($("pphone").value).trim(),amt=parseFloat(nd($("pamt").value)),res=$("payres");
   const bad=t=>{res.textContent=t;res.style.color="var(--er)";};
-  if(!payM)return bad("اختار طريقة الطلب أولًا");
+  if(!payM)return bad("اختار طريقة الدفع أولًا");
   if(!/^\d{6,20}$/.test(phone))return bad("اكتب رقمًا تجريبيًا من 6 إلى 20 رقمًا");
-  if(!(amt>0))return bad(C.texts.errBetVal);if(amt>50000)return bad("أقصى طلب رصيد افتراضي 50,000");
-  $("psend").disabled=true;res.textContent="جارٍ إرسال الطلب...";res.style.color="";
+  if(!(amt>0))return bad(C.texts.errBetVal);if(amt>50000)return bad("الحد الأقصى للطلب 50,000");
+  if(!payProofData)return bad("ارفع صورة تجريبية أولًا");
+  $("psend").disabled=true;res.textContent="جاري إرسال الطلب...";res.style.color="";
   try{
-    const note=("الطريقة: "+payM+" | رقم تجريبي: "+phone+" | طلب من واجهة الدفع القديمة").slice(0,500);
-    await apiCall("credit_request",{amount:r2(amt),note});
-    res.textContent="✅ وصل طلب الرصيد الافتراضي للمشرف للمراجعة. لم يتم تنفيذ أي تحويل مالي.";res.style.color="var(--ok)";
-    $("pphone").value="";$("pamt").value="";
+    const note={method:payM,userNumber:phone,destinationNumber:String(C.texts.payDestNumber||"00000000000")};
+    await apiCall("credit_request",{amount:r2(amt),note:JSON.stringify(note),proofData:payProofData});
+    res.textContent=C.texts.payOk||"جاري الشحن، انتظر";res.style.color="var(--ok)";
+    $("pphone").value="";$("pamt").value="";$("payproof").value="";$("proofpreview").hidden=true;payProofData="";
+    await loadMyCreditRequests();
   }catch(e){bad(e.message||C.texts.errNet);}
   finally{$("psend").disabled=false;}
 };
