@@ -433,10 +433,17 @@ async function main(req:Request) {
       const raw=Math.min(Math.exp(.35*elapsed),limit),multiplier=Math.floor(raw*100)/100;
       const crashed=raw>=Number(s.cp),auto=Number(s.auto)>1&&raw>=Number(s.auto)&&Number(s.auto)<Number(s.cp);
       if(action==="crash_status") return response({ok:true,active:true,crashPending:crashed||auto,crashed,autoDue:auto,elapsed,multiplier,stake:Number(round.stake)});
-      if(action==="crash_cash"&&!crashed) {
-        const payout=money(Number(round.stake)*multiplier);
-        const finished=await finishActive(db,user.id,round,{...s,cashedAt:Date.now(),cashMultiplier:multiplier},payout,{multiplier,cashedOut:true});
-        return response({ok:true,cashedOut:true,payout,multiplier,crashPoint:Number(s.cp),startedAt:Number(s.t0),elapsed,stake:Number(round.stake),balance:Number(finished.balance),active:null});
+      if(action==="crash_cash") {
+        const now=Date.now(),clickAt=Number(body.cashClickAt);
+        const crashElapsed=Math.log(Math.max(1,Number(s.cp)))/.35;
+        const clickElapsed=(clickAt-Number(s.t0))/1000;
+        const clickBeforeCrash=Number.isFinite(clickAt)&&Math.abs(now-clickAt)<=2500&&clickElapsed>=0&&clickElapsed<crashElapsed;
+        if(!crashed||clickBeforeCrash) {
+          const cashMultiplier=clickBeforeCrash?Math.floor(Math.exp(.35*clickElapsed)*100)/100:multiplier;
+          const payout=money(Number(round.stake)*cashMultiplier);
+          const finished=await finishActive(db,user.id,round,{...s,cashedAt:clickAt||now,cashMultiplier},payout,{multiplier:cashMultiplier,cashedOut:true,networkGraceUsed:!!(crashed&&clickBeforeCrash)});
+          return response({ok:true,cashedOut:true,payout,multiplier:cashMultiplier,crashPoint:Number(s.cp),startedAt:Number(s.t0),elapsed,stake:Number(round.stake),balance:Number(finished.balance),active:null,networkGraceUsed:!!(crashed&&clickBeforeCrash)});
+        }
       }
       if(crashed||auto) {
         const paid=auto&&!crashed?money(Number(round.stake)*Number(s.auto)):0;
