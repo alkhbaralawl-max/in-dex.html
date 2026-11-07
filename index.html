@@ -115,10 +115,11 @@ canvas{display:block;width:100%}
 .wheelwrap{position:relative;width:min(86vw,320px);margin:10px auto 14px}
 .pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:32px;color:var(--yl);z-index:2;text-shadow:0 2px 4px #000}
 .wrot{width:100%;transition:transform 4s cubic-bezier(.12,.75,.15,1)}
-.plbd{position:relative;height:260px;background:#00000022;border-radius:14px;margin-bottom:10px;overflow:hidden}
-.plpeg{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffffff55}
-.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--yl);box-shadow:0 0 8px #FFC83D;left:50%;top:2%;z-index:2;transition:top .16s ease-in,left .16s ease-in}
+.plbd{position:relative;height:260px;background:linear-gradient(180deg,#ffffff0c,#00000035);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.plpeg{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffffff88;box-shadow:0 0 3px #ffffff55;transform:translate(-50%,-50%)}
+.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5b5,var(--yl) 46%,#c17b00 100%);box-shadow:0 0 10px #FFC83D,0 2px 4px #0008;left:50%;top:2%;z-index:2;transform:translate(-50%,-50%);will-change:left,top}
 .plbuckets{display:flex;gap:2px}
+.btn.on{outline:2px solid var(--yl);outline-offset:1px}
 .plbk{flex:1;text-align:center;font-size:10.5px;font-weight:bold;border-radius:6px;padding:5px 1px;background:#ffffff1f;color:#fff;transition:transform .2s,background .2s}
 .plbk.hit{background:var(--yl);color:var(--bd);transform:scale(1.15)}
 @keyframes popin{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -276,16 +277,18 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess3";
 const CAP=20;
 
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯"};
+const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,dice:96,cards:95};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#123b52","#37a6be","#061d2a"],cards:["#54243a","#d14c70","#240b18"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"🎲",cards:"🃏"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
+{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
+{id:"dice",name:"سباق النرد",desc:"اختار نطاق مجموع حجرَي النرد وشاهد الرمية",engine:"dice",cat:"نرد",tag:"نرد",order:7},
+{id:"cards",name:"ورقة حمراء أم سوداء",desc:"توقّع لون الورقة قبل كشفها",engine:"cards",cat:"ورق",tag:"ورق",order:8}];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -313,7 +316,9 @@ ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تم�
 ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
-rulePlinko:"الكرة بتنزل من فوق وتتنطط يمين أو شمال 8 مرات، وتستقر في خانة لها مضاعف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+rulePlinko:"الكرة بتنزل على 8 صفوف من الدبابيس، وكل مسار يمين أو شمال يحدد مكانها النهائي من 9 خانات. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+ruleDice:"اختار مجموعًا من 2 إلى 6 أو 7 بالضبط أو 8 إلى 12. كل رمية بحجرَي نرد افتراضيين، وفرصة الاختيار واضحة قبل اللعب. أقصى عائد ×{cap}، والعائد النظري {rtp}%.",
+ruleCards:"اختار الأحمر أو الأسود قبل سحب ورقة من مجموعة افتراضية متساوية اللونين. فرصة كل لون 50% قبل أي إعداد معلن للحساب. أقصى عائد ×{cap}، والعائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
 scaleNote:"ℹ️ فرصة الفوز على حسابك مخفّضة بقرار المشرف ({pct}% خسارة إضافية).",
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
@@ -325,7 +330,7 @@ let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
-  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko","ruleDice","ruleCards"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{}};
 }
 function games(){
@@ -336,6 +341,13 @@ function games(){
 }
 const gOn=g=>g.on!==false;
 const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
+const ENGINE_CAP={slot:20,apple:8,rocket:20,crash:20,wheel:8,plinko:20,dice:20,cards:20};
+function capOf(g){
+  const personal=Number(U?.gameCaps?.[g?.id]);
+  if(personal>=1&&personal<=100)return personal;
+  const configured=Number(g?.maxMultiplier);
+  return configured>=1&&configured<=100?configured:(ENGINE_CAP[g?.engine]||CAP);
+}
 const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
@@ -595,7 +607,7 @@ function histHTML(g){
   return h.map(x=>{const n=r2(x.win-x.bet);return '<div class="hr2"><span>رهان '+f(x.bet)+'</span><span class="'+(n>0?"up":n<0?"dn":"")+'">'+(n>0?"+"+f(n):n<0?"-"+f(-n):"=")+'</span></div>';}).join("");
 }
 const betBox=(ex,btns)=>'<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+(ex||"")+'</div>'+btns+'</div>';
-const rulesBox=t=>'<details class="gd"><summary>📖 قواعد اللعبة</summary><p>'+t+'</p></details>';
+const rulesBox=(t,g)=>'<details class="gd"><summary>📖 قواعد اللعبة</summary><p>'+t+'</p>'+(g?'<p class="sm2">سقف المضاعف المطبق على حسابك في هذه اللعبة: ×'+capOf(g)+'</p>':'')+(U&&scU()<1?'<p class="sm2">تنبيه: إعدادات الحساب تقلل فرصة الفوز بنسبة '+Math.round((1-scU())*100)+'%.</p>':'')+'</details>';
 const histBox='<div class="gc"><b>🕘 سجل جولاتك</b><div id="hist" style="margin-top:6px"></div></div>';
 function bindBet(b){b.querySelectorAll("[data-bv]").forEach(x=>x.onclick=()=>{const i=$("bet"),v=parseFloat(nd(i.value))||0,k=x.dataset.bv;i.value=k==="h"?Math.max(1,r2(v/2)):k==="d"?r2(v*2):k;});}
 function safeClick(btn,fn){btn.onclick=async()=>{if(btn.disabled)return;try{await fn();}catch(e){toast(C.texts.errNet);busy=false;hold=false;upd();}};}
@@ -621,19 +633,23 @@ const upd=()=>{if(cur)cur.upd();};
 /* ======== Wild West Gold ======== */
 const SYM=[["🤠",.44,0],["🐴",.26,2],["🔫",.16,4],["🥃",.09,8],["💎",.04,16],["👑",.01,20]];
 function slotExact(g){
-  const P=SYM.map(s=>s[1]),T=SYM.map(s=>s[2]),D=2;
-  let raw=0;
-  for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++){
-    const pr=P[a]*P[b]*P[c];let pay=0;
-    if(a===b&&b===c)pay=T[a];else if(a===b||b===c||a===c)pay=D;
-    raw+=pr*pay;
+  const P=SYM.map(s=>s[1]),T=SYM.map(s=>s[2]),D=2,cap=capOf(g);
+  let lo=0,hi=100;
+  for(let i=0;i<52;i++){
+    const scale=(lo+hi)/2;let expected=0;
+    for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++){
+      const pr=P[a]*P[b]*P[c];let pay=0;
+      if(a===b&&b===c)pay=T[a];else if(a===b||b===c||a===c)pay=D;
+      expected+=pr*Math.min(pay*scale,cap);
+    }
+    if(expected<rtpOf(g)/100)lo=scale;else hi=scale;
   }
-  return (rtpOf(g)/100)/raw;
+  return (lo+hi)/2;
 }
 function slotPayoutOf(g,a,b,c,scale){
   let pay=0;
   if(a===b&&b===c)pay=SYM[a][2];else if(a===b||b===c||a===c)pay=2;
-  return r2(Math.min(pay*scale,CAP));
+  return r2(Math.min(pay*scale,capOf(g)));
 }
 function pickSym(){const r=rnd();let a=0;for(let i=0;i<6;i++){a+=SYM[i][1];if(r<a)return i;}return 5;}
 ENG.slot={open(g,b){
@@ -641,7 +657,7 @@ ENG.slot={open(g,b){
   const pt=SYM.map((s,i)=>'<div class="row2"><span>'+s[0]+s[0]+s[0]+'</span><b>×'+slotPayoutOf(g,i,i,i,scale)+'</b></div>').join("")+'<div class="row2"><span>رمزين متشابهين (أي مكان)</span><b>×'+slotPayoutOf(g,0,0,1,scale)+'</b></div>';
   b.innerHTML='<div class="gc"><div class="reels"><div class="reel" id="r0">🤠</div><div class="reel" id="r1">🐴</div><div class="reel" id="r2">🔫</div></div></div>'+
     betBox("",'<button class="btn y full" id="spin">'+C.texts.btnSpinSlot+'</button>')+
-    rulesBox(tpl(C.texts.ruleSlot,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+
+    rulesBox(tpl(C.texts.ruleSlot,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+
     '<div class="gd"><b>💎 جدول الجوائز</b>'+pt+'</div>'+histBox;
   bindBet(b);safeClick($("spin"),()=>slotSpin(g,scale));
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("spin").disabled=busy;};
@@ -668,11 +684,11 @@ function secureClientSymbol(){return Math.floor(rnd()*6);}
 
 /* ======== Apple of Fortune ======== */
 const AP_ROWS=5,AP_REAL_P=.8,AP_CAP=8;
-function apMult(g,k){const raw=Math.pow(1/AP_REAL_P,k)*(rtpOf(g)/100);return r2(Math.min(raw,AP_CAP));}
+function apMult(g,k){const raw=Math.pow(1/AP_REAL_P,k)*(rtpOf(g)/100);return r2(Math.min(raw,capOf(g)));}
 ENG.apple={open(g,b){
   b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="sm2" id="arisk"></div><div id="aboard"></div></div>'+
     '<div class="gc"><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div></div><div class="two"><button class="btn" id="astart">'+C.texts.btnStart+'</button><button class="btn ok" id="acash" disabled>'+C.texts.btnCash+'</button></div></div>'+
-    rulesBox(tpl(C.texts.ruleApple,{p:Math.round(AP_REAL_P*100),cap:AP_CAP,rtp:rtpOf(g)}))+histBox;
+    rulesBox(tpl(C.texts.ruleApple,{p:Math.round(AP_REAL_P*100),cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
   bindBet(b);safeClick($("astart"),()=>apStart(g));safeClick($("acash"),()=>apCash(g));
   cur.upd=()=>{base();const a=U.ap&&U.ap.k===g.id;$("hist").innerHTML=histHTML(g);$("astart").disabled=busy||a;$("acash").disabled=busy||!(a&&U.ap.level>=1);
     $("acash").textContent=a&&U.ap.level>=1?C.texts.btnCash+" "+f(U.ap.bet*apMult(g,U.ap.level)):C.texts.btnCash;apDraw(g);};
@@ -733,10 +749,10 @@ const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random(
 function genCp(g){
   const r=rnd();
   let c=Math.floor((rtpOf(g)/100)/(1-r)*100)/100;
-  if(c<1)c=1;if(c>CAP)c=CAP;
+  if(c<1)c=1;if(c>capOf(g))c=capOf(g);
   return c;
 }
-function drawCr(skin,t,m,st){
+function drawCr(skin,t,m,st,limit=CAP){
   const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,H=cv.height;
   x.clearRect(0,0,W,H);
   const g=x.createLinearGradient(0,0,0,H);
@@ -744,14 +760,14 @@ function drawCr(skin,t,m,st){
   x.fillStyle=g;x.fillRect(0,0,W,H);
   if(skin==="rocket"){x.fillStyle="#ffffff99";STARS.forEach(s=>{x.beginPath();x.arc(s[0]*W,s[1]*H,s[2],0,7);x.fill();});}
   else{x.strokeStyle="#ffffff18";x.lineWidth=1;for(let i=1;i<6;i++){x.beginPath();x.moveTo(0,H*i/6);x.lineTo(W,H*i/6);x.stroke();}}
-  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,CAP)*1.25),L=18,B=22;
+  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,limit)*1.25),L=18,B=22;
   const px=a=>L+(a/tx)*(W-2*L),py=a=>H-B-((a-1)/(my-1))*(H-B-34);
   x.beginPath();x.moveTo(px(0),py(1));
-  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.min(Math.exp(K*a),CAP)));}
+  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.min(Math.exp(K*a),limit)));}
   x.lineWidth=4;x.strokeStyle=st==="crash"?"#E5484D":(skin==="rocket"?"#ff8a3d":"#FFC83D");x.stroke();
   if(skin!=="rocket"){x.lineTo(px(t),H-B);x.lineTo(px(0),H-B);x.closePath();x.fillStyle=st==="crash"?"#E5484D33":"#FFC83D26";x.fill();}
   x.font="32px serif";x.textBaseline="middle";x.textAlign="start";
-  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.min(Math.exp(K*t),CAP))-4);
+  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.min(Math.exp(K*t),limit))-4);
   x.textAlign="center";x.font="bold 46px Tahoma";x.fillStyle=st==="crash"?"#ff7b80":"#fff";x.fillText("×"+m.toFixed(2),W/2,H/2-6);
   x.font="14px Tahoma";x.fillStyle="#cfe1f5";x.fillText(st==="crash"?"انفجر!":st==="run"?"اسحب قبل الانفجار":"جاهز",W/2,H/2+34);x.textAlign="start";
 }
@@ -759,15 +775,29 @@ function crStop(){
   if(raf)cancelAnimationFrame(raf);raf=0;
   if(crPollTimer)clearTimeout(crPollTimer);crPollTimer=0;
 }
+async function crResolve(data,c){
+  if(data.active||!U?.cr||U.cr.roundId!==c.roundId)return false;
+  U.cr=null;U.balance=Number(data.balance??U.balance);
+  const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
+  try{await refreshMe(false);}catch(e){console.warn("crash balance refresh",e);}
+  crStop();busy=false;hold=false;crLock=false;
+  if(data.cashedOut||data.autoSettled){
+    crFinal={k:c.k,cp,m:cp,status:"cash"};render();
+    result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier||0).toFixed(2));
+  }else{
+    crFinal={k:c.k,cp,m:cp,status:"crash"};render();
+    result(0,Number(data.stake||c.bet),"انفجرت الطيارة عند ×"+cp.toFixed(2));
+  }
+  return true;
+}
 function crLoop(){
   if(!raf){
     const frame=()=>{
-      const c=U&&U.cr;
-      if(!c){raf=0;return;}
+      const c=U&&U.cr;if(!c){raf=0;return;}
       const elapsed=Math.max(0,(Date.now()-Number(c.t0))/1000);
-      const multiplier=Math.min(Math.exp(K*elapsed),CAP);
+      const multiplier=Math.min(Math.exp(K*elapsed),capOf(cur?.g||{engine:"crash"}));
       if(cur&&cur.g.id===c.k&&!$("gl").hidden){
-        drawCr(cur.g.engine,elapsed,multiplier,"run");
+        drawCr(cur.g.engine,elapsed,multiplier,"run",capOf(cur.g));
         const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
       }
       raf=requestAnimationFrame(frame);
@@ -778,25 +808,23 @@ function crLoop(){
     const tick=async()=>{
       const c=U&&U.cr;if(!c){crPollTimer=0;return;}
       try{
-        const data=await apiCall("crash_tick",{roundId:c.roundId},false);
-        if(data.active){
-          const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*data.multiplier);
-          crPollTimer=setTimeout(tick,500);
-        }else{
-          crPollTimer=0;U.cr=null;
-          U.balance=Number(data.balance??U.balance);
-          const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
-          await refreshMe(false);
-          busy=false;hold=false;crStop();
-          if(data.cashedOut||data.autoSettled){
-            crFinal={k:c.k,cp,m:cp,status:"cash"};
-            render();result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب");
-          }else{
-            crFinal={k:c.k,cp,m:cp,status:"crash"};
-            render();result(0,Number(data.stake||c.bet), "انفجرت الطيارة عند ×"+cp.toFixed(2));
-          }
-        }
-      }catch(e){crPollTimer=setTimeout(tick,1000);}
+        const status=await apiCall("crash_status",{roundId:c.roundId},false);
+        if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
+        const multiplier=Number(status.multiplier)||1;
+        const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
+        if(status.crashPending){
+          if(crLock){crPollTimer=setTimeout(tick,100);return;}
+          crLock=true;
+          try{
+            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
+            if(final.active){crPollTimer=setTimeout(tick,120);return;}
+            await crResolve(final,c);
+          }finally{crLock=false;}
+        }else crPollTimer=setTimeout(tick,250);
+      }catch(e){
+        if(U?.cr&&U.cr.roundId===c.roundId)crPollTimer=setTimeout(tick,500);
+        else crPollTimer=0;
+      }
     };
     tick();
   }
@@ -805,7 +833,7 @@ function crLoop(){
 const crashEng={open(g,b){
   b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="360" height="240"></canvas></div><div class="strip" id="cstrip"></div>'+
     betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
-    rulesBox(tpl(C.texts.ruleCrash,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+    rulesBox(tpl(C.texts.ruleCrash,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   bindBet(b);safeClick($("cgo"),()=>crStart(g));safeClick($("ccash"),()=>crSettle("cash"));
   cur.upd=()=>{
     base();const mine=U.cr&&U.cr.k===g.id;
@@ -814,7 +842,7 @@ const crashEng={open(g,b){
     histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
     $("hist").innerHTML=histHTML(g);
     if(mine){crLoop();}
-    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle");}
+    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle",capOf(g));}
   };
 }};
 ENG.crash=crashEng;ENG.rocket=crashEng;
@@ -835,26 +863,16 @@ async function crSettle(mode){
   crLock=true;lastAction=Date.now();
   try{
     const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",{roundId:c.roundId});
-    crLock=false;
     if(data.active){gmsg("المضاعف ما زال يرتفع. اسحب قبل الانفجار.");return;}
-    U.cr=null;U.balance=Number(data.balance??U.balance);
-    const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
-    await refreshMe(false);
-    crStop();busy=false;hold=false;
-    if(data.cashedOut||data.autoSettled){
-      crFinal={k:c.k,cp,m:cp,status:"cash"};render();
-      result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier||0).toFixed(2));
-    }else{
-      crFinal={k:c.k,cp,m:cp,status:"crash"};render();
-      result(0,Number(data.stake||c.bet),"انفجرت الطيارة عند ×"+cp.toFixed(2));
-    }
-  }catch(e){crLock=false;gmsg(e.message||C.texts.errNet,"er");}
+    await crResolve(data,c);
+  }catch(e){gmsg(e.message||C.texts.errNet,"er");}
+  finally{crLock=false;}
 }
 
 /* ======== Spin and Win ======== */
 const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
 const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
-function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,CAP)));}
+function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,capOf(g))));}
 function wheelDraw(g){
   const cv=$("wcv"),x=cv.getContext("2d"),S=cv.width,c=S/2,R=c-6,n=20,a=2*Math.PI/n,V=wv(g);
   x.clearRect(0,0,S,S);
@@ -870,7 +888,7 @@ ENG.wheel={open(g,b){
   wRot=0;
   b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div>'+
     betBox("",'<button class="btn y full" id="wgo">'+C.texts.btnSpinWheel+'</button>')+
-    rulesBox(tpl(C.texts.ruleWheel,{cap:8,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+    rulesBox(tpl(C.texts.ruleWheel,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   wheelDraw(g);bindBet(b);safeClick($("wgo"),()=>wheelSpin(g));
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("wgo").disabled=busy;};
 }};
@@ -885,24 +903,79 @@ async function wheelSpin(g){
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
+/* ======== لعبتان توعويتان جديدتان: النرد والورق ======== */
+const DIE_FACE=["⚀","⚁","⚂","⚃","⚄","⚅"];
+let diceChoice="low",cardChoice="red";
+function chooseDice(v){
+  diceChoice=v;
+  [["dlow","low"],["dseven","seven"],["dhigh","high"]].forEach(([id,val])=>$(id).classList.toggle("on",v===val));
+}
+async function dicePlay(g){
+  if(busy||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;hold=true;lastAction=Date.now();$("droll").disabled=true;
+  const timer=setInterval(()=>{$("d1").textContent=DIE_FACE[Math.floor(rnd()*6)];$("d2").textContent=DIE_FACE[Math.floor(rnd()*6)];},75);
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,choice:diceChoice,idempotencyKey:crypto.randomUUID()});
+    await sleep(420);clearInterval(timer);
+    const o=data.outcome||{};$("d1").textContent=DIE_FACE[(Number(o.dice?.[0])||1)-1];$("d2").textContent=DIE_FACE[(Number(o.dice?.[1])||1)-1];
+    $("dsum").textContent="المجموع: "+(Number(o.sum)||0);
+    busy=false;hold=false;U.balance=Number(data.balance);render();
+    result(Number(data.payout)||0,bet,"مجموع النرد "+o.sum+" • "+(o.won?"توقع صحيح":"التوقع لم يصب"));
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){clearInterval(timer);busy=false;hold=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+ENG.dice={open(g,b){
+  b.innerHTML='<div class="gc"><div class="dicearena"><div class="diceface" id="d1">⚀</div><div class="diceface" id="d2">⚅</div></div><div class="sm2" id="dsum" style="text-align:center">اختار توقعك ثم ارمي النرد</div></div>'+
+    '<div class="gc"><div class="sec">توقع مجموع حجرَي النرد</div><div class="two"><button class="btn on" id="dlow">2 إلى 6</button><button class="btn" id="dseven">7 بالضبط</button><button class="btn" id="dhigh">8 إلى 12</button></div></div>'+
+    betBox("",'<button class="btn y full" id="droll">🎲 ارمي النرد</button>')+
+    rulesBox(tpl(C.texts.ruleDice,{cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
+  bindBet(b);$("dlow").onclick=()=>chooseDice("low");$("dseven").onclick=()=>chooseDice("seven");$("dhigh").onclick=()=>chooseDice("high");chooseDice("low");
+  safeClick($("droll"),()=>dicePlay(g));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("droll").disabled=busy;};
+}};
+function chooseCard(v){
+  cardChoice=v;$("cred").classList.toggle("on",v==="red");$("cblack").classList.toggle("on",v==="black");
+}
+async function cardPlay(g){
+  if(busy||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;hold=true;lastAction=Date.now();$("cardface").classList.add("flip");$("cgo").disabled=true;
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,choice:cardChoice,idempotencyKey:crypto.randomUUID()});
+    await sleep(450);
+    const o=data.outcome||{},rank=Number(o.rank)||1,rankLabel=rank===1?"A":rank===11?"J":rank===12?"Q":rank===13?"K":String(rank);
+    $("crank").textContent=rankLabel;$("csuit").textContent=o.suit||"♠";$("cardface").className="playingcard "+(o.red?"red":"black");
+    busy=false;hold=false;U.balance=Number(data.balance);render();
+    result(Number(data.payout)||0,bet,"الورقة: "+rankLabel+(o.suit||"")+(o.won?" • اللون صحيح":" • اللون مختلف"));
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){$("cardface").classList.remove("flip");busy=false;hold=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+ENG.cards={open(g,b){
+  b.innerHTML='<div class="gc"><div class="cardarena"><div class="playingcard" id="cardface"><span id="crank">؟</span><b id="csuit">🂠</b><small>ركن الغرب</small></div></div><div class="two"><button class="btn on" id="cred">♥ أحمر</button><button class="btn" id="cblack">♠ أسود</button></div></div>'+
+    betBox("",'<button class="btn y full" id="cgo">🃏 اكشف الورقة</button>')+
+    rulesBox(tpl(C.texts.ruleCards,{cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
+  bindBet(b);$("cred").onclick=()=>chooseCard("red");$("cblack").onclick=()=>chooseCard("black");chooseCard("red");
+  safeClick($("cgo"),()=>cardPlay(g));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("cgo").disabled=busy;};
+}};
+
 /* ======== Plinko (بديل Nour's Casino، حركة واحدة فقط) ======== */
 const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[16,5,2,1.1,.4,1.1,2,5,16];
 function plMults(g){
   let exp=0;for(let k=0;k<9;k++)exp+=(PL_COEF[k]/256)*PL_RAW[k];
   const scale=(rtpOf(g)/100)/exp;
-  return PL_RAW.map(v=>r2(Math.min(v*scale,CAP)));
+  return PL_RAW.map(v=>r2(Math.min(v*scale,capOf(g))));
 }
 function resetBall(){
   const ball=$("plball");if(!ball)return;
-  ball.style.transition="none";ball.style.left="50%";ball.style.top="2%";
-  void ball.offsetWidth;
-  ball.style.transition="top .16s ease-in,left .16s ease-in";
+  ball.style.left="50%";ball.style.top="2%";ball.style.transform="translate(-50%,-50%)";
 }
 ENG.plinko={open(g,b){
   const M=plMults(g);
   b.innerHTML='<div class="gc"><div class="plbd" id="plbd"><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+m+'</div>').join("")+'</div></div>'+
     betBox("",'<button class="btn y full" id="pldrop">'+C.texts.btnDrop+'</button>')+
-    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}))+histBox;
+    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}),g)+histBox;
   bindBet(b);
   const bd=$("plbd");
   for(let r=0;r<PL_ROWS;r++)for(let c=0;c<=r;c++){
@@ -920,7 +993,7 @@ async function plDrop(g,M){
   resetBall();gmsg("...");
   try{
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()}),o=data.outcome;
-    await plAnimate(Number(o.bucket)||0);
+    await plAnimate(Number(o.bucket)||0,o.path);
     document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",Number(x.dataset.i)===Number(o.bucket)));
     await sleep(250);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);
     render();result(Number(data.payout),bet,"×"+multText(o.multiplier));
@@ -928,20 +1001,22 @@ async function plDrop(g,M){
   }catch(e){plAnimating=false;hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
-function plAnimate(targetK){
-  return new Promise(res=>{
-    const ball=$("plball");if(!ball){res();return;}
-    let x=50,pos=0;
-    const targetX=50+(targetK-4)*(80/PL_ROWS);
-    const iv=setInterval(()=>{
-      if(pos>=PL_ROWS){clearInterval(iv);res();return;}
-      const dir=(x<targetX)?1:(x>targetX?-1:(rnd()<0.5?-1:1));
-      const jitter=pos<PL_ROWS-2?(rnd()<0.35?-1:(rnd()<0.7?1:0)):0;
-      x+=(dir+jitter*0.4)*(80/PL_ROWS)/2;
-      ball.style.left=Math.max(6,Math.min(94,x))+"%";
-      ball.style.top=(12+(pos+1)*9)+"%";
-      pos++;
-    },150);
+function plAnimate(targetK,path){
+  return new Promise(resolve=>{
+    const ball=$("plball");if(!ball){resolve();return;}
+    let bits=Array.isArray(path)&&path.length===8?path.map(v=>Number(v)?1:0):null;
+    if(!bits){bits=Array(8).fill(0);for(let i=0;i<Math.max(0,Math.min(8,targetK));i++)bits[i]=1;bits.sort(()=>rnd()-.5);}
+    const points=[{x:50,y:2},{x:50,y:12}];let bucket=0;
+    for(let i=0;i<8;i++){bucket+=bits[i];points.push({x:50+(bucket-(i+1)/2)*10,y:21+i*9});}
+    const started=performance.now(),stepMs=225,total=points.length-1;
+    function frame(now){
+      const elapsed=Math.min(total,(now-started)/stepMs),seg=Math.min(total-1,Math.floor(elapsed)),u=Math.min(1,elapsed-seg);
+      const a=points[seg],b=points[seg+1],ease=u*u*(3-2*u),bounce=Math.sin(Math.PI*u)*(seg===0?1.1:2.5);
+      ball.style.left=(a.x+(b.x-a.x)*ease)+"%";ball.style.top=(a.y+(b.y-a.y)*ease-bounce)+"%";
+      if(elapsed<total)requestAnimationFrame(frame);
+      else{ball.style.left=points[points.length-1].x+"%";ball.style.top=points[points.length-1].y+"%";resolve();}
+    }
+    requestAnimationFrame(frame);
   });
 }
 
@@ -950,7 +1025,7 @@ function mapAccount(data){
   const a=data.user||{},w=data.wallet||{},active=data.active||null;
   return {
     id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
-    scale:Number(a.scale)||100,balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
+    scale:Number(a.scale)||100,gameCaps:a.gameCaps||{},balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
     wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,
     hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:x.i})),
     ap:active&&active.gameId==="apple"?{k:active.gameId,bet:Number(active.stake),level:Number(active.level)||0,picks:active.picks||[],safeN:active.safeN||4,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
