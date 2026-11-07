@@ -227,7 +227,7 @@ async function main(req:Request) {
       ]);
       if(hist.error||bets.error) throw new HttpError(500,"account_history_unavailable");
       return response({
-        user:{id:user.id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{}},
+        user:{id:user.id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{},scale:Number(user.customer_data?.scale)||100},
         wallet,history:(hist.data||[]).map((x:any)=>({g:x.game_id,bet:Number(x.stake),win:Number(x.payout),t:new Date(x.created_at).getTime(),i:x.outcome?.multiplier??x.outcome?.level??x.outcome?.index??0})),
         active:active.data?publicActive(active.data):null,
         sportsBets:(bets.data||[]).map((x:any)=>({...x,matchTitle:x.match_snapshot?.title||"مباراة",team1:x.match_snapshot?.team1,team2:x.match_snapshot?.team2,marketTitle:x.match_snapshot?.market_title,optionLabel:x.match_snapshot?.option_label}))
@@ -260,10 +260,11 @@ async function main(req:Request) {
       if(game.engine==="slot") {
         const weights=[.44,.26,.16,.09,.04,.01],factor=slotScale(rtp);
         let triple=[0,0,0],raw=0;
+        const forceLoss=secureRandom()>(scale);
         for(let n=0;n<120;n++){
           triple=[pickWeighted(weights),pickWeighted(weights),pickWeighted(weights)];
           raw=Math.min(slotRaw(triple[0],triple[1],triple[2])*factor,cap);
-          if(!(secureRandom()>(scale))||raw===0) break;
+          if(!forceLoss||raw===0) break;
         }
         payout=money(stake*raw);outcome={symbols:triple,multiplier:raw};
       } else if(game.engine==="wheel") {
@@ -297,7 +298,11 @@ async function main(req:Request) {
       let state:Obj={};
       if(game.engine==="apple") {
         const safeN=Math.max(1,Math.min(5,Math.round(5*.8*scale)));
-        const hazards=Array.from({length:5},()=>Array.from({length:5},(_,i)=>i).sort(()=>secureRandom()-.5).slice(0,5-safeN));
+        const hazards=Array.from({length:5},()=>{
+          const pool=[0,1,2,3,4];
+          for(let i=pool.length-1;i>0;i--){const j=secureInt(i+1);[pool[i],pool[j]]=[pool[j],pool[i]];}
+          return pool.slice(0,5-safeN);
+        });
         state={level:0,picks:[],safeN,hazards,rtp};
       } else if(game.engine==="crash"||game.engine==="rocket") {
         let cp=genCrashPoint(rtp,scale);
