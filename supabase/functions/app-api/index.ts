@@ -439,7 +439,9 @@ async function main(req:Request) {
       if(uploadError) throw new HttpError(400,"proof_upload_failed");
       let requestId:string;
       try {
-        const {data,error}=await db.rpc("create_virtual_credit_request",{p_user_id:user.id,p_amount:amount,p_note:JSON.stringify({details:note,proofPath})});
+        let requestDetails:any={};
+      try{requestDetails=JSON.parse(note);}catch{requestDetails={details:note};}
+      const {data,error}=await db.rpc("create_virtual_credit_request",{p_user_id:user.id,p_amount:amount,p_note:JSON.stringify({...requestDetails,proofPath})});
         if(error) throw error;
         requestId=String(data);
       } catch(e) {
@@ -641,6 +643,9 @@ async function main(req:Request) {
       const requests=await Promise.all((data||[]).map(async(x:any)=>{
         let details:any={details:String(x.note||"")},proofUrl:string|null=null;
         try{details=JSON.parse(String(x.note||"{}"));}catch{}
+        if(typeof details.details==="string" && details.details.startsWith("{")){
+          try{details={...details,...JSON.parse(details.details)};}catch{}
+        }
         if(details.proofPath){
           const {data:signed}=await db.storage.from("virtual-credit-proofs").createSignedUrl(details.proofPath,600);
           proofUrl=signed?.signedUrl||null;
