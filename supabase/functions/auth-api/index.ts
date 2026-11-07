@@ -9,7 +9,8 @@ type Obj = Record<string, unknown>;
 
 function headers() {
   return { "access-control-allow-origin": ORIGIN, "access-control-allow-credentials": "true",
-    "access-control-allow-headers": "content-type,x-csrf-token", "access-control-allow-methods": "POST,OPTIONS", "vary": "Origin" };
+    "access-control-allow-headers": "content-type,x-csrf-token", "access-control-allow-methods": "POST,OPTIONS", "vary": "Origin",
+    "cache-control": "no-store", "pragma": "no-cache", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer" };
 }
 function reply(data: Obj, status = 200, extra: Record<string,string> = {}) {
   return new Response(JSON.stringify(data), { status, headers: { ...headers(), "content-type": "application/json; charset=utf-8", ...extra } });
@@ -107,21 +108,18 @@ Deno.serve(async (req: Request) => {
     if(action==="login") {
       const username=usernameOf(body.username), password=String(body.password ?? "");
       if(!validUsername(username) || password.length<1 || password.length>128) return reply({error:"invalid_credentials"},400);
-      const since=new Date(Date.now()-15*60*1000).toISOString();
       const ip=(req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim(), ipHash=await secretHash(ip);
-      const [byName,byIp]=await Promise.all([
-        db.from("auth_attempts").select("id",{count:"exact",head:true}).eq("username_normalized",username).eq("succeeded",false).gte("created_at",since),
-        db.from("auth_attempts").select("id",{count:"exact",head:true}).eq("ip_hash",ipHash).eq("succeeded",false).gte("created_at",since)
-      ]);
-      if(byName.error || byIp.error) throw new Error("rate_limit_failed");
-      if((byName.count ?? 0)>=8 || (byIp.count ?? 0)>=20) return reply({error:"too_many_attempts"},429,{"retry-after":"900"});
+      const {data:attemptId,error:claimError}=await db.rpc("claim_auth_attempt",{p_username:username,p_ip_hash:ipHash});
+      if(claimError) throw new Error("rate_limit_failed");
+      if(!attemptId) return reply({error:"too_many_attempts"},429,{"retry-after":"900"});
       const {data:user}=await db.from("app_users").select("id,status,password_hash,legacy_password_hash").eq("username_normalized",username).maybeSingle();
       let ok=false,upgrade: string|null=null;
       if(user && user.status==="active") {
         if(user.password_hash) ok=await verifyPassword(password,user.password_hash);
         else if(user.legacy_password_hash) { ok=equal(await legacyHash(username,password),user.legacy_password_hash); if(ok) upgrade=await passwordHash(password); }
       }
-      await db.from("auth_attempts").insert({username_normalized:username,ip_hash:ipHash,succeeded:ok});
+      const {error:attemptUpdateError}=await db.from("auth_attempts").update({succeeded:ok}).eq("id",attemptId);
+      if(attemptUpdateError) throw new Error("auth_attempt_update_failed");
       if(!ok || !user) return reply({error:"invalid_credentials"},401);
       if(upgrade) {
         const {error}=await db.from("app_users").update({password_hash:upgrade,legacy_password_hash:null}).eq("id",user.id);
