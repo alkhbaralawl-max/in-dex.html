@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
+const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-preview.vercel.app"]);
 const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const PBKDF2_ROUNDS = 600_000;
@@ -94,9 +95,10 @@ async function audit(db: ReturnType<typeof dbClient>,id: string,action: string) 
 }
 
 Deno.serve(async (req: Request) => {
+  const result = await (async () => {
   if(req.method==="OPTIONS") return new Response(null,{status:204,headers:headers()});
   if(req.method!=="POST") return reply({error:"method_not_allowed"},405);
-  if(!ORIGIN || req.headers.get("origin")!==ORIGIN) return reply({error:"origin_not_allowed"},403);
+  if(!ALLOWED_ORIGINS.has(req.headers.get("origin") ?? "")) return reply({error:"origin_not_allowed"},403);
   let body: Obj; try { body=await bodyOf(req); } catch { return reply({error:"invalid_request"},400); }
   try {
     const db=dbClient(), action=String(body.action ?? "");
@@ -175,4 +177,13 @@ Deno.serve(async (req: Request) => {
     console.error("auth-api",e instanceof Error ? e.message : "unknown");
     return reply({error:"server_error"},500);
   }
+  })();
+  const origin = req.headers.get("origin") ?? "";
+  if (ALLOWED_ORIGINS.has(origin)) {
+    const h = new Headers(result.headers);
+    h.set("access-control-allow-origin", origin);
+    h.set("vary", "Origin");
+    return new Response(result.body, { status: result.status, statusText: result.statusText, headers: h });
+  }
+  return result;
 });
