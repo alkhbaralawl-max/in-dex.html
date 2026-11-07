@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
-const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-preview.vercel.app"]);
+const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-preview.vercel.app", "https://rukn-algharb-admin.vercel.app"]);
 const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const enc = new TextEncoder();
@@ -57,7 +57,7 @@ function safeEqual(a:string,b:string) {
 }
 async function parseBody(req:Request):Promise<Obj> {
   const len=Number(req.headers.get("content-length")||0);
-  if(len>25000) throw new Error("request_too_large");
+  if(len>3000000) throw new Error("request_too_large");
   const body=await req.json();
   if(!body || typeof body!=="object" || Array.isArray(body)) throw new Error("invalid_json");
   return body;
@@ -427,10 +427,33 @@ async function main(req:Request) {
       return response({message:data});
     }
     if(action==="credit_request") {
-      const amount=money(cleanNumber(body.amount,.01,10000000)),note=String(body.note||"").slice(0,500);
-      const {data,error}=await db.rpc("create_virtual_credit_request",{p_user_id:user.id,p_amount:amount,p_note:note});
-      if(error) throw new HttpError(400,error.message||"request_failed");
-      return response({ok:true,requestId:data});
+      const amount=money(cleanNumber(body.amount,.01,10000000));
+      const note=String(body.note||"").slice(0,1500);
+      const proof=String(body.proofData||"");
+      const match=proof.match(/^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/);
+      if(!match || proof.length>2200000) throw new HttpError(400,"proof_image_required_or_too_large");
+      const mime="image/"+match[1],bytes=Uint8Array.from(atob(match[2]),c=>c.charCodeAt(0));
+      if(bytes.length>1600000) throw new HttpError(400,"proof_image_too_large");
+      const proofPath=user.id+"/"+crypto.randomUUID()+".jpg";
+      const {error:uploadError}=await db.storage.from("virtual-credit-proofs").upload(proofPath,bytes,{contentType:mime,upsert:false});
+      if(uploadError) throw new HttpError(400,"proof_upload_failed");
+      let requestId:string;
+      try {
+        const {data,error}=await db.rpc("create_virtual_credit_request",{p_user_id:user.id,p_amount:amount,p_note:JSON.stringify({details:note,proofPath})});
+        if(error) throw error;
+        requestId=String(data);
+      } catch(e) {
+        await db.storage.from("virtual-credit-proofs").remove([proofPath]);
+        throw new HttpError(400,e instanceof Error?e.message:"request_failed");
+      }
+      return response({ok:true,requestId,status:"pending"});
+    }
+    if(action==="my_credit_requests") {
+      const {data,error}=await db.from("virtual_credit_requests")
+        .select("id,requested_amount,note,status,created_at,reviewed_at")
+        .eq("user_id",user.id).order("created_at",{ascending:false}).limit(20);
+      if(error) throw new HttpError(500,"credit_requests_unavailable");
+      return response({requests:(data||[]).map((x:any)=>({id:x.id,requested_amount:x.requested_amount,status:x.status,created_at:x.created_at,reviewed_at:x.reviewed_at}))});
     }
 
     if(action==="admin_config_get") {
@@ -615,7 +638,17 @@ async function main(req:Request) {
       const {data:users,error:userError}=ids.length?await db.from("app_users").select("id,username,legacy_user_id").in("id",ids):{data:[],error:null};
       if(userError) throw new HttpError(500,"credit_requests_unavailable");
       const names=new Map((users||[]).map((x:any)=>[x.id,x]));
-      return response({requests:(data||[]).map((x:any)=>({...x,username:names.get(x.user_id)?.username||"—",legacyUserId:names.get(x.user_id)?.legacy_user_id||null}))});
+      const requests=await Promise.all((data||[]).map(async(x:any)=>{
+        let details:any={details:String(x.note||"")},proofUrl:string|null=null;
+        try{details=JSON.parse(String(x.note||"{}"));}catch{}
+        if(details.proofPath){
+          const {data:signed}=await db.storage.from("virtual-credit-proofs").createSignedUrl(details.proofPath,600);
+          proofUrl=signed?.signedUrl||null;
+        }
+        return {...x,note:details.details||"",method:details.method||"",userNumber:details.userNumber||"",destinationNumber:details.destinationNumber||"",proofUrl,
+          username:names.get(x.user_id)?.username||"—",legacyUserId:names.get(x.user_id)?.legacy_user_id||null};
+      }));
+      return response({requests});
     }
     if(action==="admin_credit_review") {
       requireAdmin(user);
