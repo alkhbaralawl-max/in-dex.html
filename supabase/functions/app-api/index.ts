@@ -685,10 +685,10 @@ async function main(req:Request) {
         .order("created_at",{ascending:false}).limit(300);
       if(error) throw new HttpError(500,"ledger_unavailable");
       const ids=[...new Set((data||[]).map((x:any)=>x.user_id))];
-      const {data:us,error:ue}=ids.length?await db.from("app_users").select("id,username").in("id",ids):{data:[],error:null};
+      const {data:us,error:ue}=ids.length?await db.from("app_users").select("id,username,legacy_user_id").in("id",ids):{data:[],error:null};
       if(ue) throw new HttpError(500,"ledger_unavailable");
-      const names=new Map((us||[]).map((x:any)=>[x.id,x.username]));
-      return response({ledger:(data||[]).map((x:any)=>({...x,username:names.get(x.user_id)||"—"}))});
+      const names=new Map((us||[]).map((x:any)=>[x.id,x]));
+      return response({ledger:(data||[]).map((x:any)=>({...x,username:names.get(x.user_id)?.username||"—",legacyUserId:names.get(x.user_id)?.legacy_user_id||null}))});
     }
     return response({error:"unknown_action"},404);
   } catch(e) {
