@@ -144,6 +144,26 @@ Deno.serve(async (req: Request) => {
     const {data:session}=await db.from("app_sessions").select("id,user_id,csrf_token,expires_at,app_users(status)")
       .eq("token_hash",await secretHash(token)).is("revoked_at",null).gt("expires_at",new Date().toISOString()).maybeSingle();
     if(!session || session.app_users?.status!=="active") return reply({error:"unauthorized"},401,{"set-cookie":cookie("",0)});
+    if(action==="change_password") {
+      if(!equal(req.headers.get("x-csrf-token") ?? "",session.csrf_token)) return reply({error:"csrf_failed"},403);
+      const currentPassword=String(body.currentPassword ?? "");
+      const newPassword=String(body.newPassword ?? "");
+      if(newPassword.length<10 || newPassword.length>128) return reply({error:"password_policy"},400);
+      const {data:account,error:accountError}=await db.from("app_users")
+        .select("id,username,password_hash,legacy_password_hash").eq("id",session.user_id).single();
+      if(accountError || !account) throw new Error("account_read_failed");
+      let valid=false;
+      if(account.password_hash) valid=await verifyPassword(currentPassword,account.password_hash);
+      else if(account.legacy_password_hash) valid=equal(await legacyHash(account.username,currentPassword),account.legacy_password_hash);
+      if(!valid) return reply({error:"current_password_invalid"},401);
+      const upgraded=await passwordHash(newPassword);
+      const {error:updateError}=await db.from("app_users").update({password_hash:upgraded,legacy_password_hash:null}).eq("id",session.user_id);
+      if(updateError) throw new Error("password_update_failed");
+      await db.from("app_sessions").update({revoked_at:new Date().toISOString()})
+        .eq("user_id",session.user_id).neq("id",session.id).is("revoked_at",null);
+      await audit(db,session.user_id,"auth.password_changed");
+      return reply({ok:true},200,{"set-cookie":cookie("",0)});
+    }
     if(action==="me") return reply({...await safeAccount(db,session.user_id),csrfToken:session.csrf_token,expiresAt:session.expires_at});
     if(action==="logout") {
       if(!equal(req.headers.get("x-csrf-token") ?? "",session.csrf_token)) return reply({error:"csrf_failed"},403);
