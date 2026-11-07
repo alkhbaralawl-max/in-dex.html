@@ -1,6 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
+const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-preview.vercel.app"]);
 const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const enc = new TextEncoder();
@@ -221,7 +222,7 @@ async function loadMatch(db:Client,id:string) {
 async function main(req:Request) {
   if(req.method==="OPTIONS") return new Response(null,{status:204,headers:corsHeaders()});
   if(req.method!=="POST") return response({error:"method_not_allowed"},405);
-  if(req.headers.get("origin")!==ORIGIN) return response({error:"origin_not_allowed"},403);
+  if(!ALLOWED_ORIGINS.has(req.headers.get("origin") ?? "")) return response({error:"origin_not_allowed"},403);
   let body:Obj;try{body=await parseBody(req);}catch{return response({error:"invalid_request"},400);}
   try {
     const db=dbClient(),action=String(body.action||"");
@@ -698,4 +699,14 @@ async function main(req:Request) {
     return response({error:message},status);
   }
 }
-Deno.serve(main);
+Deno.serve(async (req: Request) => {
+  const result = await main(req);
+  const origin = req.headers.get("origin") ?? "";
+  if (ALLOWED_ORIGINS.has(origin)) {
+    const h = new Headers(result.headers);
+    h.set("access-control-allow-origin", origin);
+    h.set("vary", "Origin");
+    return new Response(result.body, { status: result.status, statusText: result.statusText, headers: h });
+  }
+  return result;
+});
