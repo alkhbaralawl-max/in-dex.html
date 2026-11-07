@@ -303,7 +303,7 @@ async function main(req:Request) {
         }
         payout=money(stake*values[index]);outcome={index,multiplier:values[index]};
       } else if(game.engine==="plinko") {
-        const raw=[6.21,3.5,2.5,1.5,.45,.35,.2,.1,.05],values=raw.map(x=>Math.min(x*(rtp/96),20));
+        const raw=[6.21,.45,3.5,.35,2.5,.2,1.5,.1,.05],values=raw.map(x=>Math.min(x*(rtp/96),20));
         const pRight=.5+.25*(1-scale);
         const path=Array.from({length:8},()=>secureRandom()<pRight?1:0);
         const bucket=path.reduce((a,b)=>a+b,0),multiplier=values[bucket];
@@ -390,14 +390,14 @@ async function main(req:Request) {
       if(action==="crash_cash"&&!crashed) {
         const payout=money(Number(round.stake)*multiplier);
         const finished=await finishActive(db,user.id,round,{...s,cashedAt:Date.now(),cashMultiplier:multiplier},payout,{multiplier,cashedOut:true});
-        return response({ok:true,cashedOut:true,payout,multiplier,stake:Number(round.stake),balance:Number(finished.balance),active:null});
+        return response({ok:true,cashedOut:true,payout,multiplier,crashPoint:Number(s.cp),startedAt:Number(s.t0),elapsed,stake:Number(round.stake),balance:Number(finished.balance),active:null});
       }
       if(crashed||auto) {
         const paid=auto&&!crashed?money(Number(round.stake)*Number(s.auto)):0;
         const result=await finishActive(db,user.id,round,{...s,endedAt:Date.now(),crashed,autoSettled:auto&&!crashed},paid,
           {crashed,autoSettled:auto&&!crashed,crashPoint:Number(s.cp),multiplier:auto?Number(s.auto):0});
         return response({ok:true,crashed,autoSettled:auto&&!crashed,payout:paid,multiplier:auto?Number(s.auto):0,
-          crashPoint:Number(s.cp),stake:Number(round.stake),balance:Number(result.balance),active:null});
+          crashPoint:Number(s.cp),startedAt:Number(s.t0),elapsed,stake:Number(round.stake),balance:Number(result.balance),active:null});
       }
       return response({ok:true,active:publicActive(round),elapsed,multiplier,crashPoint:null});
     }
