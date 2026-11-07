@@ -27,37 +27,20 @@ button.r{background:#E5484D}button.b{background:#245A91}button.y{background:#d49
 .ctrl{background:#0f1f33;border-radius:10px;padding:8px;margin-top:6px}.sec{font-weight:bold;color:#FFC83D;margin:10px 0 6px}
 .hint{font-size:14px;color:#FFC83D;line-height:1.8;margin:8px 0;white-space:pre-line;font-weight:bold}.hint.gray{color:#9fb3c8;font-size:12px;font-weight:normal}
 label{display:block;font-size:13px;margin:8px 0 3px}.cl{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.cl input{width:60px;height:38px;padding:2px}
-.chips{display:flex;gap:6px;margin-bottom:8px}.chips button{flex:1;font-size:12px}.two{display:flex;gap:8px}.two button{flex:1;padding:14px;font-size:16px}
+.chips{display:flex;gap:6px;margin-bottom:8px}.chips button{flex:1;font-size:12px}.two{display:flex;gap:8px}.two button{flex:1;padding:14px;font-size:18px}
 .gcard{border:1px solid #35506e;border-radius:12px;padding:10px;margin-bottom:10px}
 .payimg{max-width:100%;border-radius:10px;margin:8px 0}
 .bub{max-width:78%;padding:9px 12px;border-radius:14px;margin-bottom:8px;font-size:14px;line-height:1.6;white-space:pre-wrap}
 .bub.me{background:#245A91;color:#fff;margin-right:auto;border-bottom-left-radius:4px}.bub.them{background:#1f3a58;margin-left:auto;border-bottom-right-radius:4px}.bub small{display:block;font-size:10px;opacity:.7;margin-top:3px}
 .chatbox{max-height:320px;overflow-y:auto;padding:4px;margin-bottom:8px}.chatin{display:flex;gap:8px}.chatin input{flex:1;margin:0}
 #fatal{background:#b00;color:#fff;padding:10px;border-radius:8px;margin-bottom:8px;font-size:13px;direction:ltr;text-align:left}
-/* محرر مباريات اليوم */
-.match-editor{border:1px solid #45617e;background:#102138;border-radius:14px;padding:11px;margin:10px 0}
-.teams-editor{display:grid;grid-template-columns:1fr 1fr;gap:10px;direction:rtl}
-.team-editor{min-width:0;background:#0b192b;border:1px solid #35506e;border-radius:12px;padding:9px}
-.team-editor h4{margin:2px 0 9px;color:#ffd36e;text-align:center;font-size:14px}
-.logo-preview{width:74px;height:74px;border-radius:50%;object-fit:contain;background:#fff;border:2px solid #55728f;padding:5px;display:block;margin:4px auto 9px}
-.team-editor input{font-size:14px;padding:9px}
-.market-editor{background:#0b192b;border:1px solid #35506e;border-radius:12px;padding:10px;margin:9px 0}
-.market-editor-head{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#ffd36e;font-weight:bold;margin-bottom:8px}
-.option-row{display:grid;grid-template-columns:minmax(0,1fr) 86px 36px;gap:5px;align-items:center;margin:7px 0}
-.option-row input{margin:0;min-width:0;font-size:13px;padding:8px}
-.option-row button{margin:0;padding:8px 6px}
-.match-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
-.match-actions button{flex:1;min-width:110px}
-.result-select{border:1px solid #35506e;border-radius:10px;padding:9px;background:#fff;color:#111;width:100%;margin:7px 0}
-.match-preview-line{font-size:12px;color:#aac0d6;margin:6px 0;text-align:center}
-@media(max-width:390px){.teams-editor{gap:6px}.team-editor{padding:6px}.team-editor input{font-size:12px;padding:8px}.logo-preview{width:62px;height:62px}.option-row{grid-template-columns:minmax(0,1fr) 75px 32px}}
 </style></head>
 <body><div class="w">
 <div id="fatal" hidden></div>
 <div id="login" class="card"><b>🔐 لوحة المشرف</b><br><br>
-  <input type="password" id="pin" placeholder="كلمة مرور المشرف">
+  <input type="password" id="pin" placeholder="الرقم السري">
   <button id="go" style="width:100%">دخول</button>
-  <div id="err" style="color:#ff8a8f;margin-top:6px"></div><div class="hint gray">الدخول محمي من السيرفر. لا توجد أي كلمة مرور إدارية محفوظة داخل هذه الصفحة.</div>
+  <div id="err" style="color:#ff8a8f;margin-top:6px"></div>
 </div>
 <div id="panel" hidden>
   <div id="p1"></div>
@@ -273,7 +256,6 @@ function gamesForm(){
     btn(gc,"💾 احفظ","",async()=>{const rv=pf(rt.value);if(rt.value.trim()!==""&&!(rv>=1&&rv<=99.9))return msg.textContent="❌ نسبة العائد من 1 إلى 99.9";const games={...(C.games||{}),[g.id]:{name:nm.value.trim()||g.name,desc:ds.value.trim(),cat:cat.value.trim(),tag:tg.value.trim(),img:im.value.trim(),order:Math.floor(pf(od.value))||99,rtp:rt.value.trim()===""?null:rv,engine:en.value,on:on.checked}};try{await saveConfig("games",games);msg.textContent="✅ اتحفظت وبتظهر للاعبين بعد تحديث الإعدادات";}catch(e){msg.textContent="❌ "+displayError(e);}});
     const dl=btn(gc,isDef(g.id)?"↩️ رجّع الافتراضي":"🗑 احذف اللعبة","r",()=>{});twoTap(dl,isDef(g.id)?"↩️ رجّع الافتراضي":"🗑 احذف اللعبة",async()=>{const games={...(C.games||{})};delete games[g.id];await saveConfig("games",games);gamesForm();});gc.appendChild(msg);c.appendChild(gc);box.appendChild(c);
   });
-  matchesForm();
 }
 /* بناء محرر المباراة: عمود مستقل للفريق الأول وعمود للفريق الثاني */
 function teamEditor(title,team){
