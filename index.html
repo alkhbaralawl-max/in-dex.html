@@ -86,7 +86,7 @@ textarea.fi{height:auto;padding:10px;min-height:80px}
 .gb{background:#00000066;border-radius:20px;padding:7px 12px;font-weight:bold;color:var(--yl);font-size:13px;white-space:nowrap}
 .gx{width:44px;height:44px;border-radius:50%;border:0;background:#ffffff2e;color:#fff;font-size:20px;flex-shrink:0}
 .gbody{flex:1;overflow-y:auto;padding:12px 12px 28px;max-width:560px;width:100%;margin:0 auto;-webkit-overflow-scrolling:touch}
-.gc{background:#ffffff14;border:1px solid #ffffff26;border-radius:16px;padding:12px;margin-bottom:12px}
+.gbody.gc{background:#ffffff14;border:1px solid #ffffff26;border-radius:16px;padding:12px;margin-bottom:12px}
 .gmsg{text-align:center;font-weight:bold;min-height:26px;margin-bottom:8px;font-size:15px;line-height:1.7}
 .gmsg.ok{color:#5BE39A}.gmsg.er{color:#FF8A8F}
 .sm2{font-size:12px;color:#cfe1f5;text-align:center;line-height:1.8;margin-bottom:6px}
@@ -115,10 +115,11 @@ canvas{display:block;width:100%}
 .wheelwrap{position:relative;width:min(86vw,320px);margin:10px auto 14px}
 .pointer{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:32px;color:var(--yl);z-index:2;text-shadow:0 2px 4px #000}
 .wrot{width:100%;transition:transform 4s cubic-bezier(.12,.75,.15,1)}
-.plbd{position:relative;height:260px;background:#00000022;border-radius:14px;margin-bottom:10px;overflow:hidden}
-.plpeg{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffffff55}
-.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:var(--yl);box-shadow:0 0 8px #FFC83D;left:50%;top:2%;z-index:2;transition:top .16s ease-in,left .16s ease-in}
+.plbd{position:relative;height:260px;background:linear-gradient(180deg,#ffffff0c,#00000035);border-radius:14px;margin-bottom:10px;overflow:hidden}
+.plpeg{position:absolute;width:6px;height:6px;border-radius:50%;background:#ffffff88;box-shadow:0 0 3px #ffffff55;transform:translate(-50%,-50%)}
+.plball{position:absolute;width:16px;height:16px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff5b5,var(--yl) 46%,#c17b00 100%);box-shadow:0 0 10px #FFC83D,0 2px 4px #0008;left:50%;top:2%;z-index:2;transform:translate(-50%,-50%);will-change:left,top}
 .plbuckets{display:flex;gap:2px}
+.btn.on{outline:2px solid var(--yl);outline-offset:1px}
 .plbk{flex:1;text-align:center;font-size:10.5px;font-weight:bold;border-radius:6px;padding:5px 1px;background:#ffffff1f;color:#fff;transition:transform .2s,background .2s}
 .plbk.hit{background:var(--yl);color:var(--bd);transform:scale(1.15)}
 @keyframes popin{0%{transform:scale(.6)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
@@ -140,6 +141,26 @@ canvas{display:block;width:100%}
 .ovb.w{background:linear-gradient(#22a447,#14692d);box-shadow:0 0 50px #4caf50;animation:popin .3s}
 .ovb.l{background:linear-gradient(#c62828,#7f1414);box-shadow:0 0 50px #e53935;animation:popin .3s,shake .5s .1s}
 .ovi{font-size:58px}.ova{font-size:38px;font-weight:bold;margin:4px 0}.ovt{font-size:15px}
+
+.dicearena{display:flex;justify-content:center;align-items:center;gap:18px;padding:20px 10px 12px;perspective:900px}
+.diceface{width:clamp(76px,24vw,104px);aspect-ratio:1;display:grid;place-items:center;border-radius:22px;background:linear-gradient(145deg,#fff,#dbeafe);color:#10203a;font-size:clamp(48px,15vw,72px);font-weight:900;border:1px solid #ffffffaa;box-shadow:0 14px 28px #0007,inset 0 -5px 0 #9db2d1;transition:transform .2s}
+.diceface.rolling{animation:dice-roll .16s infinite}
+@keyframes dice-roll{0%{transform:rotate(-10deg) translateY(-5px)}25%{transform:rotate(9deg) translateY(4px)}50%{transform:rotate(-7deg) translateY(-3px)}75%{transform:rotate(8deg) translateY(4px)}100%{transform:rotate(0) translateY(0)}}
+#dsum{font-size:18px;font-weight:900;color:#ffdc83;letter-spacing:.2px}
+.pickmeta{display:block;font-size:11px;opacity:.85;margin-top:3px;color:#ffe08a}
+#dlow,#dseven,#dhigh,#cred,#cblack{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:54px}
+.cardarena{display:flex;justify-content:center;align-items:center;padding:16px 8px 20px;perspective:1000px}
+.playingcard{position:relative;width:min(136px,38vw);aspect-ratio:.70;border-radius:17px;border:3px solid #fff;background:linear-gradient(145deg,#f8fafc,#dbeafe);color:#172033;display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:12px 10px;box-shadow:0 18px 38px #0008,inset 0 0 0 4px #d4deed;transform-style:preserve-3d;font-size:38px;font-weight:900}
+.playingcard span{align-self:flex-start;font-size:28px}
+.playingcard b{font-size:58px;line-height:1}
+.playingcard small{font-size:11px;letter-spacing:1px;color:#64748b}
+.playingcard.red{color:#dc2626;background:linear-gradient(145deg,#fff,#fee2e2);box-shadow:0 18px 38px #0008,0 0 24px #fb718555,inset 0 0 0 4px #fecaca}
+.playingcard.black{color:#111827;background:linear-gradient(145deg,#fff,#e5e7eb);box-shadow:0 18px 38px #0008,0 0 24px #94a3b855,inset 0 0 0 4px #cbd5e1}
+.playingcard.flipping{animation:card-flip .48s ease-in-out infinite alternate}
+.playingcard.reveal{animation:card-reveal .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes card-flip{0%{transform:rotateY(0) rotateZ(-4deg) scale(.98)}100%{transform:rotateY(180deg) rotateZ(4deg) scale(1.04)}}
+@keyframes card-reveal{0%{transform:rotateY(90deg) scale(.92);opacity:.45}70%{transform:rotateY(-10deg) scale(1.06)}100%{transform:rotateY(0) scale(1);opacity:1}}
+@media(prefers-reduced-motion:reduce){.diceface.rolling,.playingcard.flipping,.playingcard.reveal{animation:none}}
 </style></head>
 <body><div class="app">
 <div id="fatal" hidden></div>
@@ -239,20 +260,30 @@ canvas{display:block;width:100%}
 <div id="ov" class="ov" hidden><div class="ovb" id="ovb"><div class="ovi" id="ovi"></div><div class="ova" id="ova"></div><div class="ovt" id="ovt"></div></div></div>
 <div class="toast" id="toast" hidden></div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <script>
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
-firebase.initializeApp({
-  apiKey:"AIzaSyC0WWJQgh4lEYbOqfKFMcI1vLgwJS5DwCQ",
-  authDomain:"xtra-f3087.firebaseapp.com",
-  databaseURL:"https://xtra-f3087-default-rtdb.firebaseio.com",
-  projectId:"xtra-f3087",
-  storageBucket:"xtra-f3087.firebasestorage.app",
-  messagingSenderId:"122881932496",
-  appId:"1:122881932496:web:cf63664e63e38176d332d5"
-});
-const DB=firebase.database();
+const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
+const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
+const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+let csrfToken="";
+class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
+async function sendApi(url,action,payload={},useCsrf=true){
+  const headers={"content-type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
+  if(useCsrf&&csrfToken)headers["x-csrf-token"]=csrfToken;
+  let response,data;
+  try{
+    response=await fetch(url,{method:"POST",credentials:"include",headers,body:JSON.stringify({action,...payload})});
+    data=await response.json();
+  }catch(e){throw new ApiError("تعذر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.",0);}
+  if(!response.ok){
+    const messages={unauthorized:"انتهت جلسة الدخول. سجّل الدخول مرة أخرى.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",invalid_credentials:"اسم المستخدم أو كلمة السر غير صحيح.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل.",registration_closed:"التسجيل مغلق حاليًا.",too_many_attempts:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",insufficient_virtual_balance:"الرصيد الافتراضي غير كافٍ.",active_game_exists:"أنهِ الجولة الحالية أولًا.",match_closed:"بدأت المباراة أو أُغلق السوق.",admin_required:"هذه العملية متاحة للإدارة فقط."};
+    throw new ApiError(messages[data?.error]||data?.error||"حدث خطأ في الخادم.",response.status);
+  }
+  return data;
+}
+const apiCall=(action,payload={},useCsrf=true)=>sendApi(APP_API,action,payload,useCsrf);
+const authCall=(action,payload={})=>sendApi(AUTH_API,action,payload,false);
 const $=id=>document.getElementById(id);
 const nd=s=>String(s==null?"":s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
 const f=n=>Number(n).toLocaleString("en",{maximumFractionDigits:2});
@@ -266,16 +297,19 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess3";
 const CAP=20;
 
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯"};
+const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,dice:96,cards:95};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#334155","#60a5fa","#0f172a"],cards:["#7f1d1d","#ef4444","#1f1015"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"🎲",cards:"🂡"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
+{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
+{id:"dice",name:"النرد",desc:"توقع مجموع حجرَي النرد واربح أو اخسر من رصيدك الوهمي.",engine:"dice",cat:"نرد",tag:"نرد",order:7},
+{id:"cards",name:"أحمر أم أسود",desc:"اختار لون الورقة قبل كشفها، والرهان والمكسب من الرصيد الوهمي.",engine:"cards",cat:"كروت",tag:"كروت",order:8}
+]
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -303,7 +337,9 @@ ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تم�
 ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
-rulePlinko:"الكرة بتنزل من فوق وتتنطط يمين أو شمال 8 مرات، وتستقر في خانة لها مضاعف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+rulePlinko:"الكرة بتنزل على 8 صفوف من الدبابيس، وكل مسار يمين أو شمال يحدد مكانها النهائي من 9 خانات. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+ruleDice:"اختار مجموعًا من 2 إلى 6 أو 7 بالضبط أو 8 إلى 12. كل رمية بحجرَي نرد افتراضيين، وفرصة الاختيار واضحة قبل اللعب. أقصى عائد ×{cap}، والعائد النظري {rtp}%.",
+ruleCards:"اختار الأحمر أو الأسود قبل سحب ورقة من مجموعة افتراضية متساوية اللونين. فرصة كل لون 50% قبل أي إعداد معلن للحساب. أقصى عائد ×{cap}، والعائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
 scaleNote:"ℹ️ فرصة الفوز على حسابك مخفّضة بقرار المشرف ({pct}% خسارة إضافية).",
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
@@ -315,7 +351,7 @@ let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
-  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko","ruleDice","ruleCards"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{}};
 }
 function games(){
@@ -326,10 +362,17 @@ function games(){
 }
 const gOn=g=>g.on!==false;
 const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
+const ENGINE_CAP={slot:20,apple:8,rocket:20,crash:20,wheel:8,plinko:20,dice:20,cards:20};
+function capOf(g){
+  const personal=Number(U?.gameCaps?.[g?.id]);
+  if(personal>=1&&personal<=100)return personal;
+  const configured=Number(g?.maxMultiplier);
+  return configured>=1&&configured<=100?configured:(ENGINE_CAP[g?.engine]||CAP);
+}
 const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
-let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",apLast=null,crLock=false,crFinal=null,raf=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false;
+let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",apLast=null,crLock=false,crFinal=null,raf=0,crPollTimer=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false;
 const scU=()=>U?(U.scale||100)/100:1;
 const histArr=()=>Array.isArray(U.hist)?U.hist:Object.values(U.hist||{});
 function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2800);}
@@ -339,18 +382,6 @@ function applyCfg(){
   document.querySelectorAll("[data-t]").forEach(e=>{e.textContent=C.texts[e.dataset.t]||"";});
   document.querySelectorAll("[data-ph]").forEach(e=>{e.placeholder=C.texts[e.dataset.ph]||"";});
   document.title=C.texts.title;
-}
-async function hash(n,p){
-  const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode("ws3:"+n+":"+p));
-  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
-}
-async function newId(n){
-  for(let i=0;i<40;i++){
-    const id=String(100000000+Math.floor(rnd()*900000000));
-    const t=await DB.ref("ids/"+id).transaction(c=>c===null?n:undefined);
-    if(t.committed)return id;
-  }
-  throw new Error("id");
 }
 
 setInterval(()=>{
@@ -435,16 +466,16 @@ function renderMe(){
 }
 function renderPayBanner(){
   const box=$("payreqbanner");box.innerHTML="";
-  const pr=U.payreq;
-  if(!pr||pr.status==="seen"||pr.status==="pending")return;
-  const ap=pr.status==="approved";
-  const d=el("div","resbox "+(ap?"ap":"rj"));
-  d.textContent=ap?tpl(C.texts.payApprovedTpl,{amount:f(pr.amt||0)}):C.texts.payRejectedTpl;
+  const x=(myCreditRequests||[])[0];
+  if(!x||x.id===dismissedCreditRequestId)return;
+  if(x.status==="pending")return;
+  const approved=x.status==="approved";
+  const d=el("div","resbox "+(approved?"ap":"rj"),approved?tpl(C.texts.payApprovedTpl,{amount:f(Number(x.requested_amount)||0)}):C.texts.payRejectedTpl);
   const b=el("button","btn g full",C.texts.ackBtn);b.style.marginTop="8px";
-  b.onclick=()=>ref.child("payreq/status").set("seen");
-  d.appendChild(document.createElement("br"));d.appendChild(b);
-  box.appendChild(d);
+  b.onclick=()=>{dismissedCreditRequestId=x.id;renderPayBanner();};
+  d.appendChild(b);box.appendChild(d);
 }
+
 function render(){
   applyCfg();
   $("hbal").textContent="💰 "+f(U.balance);
@@ -458,31 +489,37 @@ function showAuth(t){
 function showApp(){$("v_auth").hidden=true;$("shell").hidden=false;}
 
 /* ---------- الدعم المباشر (دردشة اللاعب) ---------- */
-let chatRef=null;
-function openChat(){
-  if(chatOn)return;chatOn=true;
-  chatRef=DB.ref("chat/"+U.id).limitToLast(80);
-  chatRef.on("value",s=>{
-    const box=$("chatbox");box.innerHTML="";
-    const arr=[];s.forEach(c=>{if(c.key!=="lastSeenAdmin")arr.push(c.val());});
+/* ---------- الدعم المباشر (دردشة اللاعب عبر الخادم) ---------- */
+let chatPollTimer=0;
+async function loadPlayerChat(){
+  if(!U||!chatOn)return;
+  try{
+    const data=await apiCall("chat_list",{},false),box=$("chatbox");
+    const arr=data.messages||[];box.innerHTML="";
     if(!arr.length)box.innerHTML='<div class="empty">ابعت رسالة للمشرف وهيردّ عليك هنا</div>';
     arr.forEach(m=>{
-      if(!m||!m.msg)return;
-      const b=el("div","bub "+(m.from==="user"?"me":"them"),m.msg);
-      b.appendChild(el("small","",new Date(m.t).toLocaleTimeString("ar-EG")));
+      const b=el("div","bub "+(m.sender_role==="player"?"me":"them"),m.message);
+      b.appendChild(el("small","",new Date(m.created_at).toLocaleTimeString("ar-EG")));
       box.appendChild(b);
     });
     box.scrollTop=box.scrollHeight;
-  });
+  }catch(e){console.warn("chat refresh",e);}
 }
-$("chatsend").onclick=()=>{
+function openChat(){
+  if(chatOn)return;chatOn=true;loadPlayerChat();
+  if(chatPollTimer)clearInterval(chatPollTimer);
+  chatPollTimer=setInterval(()=>{if(document.visibilityState!=="hidden")loadPlayerChat();},6000);
+}
+$("chatsend").onclick=async()=>{
   const v=$("chatin").value.trim();if(!v||!U)return;
-  DB.ref("chat/"+U.id).push({from:"user",msg:v.slice(0,500),t:Date.now()});
-  $("chatin").value="";
+  const button=$("chatsend");button.disabled=true;
+  try{await apiCall("chat_send",{message:v.slice(0,2000)});$("chatin").value="";await loadPlayerChat();}
+  catch(e){toast(e.message||C.texts.errNet);}
+  finally{button.disabled=false;}
 };
 $("chatin").onkeydown=e=>{if(e.key==="Enter")$("chatsend").click();};
 
-/* ---------- صفحة الدفع ---------- */
+/* ---------- صفحة الرصيد الافتراضي وطلبات المراجعة ---------- */
 function updAdminMsg(){
   const am=String(C.texts.payWarn||"").trim(),b=$("adminmsg");
   b.hidden=!am;b.textContent=am;
@@ -492,65 +529,71 @@ function renderPay(){
   const box=$("paylist");box.innerHTML="";
   $("paymsgbox").hidden=true;box.hidden=false;
   box.appendChild(el("div","plb",C.texts.payChoose));
-  lines(C.texts.payMethods).forEach(l=>{const b=el("button","mrow");b.innerHTML="<span>"+esc(l)+"</span><span>‹</span>";b.onclick=()=>payClick(l);box.appendChild(b);});
+  lines(C.texts.payMethods).forEach(l=>{
+    const b=el("button","mrow");b.innerHTML="<span>"+esc(l)+"</span><span>‹</span>";
+    b.onclick=()=>payClick(l);box.appendChild(b);
+  });
+  loadMyCreditRequests().catch(()=>{});
 }
 function payClick(m){
-  payM=m;payImg="";
-  DB.ref("paylog").push({t:Date.now(),id:U.id,name:name,m:m,type:"click"}).catch(()=>{});
+  payM=String(m||"").slice(0,80);payImg="";
   $("paylist").hidden=true;$("paymsgbox").hidden=false;
-  $("pmethod").textContent="طريقة الدفع: "+m;
+  $("pmethod").textContent="طريقة الدفع: "+payM;
   $("amtLbl").textContent=C.texts.amtLbl;
-  $("pphone").value="";$("pamt").value="";$("psend").textContent=C.texts.transferBtn;$("payres").textContent="";
+  $("pphone").value="";$("pamt").value="";
+  $("psend").textContent=C.texts.transferBtn;$("payres").textContent="";
   $("upbox").querySelector("img")?.remove();
   $("upboxtxt").textContent=C.texts.shotPh;
 }
 $("upbox").onclick=()=>$("pfile").click();
 $("pfile").onchange=()=>{
   const f0=$("pfile").files[0];if(!f0)return;
+  if(!/^image\/(png|jpeg|webp)$/.test(f0.type)){ $("payres").textContent="اختار صورة PNG أو JPG أو WEBP فقط";return; }
+  if(f0.size>8*1024*1024){$("payres").textContent="الصورة كبيرة جدًا؛ اختار صورة أصغر من 8 ميجابايت";return;}
   const r=new FileReader();
   r.onload=()=>{
-    payImg=r.result;
+    payImg=String(r.result);
     let img=$("upbox").querySelector("img");
-    if(!img){img=document.createElement("img");$("upbox").appendChild(img);}
+    if(!img){img=document.createElement("img");img.className="payimg";$("upbox").appendChild(img);}
     img.src=payImg;img.hidden=false;$("upboxtxt").textContent=C.texts.shotPh2;
   };
   r.readAsDataURL(f0);
 };
+async function loadMyCreditRequests(){
+  if(!U)return;
+  const d=await apiCall("my_credit_requests",{},false);
+  myCreditRequests=d.requests||[];
+  renderPayBanner();
+  return myCreditRequests;
+}
 $("psend").onclick=async()=>{
   const phone=nd($("pphone").value).trim(),amt=parseFloat(nd($("pamt").value)),res=$("payres");
   const bad=s=>{res.textContent=s;res.style.color="var(--er)";};
-  if(!phone)return bad(C.texts.phoneLbl);
+  if(!payM)return bad("اختار طريقة الدفع أولًا");
+  if(!phone||phone.length>30)return bad(C.texts.phoneLbl);
   if(!(amt>0))return bad(C.texts.errBetVal);
   if(amt>50000)return bad("❌ أقصى مبلغ 50,000 جنيه");
-  $("psend").disabled=true;res.textContent="...";res.style.color="";
+  $("psend").disabled=true;res.textContent="جاري إرسال الطلب...";res.style.color="";
   try{
-    await ref.child("payreq").set({status:"pending"});
-    await DB.ref("paylog").push({t:Date.now(),id:U.id,name:name,m:payM,type:"req",phone:phone.slice(0,30),amt:r2(amt),img:payImg?payImg.slice(0,300000):"",status:"pending"});
+    const note={method:payM,userNumber:phone};
+    const payload={amount:r2(amt),note:JSON.stringify(note)};
+    if(payImg)payload.proofData=payImg;
+    await apiCall("credit_request",payload);
     res.textContent=C.texts.payOk;res.style.color="var(--ok)";
-    $("pphone").value="";$("pamt").value="";payImg="";$("upboxtxt").textContent=C.texts.shotPh;$("pfile").value="";
-  }catch(e){bad(C.texts.errNet);}
-  $("psend").disabled=false;
+    $("pphone").value="";$("pamt").value="";payImg="";$("pfile").value="";
+    $("upboxtxt").textContent=C.texts.shotPh;
+    const img=$("upbox").querySelector("img");if(img)img.remove();
+    await loadMyCreditRequests();
+  }catch(e){bad(e.message||C.texts.errNet);}
+  finally{$("psend").disabled=false;}
 };
 $("payagain").onclick=renderPay;
 $("usd").onclick=()=>{renderPay();show("pay");};
 $("payback").onclick=()=>show("home");
 
 /* ---------- منطق عام للعب (آمن ضد التعليق) ---------- */
-async function run(fn){
-  let out={};
-  try{
-    const res=await ref.transaction(u=>{
-      if(!u)return u;
-      out={};
-      if(u.closed){out.err=C.texts.closedMsg;return;}
-      try{return fn(u,out);}catch(e){out.err=e.message;return;}
-    });
-    if(!res.committed)return {err:out.err||C.texts.errNet};
-    return out;
-  }catch(e){
-    return {err:C.texts.errNet};
-  }
-}
+async function run(){throw new Error("يجب تنفيذ الجولة من الخادم");}
+
 function chk(u,bet){
   if(!(bet>=C.settings.minBet))throw new Error(C.texts.errBetVal+" (على الأقل "+C.settings.minBet+")");
   if(C.settings.maxBet>0&&bet>C.settings.maxBet)throw new Error("أقصى رهان "+f(C.settings.maxBet));
@@ -585,7 +628,7 @@ function histHTML(g){
   return h.map(x=>{const n=r2(x.win-x.bet);return '<div class="hr2"><span>رهان '+f(x.bet)+'</span><span class="'+(n>0?"up":n<0?"dn":"")+'">'+(n>0?"+"+f(n):n<0?"-"+f(-n):"=")+'</span></div>';}).join("");
 }
 const betBox=(ex,btns)=>'<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+(ex||"")+'</div>'+btns+'</div>';
-const rulesBox=t=>'<details class="gd"><summary>📖 قواعد اللعبة</summary><p>'+t+'</p></details>';
+const rulesBox=(t,g)=>'<details class="gd"><summary>📖 قواعد اللعبة</summary><p>'+t+'</p>'+(g?'<p class="sm2">سقف المضاعف المطبق على حسابك في هذه اللعبة: ×'+capOf(g)+'</p><p class="sm2">هذا السقف قد يجعل العائد الفعلي أقل من العائد النظري المذكور أعلاه.</p>':'')+(U&&scU()<1?'<p class="sm2">تنبيه: إعدادات المشرف تقلل فرص المكسب على هذا الحساب.</p>':'')+'</details>';
 const histBox='<div class="gc"><b>🕘 سجل جولاتك</b><div id="hist" style="margin-top:6px"></div></div>';
 function bindBet(b){b.querySelectorAll("[data-bv]").forEach(x=>x.onclick=()=>{const i=$("bet"),v=parseFloat(nd(i.value))||0,k=x.dataset.bv;i.value=k==="h"?Math.max(1,r2(v/2)):k==="d"?r2(v*2):k;});}
 function safeClick(btn,fn){btn.onclick=async()=>{if(btn.disabled)return;try{await fn();}catch(e){toast(C.texts.errNet);busy=false;hold=false;upd();}};}
@@ -611,19 +654,23 @@ const upd=()=>{if(cur)cur.upd();};
 /* ======== Wild West Gold ======== */
 const SYM=[["🤠",.44,0],["🐴",.26,2],["🔫",.16,4],["🥃",.09,8],["💎",.04,16],["👑",.01,20]];
 function slotExact(g){
-  const P=SYM.map(s=>s[1]),T=SYM.map(s=>s[2]),D=2;
-  let raw=0;
-  for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++){
-    const pr=P[a]*P[b]*P[c];let pay=0;
-    if(a===b&&b===c)pay=T[a];else if(a===b||b===c||a===c)pay=D;
-    raw+=pr*pay;
+  const P=SYM.map(s=>s[1]),T=SYM.map(s=>s[2]),D=2,cap=capOf(g);
+  let lo=0,hi=100;
+  for(let i=0;i<52;i++){
+    const scale=(lo+hi)/2;let expected=0;
+    for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++){
+      const pr=P[a]*P[b]*P[c];let pay=0;
+      if(a===b&&b===c)pay=T[a];else if(a===b||b===c||a===c)pay=D;
+      expected+=pr*Math.min(pay*scale,cap);
+    }
+    if(expected<rtpOf(g)/100)lo=scale;else hi=scale;
   }
-  return (rtpOf(g)/100)/raw;
+  return (lo+hi)/2;
 }
 function slotPayoutOf(g,a,b,c,scale){
   let pay=0;
   if(a===b&&b===c)pay=SYM[a][2];else if(a===b||b===c||a===c)pay=2;
-  return r2(Math.min(pay*scale,CAP));
+  return r2(Math.min(pay*scale,capOf(g)));
 }
 function pickSym(){const r=rnd();let a=0;for(let i=0;i<6;i++){a+=SYM[i][1];if(r<a)return i;}return 5;}
 ENG.slot={open(g,b){
@@ -631,37 +678,38 @@ ENG.slot={open(g,b){
   const pt=SYM.map((s,i)=>'<div class="row2"><span>'+s[0]+s[0]+s[0]+'</span><b>×'+slotPayoutOf(g,i,i,i,scale)+'</b></div>').join("")+'<div class="row2"><span>رمزين متشابهين (أي مكان)</span><b>×'+slotPayoutOf(g,0,0,1,scale)+'</b></div>';
   b.innerHTML='<div class="gc"><div class="reels"><div class="reel" id="r0">🤠</div><div class="reel" id="r1">🐴</div><div class="reel" id="r2">🔫</div></div></div>'+
     betBox("",'<button class="btn y full" id="spin">'+C.texts.btnSpinSlot+'</button>')+
-    rulesBox(tpl(C.texts.ruleSlot,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+
+    rulesBox(tpl(C.texts.ruleSlot,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+
     '<div class="gd"><b>💎 جدول الجوائز</b>'+pt+'</div>'+histBox;
   bindBet(b);safeClick($("spin"),()=>slotSpin(g,scale));
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("spin").disabled=busy;};
 }};
 async function slotSpin(g,scale){
-  if(busy)return;const bet=getBet();
-  try{chk(U,bet);}catch(e){return gmsg(e.message,"er");}
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   lastAction=Date.now();busy=true;hold=true;$("spin").disabled=true;
-  const lp=1-scU(),rf=rnd();
   const rs=[0,1,2].map(i=>$("r"+i));
-  const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[Math.floor(Math.random()*6)][0];},70));
-  rs.forEach(r=>r.classList.add("spin"));gmsg("...");
-  const pr=run((u,o)=>{
-    chk(u,bet);let a,b,c,p,t=0;
-    do{a=pickSym();b=pickSym();c=pickSym();p=slotPayoutOf(g,a,b,c,scale);t++;}while(rf<lp&&p>0&&t<120);
-    const win=r2(bet*p);stake(u,bet);payout(u,bet,win,g.id,p);o.s=[a,b,c];o.win=win;return u;});
-  const res=await Promise.all([pr,sleep(900)]);const o=res[0];
-  iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));
-  if(o.err){hold=false;busy=false;upd();return gmsg(o.err,"er");}
-  for(let i=0;i<3;i++){rs[i].textContent=SYM[o.s[i]][0];await sleep(350);}
-  hold=false;busy=false;render();result(o.win,bet);
+  const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[secureClientSymbol()][0];},90));
+  rs.forEach(r=>{r.classList.remove("reel-stop");r.classList.add("spin");});gmsg("جارٍ تنفيذ الجولة بأمان...");
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const symbols=data.outcome.symbols||[0,0,0];
+    for(let i=0;i<3;i++){
+      await sleep(520);
+      clearInterval(iv[i]);rs[i].classList.remove("spin");
+      rs[i].textContent=SYM[symbols[i]][0];
+      rs[i].classList.add("reel-stop");
+    }
+    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet);refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
+function secureClientSymbol(){return Math.floor(rnd()*6);}
 
 /* ======== Apple of Fortune ======== */
 const AP_ROWS=5,AP_REAL_P=.8,AP_CAP=8;
-function apMult(g,k){const raw=Math.pow(1/AP_REAL_P,k)*(rtpOf(g)/100);return r2(Math.min(raw,AP_CAP));}
+function apMult(g,k){const raw=Math.pow(1/AP_REAL_P,k)*(rtpOf(g)/100);return r2(Math.min(raw,capOf(g)));}
 ENG.apple={open(g,b){
   b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="sm2" id="arisk"></div><div id="aboard"></div></div>'+
     '<div class="gc"><div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div><div class="fld"><div><label>الرهان</label><input id="bet" type="number" inputmode="decimal" value="'+C.settings.defBet+'"></div></div><div class="two"><button class="btn" id="astart">'+C.texts.btnStart+'</button><button class="btn ok" id="acash" disabled>'+C.texts.btnCash+'</button></div></div>'+
-    rulesBox(tpl(C.texts.ruleApple,{p:Math.round(AP_REAL_P*100),cap:AP_CAP,rtp:rtpOf(g)}))+histBox;
+    rulesBox(tpl(C.texts.ruleApple,{p:Math.round(AP_REAL_P*100),cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
   bindBet(b);safeClick($("astart"),()=>apStart(g));safeClick($("acash"),()=>apCash(g));
   cur.upd=()=>{base();const a=U.ap&&U.ap.k===g.id;$("hist").innerHTML=histHTML(g);$("astart").disabled=busy||a;$("acash").disabled=busy||!(a&&U.ap.level>=1);
     $("acash").textContent=a&&U.ap.level>=1?C.texts.btnCash+" "+f(U.ap.bet*apMult(g,U.ap.level)):C.texts.btnCash;apDraw(g);};
@@ -689,36 +737,31 @@ function apDraw(g){
   }
 }
 async function apStart(g){
-  if(busy)return;const bet=getBet();lastAction=Date.now();
-  const o=await run(u=>{chk(u,bet);if(u.ap)throw new Error(C.texts.errBusy);stake(u,bet);u.ap={k:g.id,bet:bet,level:0};return u;});
-  if(o.err)return gmsg(o.err,"er");
-  apLast=null;upd();
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;lastAction=Date.now();gmsg("جارٍ بدء الجولة على الخادم...");
+  try{
+    const data=await apiCall("active_start",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    U.balance=Number(data.balance);U.ap={k:g.id,bet:bet,level:data.active.level||0,picks:data.active.picks||[],safeN:data.active.safeN||4,hazards:data.active.revealedHazards||[],roundId:data.active.id,version:data.active.version};
+    apLast=null;busy=false;render();
+  }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 async function apPick(g,c){
-  if(busy)return;busy=true;hold=true;lastAction=Date.now();
-  document.querySelectorAll("#aboard .ap.act").forEach(x=>{x.textContent="⏳";x.disabled=true;});
-  $("acash").disabled=true;
-  const r=rnd();
-  const pr=run((u,o)=>{
-    const a=u.ap;if(!a||a.k!==g.id)throw new Error(C.texts.errBusy);
-    const row=a.level,pk=a.picks||[];
-    if(r>=AP_REAL_P*scU()){o.lost={row:row,col:c,picks:pk};o.bet=a.bet;u.ap=null;payout(u,a.bet,0,g.id,row);return u;}
-    a.level++;a.picks=pk.concat([c]);
-    if(a.level>=AP_ROWS){const w=r2(a.bet*apMult(g,a.level));u.ap=null;payout(u,a.bet,w,g.id,a.level);o.won=w;o.bet=a.bet;}
-    return u;});
-  const res=await Promise.all([pr,sleep(650)]);const o=res[0];
-  hold=false;busy=false;
-  if(o.err){render();return gmsg(o.err,"er");}
-  if(o.lost){apLast=o.lost;render();result(0,o.bet);}
-  else if(o.won){apLast=null;render();result(o.won,o.bet);}
-  else{render();gmsg("✅ تفاحة سليمة! كمّل أو اسحب","ok");}
+  if(busy||!U?.ap)return;busy=true;hold=true;lastAction=Date.now();
+  document.querySelectorAll("#aboard .ap.act").forEach(x=>{x.textContent="·";x.disabled=true;});$("acash").disabled=true;
+  try{
+    const a=U.ap,data=await apiCall("apple_pick",{roundId:a.roundId,cell:c});
+    U.balance=Number(data.balance);hold=false;busy=false;
+    if(data.lost){apLast={row:data.row,col:data.cell,picks:data.picks,hazards:data.hazards,safeN:a.safeN,bet:a.bet};U.ap=null;render();result(0,a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
+    else if(data.won){apLast=null;U.ap=null;render();result(Number(data.payout),a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
+    else{U.ap={k:g.id,roundId:data.active.id,bet:a.bet,level:data.active.level,picks:data.active.picks,safeN:data.active.safeN,hazards:data.active.revealedHazards||[],version:data.active.version};render();gmsg("✓ اختيار آمن. اختار الصف التالي أو اسحب رصيدك.","ok");}
+  }catch(e){hold=false;busy=false;await refreshMe(false).catch(()=>{});render();gmsg(e.message||C.texts.errNet,"er");}
 }
 async function apCash(g){
-  if(busy)return;busy=true;lastAction=Date.now();
-  const o=await run((u,o)=>{const a=u.ap;if(!a||a.k!==g.id||a.level<1)throw new Error(C.texts.errBusy);
-    const w=r2(a.bet*apMult(g,a.level));u.ap=null;payout(u,a.bet,w,g.id,a.level);o.won=w;o.bet=a.bet;return u;});
-  busy=false;if(o.err)return gmsg(o.err,"er");
-  apLast=null;render();result(o.won,o.bet);
+  if(busy||!U?.ap)return;busy=true;lastAction=Date.now();
+  try{
+    const a=U.ap,data=await apiCall("apple_cash",{roundId:a.roundId});
+    U.balance=Number(data.balance);U.ap=null;apLast=null;busy=false;render();result(Number(data.payout),a.bet);refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 
 /* ======== Crash / Red Rocket ======== */
@@ -727,10 +770,10 @@ const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random(
 function genCp(g){
   const r=rnd();
   let c=Math.floor((rtpOf(g)/100)/(1-r)*100)/100;
-  if(c<1)c=1;if(c>CAP)c=CAP;
+  if(c<1)c=1;if(c>capOf(g))c=capOf(g);
   return c;
 }
-function drawCr(skin,t,m,st){
+function drawCr(skin,t,m,st,limit=CAP){
   const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,H=cv.height;
   x.clearRect(0,0,W,H);
   const g=x.createLinearGradient(0,0,0,H);
@@ -738,36 +781,91 @@ function drawCr(skin,t,m,st){
   x.fillStyle=g;x.fillRect(0,0,W,H);
   if(skin==="rocket"){x.fillStyle="#ffffff99";STARS.forEach(s=>{x.beginPath();x.arc(s[0]*W,s[1]*H,s[2],0,7);x.fill();});}
   else{x.strokeStyle="#ffffff18";x.lineWidth=1;for(let i=1;i<6;i++){x.beginPath();x.moveTo(0,H*i/6);x.lineTo(W,H*i/6);x.stroke();}}
-  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,CAP)*1.25),L=18,B=22;
+  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,limit)*1.25),L=18,B=22;
   const px=a=>L+(a/tx)*(W-2*L),py=a=>H-B-((a-1)/(my-1))*(H-B-34);
   x.beginPath();x.moveTo(px(0),py(1));
-  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.min(Math.exp(K*a),CAP)));}
+  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.min(Math.exp(K*a),limit)));}
   x.lineWidth=4;x.strokeStyle=st==="crash"?"#E5484D":(skin==="rocket"?"#ff8a3d":"#FFC83D");x.stroke();
   if(skin!=="rocket"){x.lineTo(px(t),H-B);x.lineTo(px(0),H-B);x.closePath();x.fillStyle=st==="crash"?"#E5484D33":"#FFC83D26";x.fill();}
   x.font="32px serif";x.textBaseline="middle";x.textAlign="start";
-  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.min(Math.exp(K*t),CAP))-4);
+  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.min(Math.exp(K*t),limit))-4);
   x.textAlign="center";x.font="bold 46px Tahoma";x.fillStyle=st==="crash"?"#ff7b80":"#fff";x.fillText("×"+m.toFixed(2),W/2,H/2-6);
   x.font="14px Tahoma";x.fillStyle="#cfe1f5";x.fillText(st==="crash"?"انفجر!":st==="run"?"اسحب قبل الانفجار":"جاهز",W/2,H/2+34);x.textAlign="start";
 }
-function crStop(){if(raf)cancelAnimationFrame(raf);raf=0;}
-function crLoop(){
-  if(raf)return;
-  const loop=()=>{
-    const c=U&&U.cr;
-    if(!c||!cur||cur.g.id!==c.k||$("gl").hidden){raf=0;return;}
-    const t=(Date.now()-c.t0)/1000,raw=Math.min(Math.exp(K*t),CAP),m=Math.floor(raw*100)/100;
-    if(raw>=c.cp){raf=0;crSettle("crash");return;}
-    if(c.auto>1&&m>=c.auto&&c.auto<c.cp){raf=0;crSettle("auto");return;}
-    drawCr(cur.g.engine,t,m,"run");
-    const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*m);
-    raf=requestAnimationFrame(loop);
-  };
-  raf=requestAnimationFrame(loop);
+function crStop(){
+  if(raf)cancelAnimationFrame(raf);raf=0;
+  if(crPollTimer)clearTimeout(crPollTimer);crPollTimer=0;
 }
+async function crResolve(data,c){
+  if(data.active||!U?.cr||U.cr.roundId!==c.roundId)return false;
+  U.cr=null;U.balance=Number(data.balance??U.balance);
+  const cp=Number(data.crashPoint)||Number(data.multiplier)||1;
+  try{await refreshMe(false);}catch(e){console.warn("crash balance refresh",e);}
+  crStop();busy=false;hold=false;crLock=false;
+  if(data.cashedOut||data.autoSettled){
+    crFinal={k:c.k,cp,m:cp,status:"cash"};render();
+    result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier||0).toFixed(2));
+  }else{
+    crFinal={k:c.k,cp,m:cp,status:"crash"};render();
+    result(0,Number(data.stake||c.bet),"انفجرت الطيارة عند ×"+cp.toFixed(2));
+  }
+  return true;
+}
+function crLoop(){
+  if(!raf){
+    const frame=()=>{
+      const c=U&&U.cr;if(!c){raf=0;return;}
+      const elapsed=Math.max(0,(Date.now()-Number(c.t0))/1000);
+      const multiplier=Math.min(Math.exp(K*elapsed),capOf(cur?.g||{engine:"crash"}));
+      if(cur&&cur.g.id===c.k&&!$("gl").hidden){
+        drawCr(cur.g.engine,elapsed,multiplier,"run",capOf(cur.g));
+        const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
+      }
+      raf=requestAnimationFrame(frame);
+    };
+    raf=requestAnimationFrame(frame);
+  }
+  if(U&&U.cr&&!crPollTimer){
+    const tick=async()=>{
+      const c=U&&U.cr;if(!c){crPollTimer=0;return;}
+      try{
+        const status=await apiCall("crash_status",{roundId:c.roundId},false);
+        if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
+        const multiplier=Number(status.multiplier)||1;
+        const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
+        if(status.autoDue){
+          if(crLock){crPollTimer=setTimeout(tick,100);return;}
+          crLock=true;
+          try{
+            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
+            if(final.active){crPollTimer=setTimeout(tick,120);return;}
+            await crResolve(final,c);
+          }finally{crLock=false;}
+        }else if(status.crashed){
+          c.crashDetectedAt=c.crashDetectedAt||Date.now();
+          const remaining=Math.max(0,850-(Date.now()-c.crashDetectedAt));
+          if(remaining>0){crPollTimer=setTimeout(tick,Math.min(remaining,150));return;}
+          if(crLock){crPollTimer=setTimeout(tick,100);return;}
+          crLock=true;
+          try{
+            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
+            if(final.active){crPollTimer=setTimeout(tick,120);return;}
+            await crResolve(final,c);
+          }finally{crLock=false;}
+        }else{c.crashDetectedAt=0;crPollTimer=setTimeout(tick,250);}
+      }catch(e){
+        if(U?.cr&&U.cr.roundId===c.roundId)crPollTimer=setTimeout(tick,500);
+        else crPollTimer=0;
+      }
+    };
+    tick();
+  }
+}
+
 const crashEng={open(g,b){
   b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="360" height="240"></canvas></div><div class="strip" id="cstrip"></div>'+
     betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
-    rulesBox(tpl(C.texts.ruleCrash,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+    rulesBox(tpl(C.texts.ruleCrash,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   bindBet(b);safeClick($("cgo"),()=>crStart(g));safeClick($("ccash"),()=>crSettle("cash"));
   cur.upd=()=>{
     base();const mine=U.cr&&U.cr.k===g.id;
@@ -776,48 +874,37 @@ const crashEng={open(g,b){
     histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
     $("hist").innerHTML=histHTML(g);
     if(mine){crLoop();}
-    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle");}
+    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle",capOf(g));}
   };
 }};
 ENG.crash=crashEng;ENG.rocket=crashEng;
 async function crStart(g){
-  if(busy||crLock)return;const bet=getBet();lastAction=Date.now();
+  if(busy||crLock||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   let auto=parseFloat(nd($("auto").value));if(!(auto>=1.01))auto=0;
-  const lp=1-scU(),rf=rnd(),r3=rnd();
-  const o=await run(u=>{
-    if(u.cr)throw new Error(C.texts.errBusy);chk(u,bet);stake(u,bet);
-    let cp=genCp(g);if(rf<lp)cp=Math.min(cp,r2(1+r3*0.3));
-    u.cr={k:g.id,bet:bet,cp:cp,t0:Date.now(),auto:auto};return u;});
-  if(o.err)return gmsg(o.err,"er");
-  crFinal=null;gmsg("الجولة بدأت: اسحب قبل الانفجار!");
+  lastAction=Date.now();busy=true;gmsg("جارٍ بدء الجولة على الخادم...");
+  try{
+    const data=await apiCall("active_start",{gameId:g.id,stake:bet,auto,idempotencyKey:crypto.randomUUID()});
+    U.balance=Number(data.balance);
+    U.cr={k:g.id,bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version};
+    crFinal=null;busy=false;render();gmsg("الجولة بدأت: اسحب قبل الانفجار!");crLoop();
+  }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 async function crSettle(mode){
-  if(crLock)return;crLock=true;lastAction=Date.now();
-  const o=await run((u,o)=>{
-    const c=u.cr;if(!c)throw new Error("x");
-    const t=(Date.now()-c.t0)/1000,mt=Math.floor(Math.min(Math.exp(K*t),CAP)*100)/100;let m=0;
-    if(mode==="cash"){if(mt<c.cp)m=mt;}else if(c.auto>1&&c.auto<c.cp)m=c.auto;
-    const win=m>=1?r2(c.bet*m):0;payout(u,c.bet,win,c.k,c.cp);u.cr=null;
-    o.k=c.k;o.cp=c.cp;o.bet=c.bet;o.win=win;o.m=m;return u;});
-  crLock=false;crStop();
-  if(o.err||!o.k)return;
-  crFinal={k:o.k,cp:o.cp};
-  const net=r2(o.win-o.bet);
-  const t=net>0?"🚀 سحبت عند ×"+o.m.toFixed(2)+" • كسبت "+f(net):net<0?"💥 انفجر عند ×"+o.cp.toFixed(2)+" • خسرت "+f(o.bet):C.texts.msgTie;
-  render();
-  if(cur&&cur.g.id===o.k){drawCr(cur.g.engine,Math.log(o.cp)/K,o.cp,"crash");gmsg(t,net>0?"ok":net<0?"er":"");fxBal(net>=0);overlay(net>=0,net>=0?net:-net,t);}else toast(t);
+  if(crLock||!U?.cr)return;
+  crLock=true;lastAction=Date.now();
+  try{
+    const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",mode==="cash"?{roundId:c.roundId,cashClickAt:Date.now()}:{roundId:c.roundId});
+    if(data.active){gmsg("المضاعف ما زال يرتفع. اسحب قبل الانفجار.");return;}
+    await crResolve(data,c);
+  }catch(e){gmsg(e.message||C.texts.errNet,"er");}
+  finally{crLock=false;}
 }
-setInterval(()=>{
-  if(!U||hold||crLock)return;const c=U.cr;if(!c)return;
-  if(cur&&cur.g.id===c.k&&!$("gl").hidden)return;
-  const raw=Math.min(Math.exp(K*(Date.now()-c.t0)/1000),CAP);
-  if(raw>=c.cp)crSettle("crash");else if(c.auto>1&&raw>=c.auto&&c.auto<c.cp)crSettle("auto");
-},700);
 
 /* ======== Spin and Win ======== */
 const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
 const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
-function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,CAP)));}
+function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,capOf(g))));}
 function wheelDraw(g){
   const cv=$("wcv"),x=cv.getContext("2d"),S=cv.width,c=S/2,R=c-6,n=20,a=2*Math.PI/n,V=wv(g);
   x.clearRect(0,0,S,S);
@@ -833,44 +920,97 @@ ENG.wheel={open(g,b){
   wRot=0;
   b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div>'+
     betBox("",'<button class="btn y full" id="wgo">'+C.texts.btnSpinWheel+'</button>')+
-    rulesBox(tpl(C.texts.ruleWheel,{cap:8,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+    rulesBox(tpl(C.texts.ruleWheel,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   wheelDraw(g);bindBet(b);safeClick($("wgo"),()=>wheelSpin(g));
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("wgo").disabled=busy;};
 }};
 async function wheelSpin(g){
-  if(busy)return;const bet=getBet();
-  try{chk(U,bet);}catch(e){return gmsg(e.message,"er");}
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   lastAction=Date.now();busy=true;hold=true;$("wgo").disabled=true;gmsg("العجلة بتلف...");
-  const lp=1-scU(),rf=rnd(),ri=rnd(),V=wv(g);
-  const o=await run((u,o)=>{
-    chk(u,bet);let i=Math.floor(ri*20);
-    if(rf<lp){const L=[];V.forEach((v,k)=>{if(v<1)L.push(k);});if(L.length)i=L[Math.floor(ri*L.length)];}
-    const win=r2(bet*V[i]);stake(u,bet);payout(u,bet,win,g.id,V[i]);o.i=i;o.win=win;return u;});
-  if(o.err){hold=false;busy=false;upd();return gmsg(o.err,"er");}
-  wRot=(Math.floor(wRot/360)+5)*360+(360-(o.i*18+9))+(Math.random()*10-5);
-  $("wrot").style.transform="rotate("+wRot+"deg)";
-  await sleep(4300);
-  hold=false;busy=false;render();result(o.win,bet,"×"+V[o.i]);
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
+    $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
+    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
+
+/* ======== لعبتان توعويتان جديدتان: النرد والورق ======== */
+const DIE_FACE=["⚀","⚁","⚂","⚃","⚄","⚅"];
+let diceChoice="low",cardChoice="red";
+const diceMultiplier=(g,c)=>Math.min(capOf(g),(rtpOf(g)/100)/(c==="seven"?6/36:15/36)).toFixed(2);
+const cardsMultiplier=g=>Math.min(capOf(g),(rtpOf(g)/100)/.5).toFixed(2);
+function chooseDice(v){
+  diceChoice=v;
+  [["dlow","low"],["dseven","seven"],["dhigh","high"]].forEach(([id,val])=>$(id).classList.toggle("on",v===val));
+}
+async function dicePlay(g){
+  if(busy||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;hold=true;lastAction=Date.now();$("droll").disabled=true;
+  const d1=$("d1"),d2=$("d2");d1.classList.add("rolling");d2.classList.add("rolling");
+  const timer=setInterval(()=>{d1.textContent=DIE_FACE[Math.floor(rnd()*6)];d2.textContent=DIE_FACE[Math.floor(rnd()*6)];},75);
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,choice:diceChoice,idempotencyKey:crypto.randomUUID()});
+    await sleep(420);clearInterval(timer);d1.classList.remove("rolling");d2.classList.remove("rolling");
+    const o=data.outcome||{};d1.textContent=DIE_FACE[(Number(o.dice?.[0])||1)-1];d2.textContent=DIE_FACE[(Number(o.dice?.[1])||1)-1];
+    $("dsum").textContent="المجموع: "+(Number(o.sum)||0);
+    busy=false;hold=false;U.balance=Number(data.balance);render();
+    result(Number(data.payout)||0,bet,"مجموع النرد "+o.sum+" • "+(o.won?"توقع صحيح":"التوقع لم يصب"));
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){clearInterval(timer);d1.classList.remove("rolling");d2.classList.remove("rolling");busy=false;hold=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+ENG.dice={open(g,b){
+  b.innerHTML='<div class="gc"><div class="dicearena"><div class="diceface" id="d1">⚀</div><div class="diceface" id="d2">⚅</div></div><div class="sm2" id="dsum" style="text-align:center">اختار توقعك ثم ارمي النرد</div></div>'+
+    '<div class="gc"><div class="sec">توقع مجموع حجرَي النرد</div><div class="two"><button class="btn on" id="dlow"><span>2 إلى 6</span><small class="pickmeta">×'+diceMultiplier(g,"low")+'</small></button><button class="btn" id="dseven"><span>7 بالضبط</span><small class="pickmeta">×'+diceMultiplier(g,"seven")+'</small></button><button class="btn" id="dhigh"><span>8 إلى 12</span><small class="pickmeta">×'+diceMultiplier(g,"high")+'</small></button></div></div>'+
+    betBox("",'<button class="btn y full" id="droll">🎲 ارمي النرد</button>')+
+    rulesBox(tpl(C.texts.ruleDice,{cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
+  bindBet(b);$("dlow").onclick=()=>chooseDice("low");$("dseven").onclick=()=>chooseDice("seven");$("dhigh").onclick=()=>chooseDice("high");chooseDice("low");
+  safeClick($("droll"),()=>dicePlay(g));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("droll").disabled=busy;};
+}};
+function chooseCard(v){
+  cardChoice=v;$("cred").classList.toggle("on",v==="red");$("cblack").classList.toggle("on",v==="black");
+}
+async function cardPlay(g){
+  if(busy||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;hold=true;lastAction=Date.now();$("cardface").classList.add("flipping");$("cgo").disabled=true;
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,choice:cardChoice,idempotencyKey:crypto.randomUUID()});
+    await sleep(450);
+    const o=data.outcome||{},rank=Number(o.rank)||1,rankLabel=rank===1?"A":rank===11?"J":rank===12?"Q":rank===13?"K":String(rank);
+    $("crank").textContent=rankLabel;$("csuit").textContent=o.suit||"♠";$("cardface").className="playingcard reveal "+(o.red?"red":"black");
+    busy=false;hold=false;U.balance=Number(data.balance);render();
+    result(Number(data.payout)||0,bet,"الورقة: "+rankLabel+(o.suit||"")+(o.won?" • اللون صحيح":" • اللون مختلف"));
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){$("cardface").classList.remove("flipping");busy=false;hold=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+ENG.cards={open(g,b){
+  b.innerHTML='<div class="gc"><div class="cardarena"><div class="playingcard" id="cardface"><span id="crank">؟</span><b id="csuit">🂠</b><small>ركن الغرب</small></div></div><div class="two"><button class="btn on" id="cred"><span>♥ أحمر</span><small class="pickmeta">50% • ×'+cardsMultiplier(g)+'</small></button><button class="btn" id="cblack"><span>♠ أسود</span><small class="pickmeta">50% • ×'+cardsMultiplier(g)+'</small></button></div></div>'+
+    betBox("",'<button class="btn y full" id="cgo">🃏 اكشف الورقة</button>')+
+    rulesBox(tpl(C.texts.ruleCards,{cap:capOf(g),rtp:rtpOf(g)}),g)+histBox;
+  bindBet(b);$("cred").onclick=()=>chooseCard("red");$("cblack").onclick=()=>chooseCard("black");chooseCard("red");
+  safeClick($("cgo"),()=>cardPlay(g));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("cgo").disabled=busy;};
+}};
 
 /* ======== Plinko (بديل Nour's Casino، حركة واحدة فقط) ======== */
 const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[16,5,2,1.1,.4,1.1,2,5,16];
 function plMults(g){
   let exp=0;for(let k=0;k<9;k++)exp+=(PL_COEF[k]/256)*PL_RAW[k];
   const scale=(rtpOf(g)/100)/exp;
-  return PL_RAW.map(v=>r2(Math.min(v*scale,CAP)));
+  return PL_RAW.map(v=>r2(Math.min(v*scale,capOf(g))));
 }
 function resetBall(){
   const ball=$("plball");if(!ball)return;
-  ball.style.transition="none";ball.style.left="50%";ball.style.top="2%";
-  void ball.offsetWidth;
-  ball.style.transition="top .16s ease-in,left .16s ease-in";
+  ball.style.left="50%";ball.style.top="2%";ball.style.transform="translate(-50%,-50%)";
 }
 ENG.plinko={open(g,b){
   const M=plMults(g);
   b.innerHTML='<div class="gc"><div class="plbd" id="plbd"><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+m+'</div>').join("")+'</div></div>'+
     betBox("",'<button class="btn y full" id="pldrop">'+C.texts.btnDrop+'</button>')+
-    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}))+histBox;
+    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}),g)+histBox;
   bindBet(b);
   const bd=$("plbd");
   for(let r=0;r<PL_ROWS;r++)for(let c=0;c<=r;c++){
@@ -882,57 +1022,82 @@ ENG.plinko={open(g,b){
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("pldrop").disabled=busy;};
 }};
 async function plDrop(g,M){
-  if(busy)return;const bet=getBet();
-  try{chk(U,bet);}catch(e){return gmsg(e.message,"er");}
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   lastAction=Date.now();busy=true;hold=true;plAnimating=true;$("pldrop").disabled=true;
   document.querySelectorAll(".plbk").forEach(x=>x.classList.remove("hit"));
   resetBall();gmsg("...");
-  const lp=1-scU(),rf=rnd();
-  const pr=run((u,o)=>{
-    chk(u,bet);
-    let k;
-    if(rf<lp){const L=[];M.forEach((m,i)=>{if(m<1)L.push(i);});k=L.length?L[Math.floor(rnd()*L.length)]:4;}
-    else{let x=0;for(let i=0;i<PL_ROWS;i++)x+=rnd()<0.5?0:1;k=x;}
-    const win=r2(bet*M[k]);stake(u,bet);payout(u,bet,win,g.id,M[k]);o.k=k;o.win=win;return u;});
-  const res=await Promise.all([pr,sleep(350)]);const o=res[0];
-  if(o.err){plAnimating=false;hold=false;busy=false;upd();return gmsg(o.err,"er");}
-  await plAnimate(o.k);
-  document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",+x.dataset.i===o.k));
-  await sleep(250);
-  plAnimating=false;hold=false;busy=false;render();result(o.win,bet,"×"+M[o.k]);
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()}),o=data.outcome;
+    await plAnimate(Number(o.bucket)||0,o.path);
+    document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",Number(x.dataset.i)===Number(o.bucket)));
+    await sleep(250);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);
+    render();result(Number(data.payout),bet,"×"+multText(o.multiplier));
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){plAnimating=false;hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
-function plAnimate(targetK){
-  return new Promise(res=>{
-    const ball=$("plball");if(!ball){res();return;}
-    let x=50,pos=0;
-    const targetX=50+(targetK-4)*(80/PL_ROWS);
-    const iv=setInterval(()=>{
-      if(pos>=PL_ROWS){clearInterval(iv);res();return;}
-      const dir=(x<targetX)?1:(x>targetX?-1:(rnd()<0.5?-1:1));
-      const jitter=pos<PL_ROWS-2?(rnd()<0.35?-1:(rnd()<0.7?1:0)):0;
-      x+=(dir+jitter*0.4)*(80/PL_ROWS)/2;
-      ball.style.left=Math.max(6,Math.min(94,x))+"%";
-      ball.style.top=(12+(pos+1)*9)+"%";
-      pos++;
-    },150);
+
+function plAnimate(targetK,path){
+  return new Promise(resolve=>{
+    const ball=$("plball");if(!ball){resolve();return;}
+    let bits=Array.isArray(path)&&path.length===8?path.map(v=>Number(v)?1:0):null;
+    if(!bits){bits=Array(8).fill(0);for(let i=0;i<Math.max(0,Math.min(8,targetK));i++)bits[i]=1;bits.sort(()=>rnd()-.5);}
+    const points=[{x:50,y:2},{x:50,y:12}];let bucket=0;
+    for(let i=0;i<8;i++){bucket+=bits[i];points.push({x:50+(bucket-(i+1)/2)*10,y:21+i*9});}
+    const started=performance.now(),stepMs=225,total=points.length-1;
+    function frame(now){
+      const elapsed=Math.min(total,(now-started)/stepMs),seg=Math.min(total-1,Math.floor(elapsed)),u=Math.min(1,elapsed-seg);
+      const a=points[seg],b=points[seg+1],ease=u*u*(3-2*u),bounce=Math.sin(Math.PI*u)*(seg===0?1.1:2.5);
+      ball.style.left=(a.x+(b.x-a.x)*ease)+"%";ball.style.top=(a.y+(b.y-a.y)*ease-bounce)+"%";
+      ball.style.transform="translate(-50%,-50%) rotate("+Math.round(elapsed*180)+"deg)";
+      if(elapsed<total)requestAnimationFrame(frame);
+      else{ball.style.left=points[points.length-1].x+"%";ball.style.top=points[points.length-1].y+"%";ball.style.transform="translate(-50%,-50%) rotate(1440deg)";resolve();}
+    }
+    requestAnimationFrame(frame);
   });
 }
 
-/* ---------- الحسابات ---------- */
-function attach(n,h){
-  name=n;ref=DB.ref("users/"+n);
-  ref.on("value",s=>{
-    const u=s.val();
-    if(!u||u.pw!==h){logout("سجّل دخول من جديد");return;}
-    if(u.closed){logout(C.texts.closedMsg);return;}
-    U=u;
-    if(hold||plAnimating)return;
-    showApp();render();
-  });
+/* ---------- الحسابات والاتصال الآمن بالخادم ---------- */
+function mapAccount(data){
+  const a=data.user||{},w=data.wallet||{},active=data.active||null;
+  return {
+    id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
+    scale:Number(a.scale)||100,gameCaps:a.gameCaps||{},balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
+    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,
+    hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:x.i})),
+    ap:active&&active.gameId==="apple"?{k:active.gameId,bet:Number(active.stake),level:Number(active.level)||0,picks:active.picks||[],safeN:active.safeN||4,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
+    cr:active&&(active.gameId==="crash"||active.gameId==="rocket")?{k:active.gameId,bet:Number(active.stake),t0:Number(active.startedAt),auto:Number(active.auto)||0,roundId:active.id,version:active.version}:null,
+    creditRequest:null
+  };
 }
-function logout(t){
-  if(ref)ref.off();if(chatRef)chatRef.off();ref=null;name=null;hold=false;busy=false;chatOn=false;
-  localStorage.removeItem(SESS);show("home");showAuth(t);
+let myCreditRequests=[],dismissedCreditRequestId="";
+async function refreshMe(shouldRender=true){
+  if(!name)return null;
+  const data=await apiCall("me",{},false);
+  csrfToken=data.csrfToken||csrfToken;
+  U=mapAccount(data);
+  if(shouldRender&&!hold&&!plAnimating)render();
+  if(U.cr&&cur&&cur.g.id===U.cr.k)crLoop();
+  return U;
+}
+async function loadPublicConfig(){
+  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();if(U)render();}
+  catch(e){console.warn("site config unavailable",e);}
+}
+function attach(n){
+  name=n;ref=true;
+  refreshMe(false).then(async()=>{
+    showApp();render();
+    await loadMyCreditRequests().catch(()=>{});
+    if(U.cr)crLoop();
+  }).catch(e=>logout(e.message||"سجّل دخول من جديد"));
+}
+async function logout(t){
+  if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=0;crStop();
+  try{if(csrfToken)await apiCall("logout",{});}catch(e){console.warn("logout",e);}
+  ref=null;name=null;U=null;csrfToken="";myCreditRequests=[];
+  hold=false;busy=false;chatOn=false;
+  localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+  show("home");showAuth(t);
 }
 function setAuth(m){
   authMode=m;$("p2").hidden=m!=="reg";
@@ -942,31 +1107,18 @@ function setAuth(m){
 async function auth(){
   const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
   if(!/^[a-z0-9_]{3,20}$/.test(n))return err("اسم المستخدم من 3 إلى 20 حرف إنجليزي أو أرقام أو _ بدون مسافات");
-  if(p.length<6)return err("كلمة السر 6 أحرف على الأقل");
-  if(reg){
-    if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");
-    if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");
-  }
-  err("...");
+  if(reg&&p.length<10)return err("كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل");
+  if(!reg&&p.length<1)return err("اكتب كلمة السر");
+  if(reg){if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");}
+  err("جارٍ التحقق...");$("agb").disabled=true;
   try{
-    const h=await hash(n,p),r=DB.ref("users/"+n),snap=await r.get();
-    if(reg){
-      if(!C.settings.registration)return err(C.texts.regClosed);
-      if(snap.exists())return err("اسم المستخدم مستخدم، اختار اسم تاني");
-      let id;try{id=await newId(n);}catch(e){return err("حصلت مشكلة، جرّب تاني");}
-      const s0=C.settings.newZero?0:Number(C.settings.initial);
-      await r.set({id:id,pw:h,balance:s0,regBonus:s0,rounds:0,wins:0,losses:0,wagered:0,returned:0,closed:false,created:Date.now(),last:0});
-    }else{
-      const u=snap.val();
-      if(!u||u.pw!==h)return err("اسم المستخدم أو كلمة السر غلط");
-      if(u.closed)return err(C.texts.closedMsg);
-    }
-    err("");$("p").value="";$("p2").value="";
-    localStorage.setItem(SESS,JSON.stringify({n:n,h:h}));
-    show("home");attach(n,h);
-  }catch(e){err(C.texts.errNet);}
+    const data=await authCall(reg?"register":"login",{username:n,password:p});
+    csrfToken=data.csrfToken||"";$("p").value="";$("p2").value="";
+    localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+    err("");attach(n);
+  }catch(e){err(e.message||C.texts.errNet);}
+  finally{$("agb").disabled=false;}
 }
-
 $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
 $("agb").onclick=auth;
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
@@ -975,18 +1127,13 @@ $("mout").onclick=()=>logout();
 $("pgback").onclick=()=>show("more");
 $("q").oninput=renderHome;
 $("banbtn").onclick=()=>{const g=games().filter(gOn)[0];if(g)openGame(g.id);};
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{
-  const v=b.dataset.v;
-  if(v==="games"){show("home");setTimeout(()=>$("alltop").scrollIntoView({behavior:"smooth"}),60);}else show(v);
-});
-DB.ref("config").on("value",s=>{
-  merge(s.val());
-  applyCfg();if(U&&!hold)render();
-});
-setAuth("login");applyCfg();
-try{
-  const sv=JSON.parse(localStorage.getItem(SESS));
-  if(sv&&sv.n&&sv.h)attach(sv.n,sv.h);else showAuth();
-}catch(e){showAuth();}
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{const v=b.dataset.v;if(v==="games"){show("home");setTimeout(()=>$("alltop").scrollIntoView({behavior:"smooth"}),60);}else show(v);});
+setAuth("login");applyCfg();loadPublicConfig();
+(async()=>{
+  try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;attach(name);}
+  catch(e){showAuth();}
+})();
+setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden"){refreshMe(true).catch(()=>{});loadMyCreditRequests().catch(()=>{});}},12000);
+
 </script></body></html>
 <!-- END -->
