@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
-const COOKIE = "rw_session";
+const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const PBKDF2_ROUNDS = 600_000;
 const enc = new TextEncoder();
@@ -18,8 +18,11 @@ function reply(data: Obj, status = 200, extra: Record<string,string> = {}) {
 function dbClient() {
   const url = Deno.env.get("SUPABASE_URL");
   const secrets = Deno.env.get("SUPABASE_SECRET_KEYS");
-  const key = secrets ? JSON.parse(secrets).default : Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  if (!url || !key) throw new Error("server_not_configured");
+  // Prefer the legacy JWT service key here: supabase-js sends its key as
+  // Authorization: Bearer, while the newer opaque secret key must be sent
+  // only as apikey unless using @supabase/server.
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!url || !key) throw new Error("legacy_service_key_missing");
   return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
 }
 function randomToken(size = 32) {
@@ -32,8 +35,7 @@ async function hashHex(value: string) {
 }
 async function secretHash(value: string) {
   const explicitPepper = Deno.env.get("SESSION_PEPPER");
-  let platformPepper = "";
-  try { platformPepper = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}").default ?? ""; } catch { platformPepper = ""; }
+  const platformPepper = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
   const pepper = explicitPepper && explicitPepper.length >= 32 ? explicitPepper : platformPepper;
   if (!pepper || pepper.length < 32) throw new Error("server_pepper_missing");
   return hashHex(pepper + ":" + value);
@@ -49,7 +51,7 @@ function getCookie(req: Request) {
   return null;
 }
 function cookie(value: string,maxAge: number) {
-  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=None; Secure; Partitioned; Max-Age="+maxAge;
+  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=None; Partitioned; Max-Age="+maxAge;
 }
 async function bodyOf(req: Request): Promise<Obj> {
   const n=Number(req.headers.get("content-length") ?? 0); if(n>12000) throw new Error("too_large");
