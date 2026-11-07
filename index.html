@@ -918,7 +918,7 @@ async function slotSpin(g,scale){
   lastAction=Date.now();busy=true;hold=true;$("spin").disabled=true;
   const rs=[0,1,2].map(i=>$("r"+i));
   const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[secureClientSymbol()][0];},90));
-  rs.forEach(r=>r.classList.add("spin"));gmsg("جارٍ تنفيذ الجولة بأمان...");
+  rs.forEach(r=>{r.classList.remove("reel-stop");r.classList.add("spin");});gmsg("جارٍ تنفيذ الجولة بأمان...");
   try{
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
     const symbols=data.outcome.symbols||[0,0,0];
