@@ -897,8 +897,7 @@ function slotPayoutOf(g,a,b,c,scale){
 function pickSym(){const r=rnd();let a=0;for(let i=0;i<6;i++){a+=SYM[i][1];if(r<a)return i;}return 5;}
 ENG.slot={open(g,b){
   const scale=slotExact(g);
-  const pt=SYM.map((s,i)=>'<div class="row2"><span>'+s[0]+s[0]+s[0]+'</span><b>×'+slotPayoutOf(g,i,i,i,scale)+'</b></div>').join("")+'<div class="row2"><span>رمزين متشابهين (أي مكان)</span><b>×'+slotPayoutOf(g,0,0,1,scale)+'</b></div>';
-  b.innerHTML='<div class="gc"><div class="reels"><div class="reel" id="r0">🤠</div><div class="reel" id="r1">🐴</div><div class="reel" id="r2">🔫</div></div></div>'+
+  const pt=SYM.map((s,i)=>'<div class="row2"><span>'+s[0]+s[0]+s[0]+'</span><b>×'+slotPayoutOf(g,i,i,i,scale)+'</b></div>').join("")+'<div class="row2"><span>رمزين متشابهين (أي مكان)</span><b>×'+slotPayoutOf(g,0,0,1,scale)+'</b></div>';  b.innerHTML='<div class="gc"><div class="reels"><div class="reel" id="r0">🤠</div><div class="reel" id="r1">🐴</div><div class="reel" id="r2">🔫</div></div></div>'+
     betBox("",'<button class="btn y full" id="spin">'+C.texts.btnSpinSlot+'</button>')+
     rulesBox(tpl(C.texts.ruleSlot,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+
     '<div class="gd"><b>💎 جدول الجوائز</b>'+pt+'</div>'+histBox;
@@ -998,3 +997,297 @@ async function apPick(g,c){
     if(data.lost){apLast={row:data.row,col:data.cell,picks:data.picks,hazards:data.hazards,safeN:a.safeN,bet:a.bet};U.ap=null;await refreshMe(false);render();result(0,a.bet);}
     else if(data.won){apLast=null;U.ap=null;await refreshMe(false);render();result(Number(data.payout),a.bet);}
     else{U.ap={k:g.id,roundId:data.active.id,bet:a.bet,level:data.active.level,picks:data.active.picks,safeN:data.active.safeN,hazards:data.active.revealedHazards||[],version:data.active.version};render();gmsg("✓ اختيار آمن. اختار الصف التالي أو اسحب رصيدك.","ok");}
+  }catch(e){hold=false;busy=false;await refreshMe(false).catch(()=>{});render();gmsg(e.message||C.texts.errNet,"er");}
+}
+async function apCash(g){
+  if(busy||!U?.ap)return;busy=true;lastAction=Date.now();
+  try{
+    const a=U.ap,data=await apiCall("apple_cash",{roundId:a.roundId});
+    U.balance=Number(data.balance);U.ap=null;apLast=null;busy=false;await refreshMe(false);render();result(Number(data.payout),a.bet);
+  }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
+}
+
+/* ======== Crash / Red Rocket ======== */
+const K=0.35;
+const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
+function genCp(g){
+  const r=rnd();
+  let c=Math.floor((rtpOf(g)/100)/(1-r)*100)/100;
+  if(c<1)c=1;if(c>CAP)c=CAP;
+  return c;
+}
+function drawRocket(ctx,x,y,angle,phase){
+  ctx.save();ctx.translate(x,y);ctx.rotate(angle);
+  const flicker=8+Math.sin(phase*19)*3+Math.cos(phase*11)*2;
+  const flame=ctx.createLinearGradient(0,17,0,17+flicker);
+  flame.addColorStop(0,"#fff4c4");flame.addColorStop(.35,"#ffb347");flame.addColorStop(1,"#ff4b42");
+  ctx.beginPath();ctx.moveTo(-6,15);ctx.quadraticCurveTo(0,20+flicker,6,15);ctx.lineTo(0,34+flicker);ctx.closePath();ctx.fillStyle=flame;ctx.shadowColor="#ff8a3d";ctx.shadowBlur=16;ctx.fill();ctx.shadowBlur=0;
+  ctx.beginPath();ctx.moveTo(0,-25);ctx.bezierCurveTo(11,-16,11,2,7,16);ctx.lineTo(-7,16);ctx.bezierCurveTo(-11,2,-11,-16,0,-25);ctx.closePath();
+  const body=ctx.createLinearGradient(-10,0,10,0);body.addColorStop(0,"#b9c8d9");body.addColorStop(.45,"#fffdf4");body.addColorStop(1,"#8da2b9");ctx.fillStyle=body;ctx.strokeStyle="#536b84";ctx.lineWidth=1.4;ctx.fill();ctx.stroke();
+  ctx.beginPath();ctx.moveTo(0,-30);ctx.lineTo(7,-16);ctx.lineTo(-7,-16);ctx.closePath();ctx.fillStyle="#e45b53";ctx.fill();
+  ctx.beginPath();ctx.moveTo(-7,5);ctx.lineTo(-17,18);ctx.lineTo(-7,15);ctx.closePath();ctx.fillStyle="#e45b53";ctx.fill();
+  ctx.beginPath();ctx.moveTo(7,5);ctx.lineTo(17,18);ctx.lineTo(7,15);ctx.closePath();ctx.fillStyle="#e45b53";ctx.fill();
+  ctx.beginPath();ctx.arc(0,-5,4.6,0,Math.PI*2);ctx.fillStyle="#3b84b8";ctx.fill();ctx.strokeStyle="#e8f7ff";ctx.lineWidth=1.5;ctx.stroke();
+  ctx.restore();
+}
+function drawCr(skin,t,m,st){
+  const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,H=cv.height;
+  x.clearRect(0,0,W,H);
+  const sky=x.createLinearGradient(0,0,0,H);
+  if(skin==="rocket"){sky.addColorStop(0,"#07182d");sky.addColorStop(.55,"#102b49");sky.addColorStop(1,"#241d36");}
+  else{sky.addColorStop(0,"#091b31");sky.addColorStop(1,"#0c3551");}
+  x.fillStyle=sky;x.fillRect(0,0,W,H);
+  if(skin==="rocket"){
+    x.fillStyle="#ffffffa8";
+    STARS.forEach((s,i)=>{const sx=((s[0]*W-(t*12*(i%3+1)))%W+W)%W,sy=(s[1]*H+t*3)%H;x.globalAlpha=.35+(i%5)*.12;x.beginPath();x.arc(sx,sy,s[2],0,Math.PI*2);x.fill();});x.globalAlpha=1;
+  }
+  x.strokeStyle="#ffffff12";x.lineWidth=1;
+  for(let i=1;i<6;i++){x.beginPath();x.moveTo(0,H*i/6);x.lineTo(W,H*i/6);x.stroke();}
+  for(let i=1;i<8;i++){x.beginPath();x.moveTo(W*i/8,0);x.lineTo(W*i/8,H);x.stroke();}
+  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,CAP)*1.25),L=24,B=25;
+  const px=a=>L+(a/tx)*(W-2*L),py=a=>H-B-((a-1)/(my-1))*(H-B-42);
+  x.beginPath();x.moveTo(px(0),py(1));
+  for(let i=1;i<=90;i++){const a=t*i/90;x.lineTo(px(a),py(Math.min(Math.exp(K*a),CAP)));}
+  x.lineWidth=skin==="rocket"?4.5:4;x.lineCap="round";x.lineJoin="round";
+  x.shadowColor=st==="crash"?"#ff6b72":skin==="rocket"?"#ff9e56":"#66c5ff";x.shadowBlur=13;
+  x.strokeStyle=st==="crash"?"#ff737b":skin==="rocket"?"#ffad63":"#72caff";x.stroke();x.shadowBlur=0;
+  x.lineTo(px(t),H-B);x.lineTo(px(0),H-B);x.closePath();
+  const area=x.createLinearGradient(0,py(Math.min(m,CAP)),0,H-B);area.addColorStop(0,skin==="rocket"?"#ffad632d":"#72caff27");area.addColorStop(1,"#72caff00");x.fillStyle=area;x.fill();
+  const currentY=py(Math.min(m,CAP)),currentX=px(t);
+  if(skin==="rocket"&&st!=="crash")drawRocket(x,currentX,Math.min(currentY,H-58),.52+Math.sin(t*2)*.035,t);
+  else if(st!=="crash"){
+    x.beginPath();x.arc(currentX,currentY,8,0,Math.PI*2);x.fillStyle="#e7f8ff";x.shadowColor="#74d0ff";x.shadowBlur=20;x.fill();x.shadowBlur=0;
+    x.beginPath();x.arc(currentX,currentY,3,0,Math.PI*2);x.fillStyle="#1677d2";x.fill();
+  }else{
+    x.beginPath();x.arc(currentX,currentY,10,0,Math.PI*2);x.fillStyle="#ff737b";x.shadowColor="#ff525b";x.shadowBlur=20;x.fill();x.shadowBlur=0;
+  }
+  x.textAlign="center";x.textBaseline="middle";x.font="800 45px Tahoma";x.fillStyle=st==="crash"?"#ff9ba0":"#ffffff";x.shadowColor="#0009";x.shadowBlur=8;x.fillText("×"+Number(m).toFixed(2),W/2,H/2-5);x.shadowBlur=0;
+  x.font="bold 15px Tahoma";x.fillStyle="#d3e4f4";x.fillText(st==="crash"?"انتهت الجولة":st==="run"?"اسحب قبل الانفجار":st==="cash"?"تم السحب بنجاح":"جاهز للجولة",W/2,H/2+34);
+  x.textAlign="start";
+}
+function crStop(){if(raf)cancelAnimationFrame(raf);raf=0;if(crPollTimer)clearTimeout(crPollTimer);crPollTimer=0;}
+function crLoop(){
+  if(crPollTimer||!U?.cr)return;
+  const tick=async()=>{
+    if(!U?.cr){crStop();return;}
+    const c=U.cr,visible=!!(cur&&cur.g.id===c.k&&!$("gl").hidden);
+    try{
+      const data=await apiCall("crash_tick",{roundId:c.roundId},false);
+      if(data.active){if(visible){drawCr(c.k,data.elapsed,data.multiplier,"run");const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*data.multiplier);}crPollTimer=setTimeout(tick,500);}
+      else{
+        crPollTimer=0;crFinal={k:c.k,cp:Number(data.crashPoint)||Number(data.multiplier)||1,m:Number(data.multiplier)||0,status:data.cashedOut||data.autoSettled?"cash":"crash"};U.cr=null;busy=false;hold=false;
+        await refreshMe(false);if(visible)render();else toast(data.autoSettled?"تم السحب التلقائي":"انتهت جولة الكراش");
+        const net=r2(Number(data.payout||0)-Number(data.stake||c.bet));
+        if(visible){const message=data.autoSettled?"تم السحب التلقائي عند ×"+Number(data.multiplier).toFixed(2):data.cashedOut?"تم السحب عند ×"+Number(data.multiplier).toFixed(2):"انفجر الصاروخ عند ×"+Number(data.crashPoint||1).toFixed(2);gmsg(message,net>0?"ok":net<0?"er":"");}
+        fxBal(net>=0);
+      }
+    }catch(e){crPollTimer=setTimeout(tick,1200);}
+  };
+  tick();
+}
+const crashEng={open(g,b){
+  b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="600" height="400"></canvas></div><div class="strip" id="cstrip"></div>'+
+    betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
+    rulesBox(tpl(C.texts.ruleCrash,{cap:CAP,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+  bindBet(b);safeClick($("cgo"),()=>crStart(g));safeClick($("ccash"),()=>crSettle("cash"));
+  cur.upd=()=>{
+    base();const mine=U.cr&&U.cr.k===g.id;
+    $("cgo").disabled=!!U.cr;$("ccash").disabled=!mine;if(!mine)$("ccash").textContent=C.texts.btnCash;
+    const S=$("cstrip");S.innerHTML="";
+    histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
+    $("hist").innerHTML=histHTML(g);
+    if(mine){crLoop();}
+    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?(crFinal.status||"crash"):"idle");}
+  };
+}};
+ENG.crash=crashEng;ENG.rocket=crashEng;
+async function crStart(g){
+  if(busy||crLock||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  let auto=parseFloat(nd($("auto").value));if(!(auto>=1.01))auto=0;
+  lastAction=Date.now();busy=true;gmsg("جارٍ بدء الجولة على الخادم...");
+  try{
+    const data=await apiCall("active_start",{gameId:g.id,stake:bet,auto: auto,idempotencyKey:crypto.randomUUID()});
+    U.balance=Number(data.balance);U.cr={k:g.id,bet:bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version};
+    crFinal=null;busy=false;render();gmsg("الجولة بدأت: اسحب قبل الانفجار!");crLoop();
+  }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
+}
+async function crSettle(mode){
+  if(crLock||!U?.cr)return;crLock=true;lastAction=Date.now();
+  try{
+    const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",{roundId:c.roundId});
+    crLock=false;
+    if(data.active){gmsg("استمر المضاعف في الارتفاع. اسحب قبل الانفجار.");return;}
+    crStop();U.cr=null;busy=false;hold=false;crFinal={k:c.k,cp:Number(data.crashPoint)||Number(data.multiplier)||1,m:Number(data.multiplier)||0,status:data.cashedOut||data.autoSettled?"cash":"crash"};
+    await refreshMe(false);render();
+    const payout=Number(data.payout)||0,net=r2(payout-Number(data.stake||c.bet));
+    const msg=data.cashedOut?"تم السحب عند ×"+Number(data.multiplier).toFixed(2):data.autoSettled?"تم السحب التلقائي":"انفجر الصاروخ عند ×"+Number(data.crashPoint||1).toFixed(2);
+    gmsg(msg,net>0?"ok":net<0?"er":"");fxBal(net>=0);
+  }catch(e){crLock=false;gmsg(e.message||C.texts.errNet,"er");}
+}
+setInterval(()=>{if(U?.cr&&!crPollTimer&&!crLock&&!(cur&&cur.g.id===U.cr.k&&!$("gl").hidden))crLoop();},700);
+
+/* ======== Spin and Win ======== */
+const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
+const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
+function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,CAP)));}
+function wheelDraw(g){
+  const cv=$("wcv"),x=cv.getContext("2d"),S=cv.width,c=S/2,R=c-6,n=20,a=2*Math.PI/n,V=wv(g);
+  x.clearRect(0,0,S,S);
+  for(let i=0;i<n;i++){
+    x.beginPath();x.moveTo(c,c);x.arc(c,c,R,-Math.PI/2+i*a,-Math.PI/2+(i+1)*a);x.closePath();
+    x.fillStyle=WC[WH[i]]||"#245A91";x.fill();x.strokeStyle="#0b1623";x.lineWidth=2;x.stroke();
+    x.save();x.translate(c,c);x.rotate(-Math.PI/2+(i+.5)*a);x.fillStyle="#fff";x.font="bold 14px Tahoma";x.textAlign="right";x.textBaseline="middle";
+    x.fillText(V[i]?"×"+V[i]:"0",R-12,0);x.restore();
+  }
+  x.beginPath();x.arc(c,c,26,0,7);x.fillStyle="#0B1E3A";x.fill();x.lineWidth=4;x.strokeStyle="#FFC83D";x.stroke();
+}
+ENG.wheel={open(g,b){
+  wRot=0;
+  b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div>'+
+    betBox("",'<button class="btn y full" id="wgo">'+C.texts.btnSpinWheel+'</button>')+
+    rulesBox(tpl(C.texts.ruleWheel,{cap:8,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
+  wheelDraw(g);bindBet(b);safeClick($("wgo"),()=>wheelSpin(g));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("wgo").disabled=busy;};
+}};
+async function wheelSpin(g){
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  lastAction=Date.now();busy=true;hold=true;$("wgo").disabled=true;gmsg("العجلة بتلف...");
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
+    $("wrot").style.transform="rotate("+wRot+"deg)";await sleep(900);
+    U.balance=Number(data.balance);hold=false;busy=false;await refreshMe(false);render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));
+  }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+
+/* ======== Plinko ======== */
+const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[6.21,3.5,2.5,1.5,.45,.35,.2,.1,.05];
+const multText=n=>Number(n).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:4});
+function plMults(g){
+  const scale=rtpOf(g)/96;
+  return PL_RAW.map(v=>Math.min(v*scale,CAP));
+}
+function resetBall(){
+  const ball=$("plball");if(!ball)return;
+  ball.style.transition="none";ball.style.left="50%";ball.style.top="3%";
+  void ball.offsetWidth;
+  ball.style.transition="left .17s cubic-bezier(.2,.7,.2,1),top .17s cubic-bezier(.2,.7,.2,1)";
+}
+function makePlinkoPath(targetK){
+  const path=Array(targetK).fill(1).concat(Array(PL_ROWS-targetK).fill(0));
+  for(let i=path.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[path[i],path[j]]=[path[j],path[i]];}
+  return path;
+}
+ENG.plinko={open(g,b){
+  const M=plMults(g);
+  b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="plbd" id="plbd"><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+multText(m)+'</div>').join("")+'</div></div>'+
+    betBox("",'<button class="btn y full" id="pldrop">'+C.texts.btnDrop+'</button>')+
+    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}))+histBox;
+  bindBet(b);
+  const bd=$("plbd");
+  for(let r=0;r<PL_ROWS;r++)for(let c=0;c<=r;c++){
+    const px=50+(2*c-r)*(100/(2*(PL_ROWS+1)));
+    const p=el("div","plpeg");p.style.left=px+"%";p.style.top=(10+r*9.6)+"%";bd.appendChild(p);
+  }
+  resetBall();safeClick($("pldrop"),()=>plDrop(g,M));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("pldrop").disabled=busy;};
+}};
+async function plDrop(g,M){
+  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  lastAction=Date.now();busy=true;hold=true;plAnimating=true;$("pldrop").disabled=true;
+  document.querySelectorAll(".plbk").forEach(x=>x.classList.remove("hit"));resetBall();gmsg("الكرة بدأت النزول...");
+  try{
+    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()}),o=data.outcome;
+    await plAnimate(o.path||[]);document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",Number(x.dataset.i)===Number(o.bucket)));
+    await sleep(300);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);await refreshMe(false);render();result(Number(data.payout),bet,"×"+multText(o.multiplier));
+  }catch(e){plAnimating=false;hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+}
+function plAnimate(path){
+  return new Promise(res=>{
+    const ball=$("plball");if(!ball){res();return;}
+    const step=100/(PL_ROWS+1)/2;
+    let x=50,pos=0;
+    const tick=()=>{
+      if(pos>=PL_ROWS){ball.style.left=x+"%";ball.style.top="91%";setTimeout(res,220);return;}
+      x+=(path[pos]?1:-1)*step;pos++;
+      ball.style.left=x+"%";ball.style.top=(10+pos*9.6)+"%";
+      setTimeout(tick,175);
+    };
+    tick();
+  });
+}
+
+/* ---------- الحسابات والاتصال الآمن بالخادم ---------- */
+function mapAccount(data){
+  const a=data.user||{},w=data.wallet||{};
+  const bets={};(data.sportsBets||[]).forEach(b=>{bets[b.id]={id:b.id,matchId:b.match_id,matchTitle:b.matchTitle,team1:b.team1,team2:b.team2,marketId:b.market_id,marketTitle:b.marketTitle,optionId:b.option_id,optionLabel:b.optionLabel,stake:Number(b.stake),odds:Number(b.odds),status:b.status,payout:Number(b.payout),createdAt:new Date(b.created_at).getTime()};});
+  const active=data.active||null;
+  return {
+    id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
+    scale:Number(a.scale)||100,balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
+    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,
+    hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:x.i})),sportsBets:bets,
+    ap:active&&active.gameId==="apple"?{k:active.gameId,bet:active.stake,level:active.level,picks:active.picks||[],safeN:active.safeN,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
+    cr:active&&(active.gameId==="crash"||active.gameId==="rocket")?{k:active.gameId,bet:active.stake,t0:active.startedAt,auto:active.auto,roundId:active.id,version:active.version}:null,
+    creditRequest:null
+  };
+}
+async function refreshMe(shouldRender=true){
+  if(!name)return null;
+  const data=await apiCall("me",{},false);
+  csrfToken=data.csrfToken||csrfToken;
+  U=mapAccount(data);
+  if(shouldRender&&!hold&&!plAnimating)render();
+  if(U.cr&&cur&&cur.g.id===U.cr.k)crLoop();
+  return U;
+}
+async function loadPublicConfig(){
+  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();if(U)render();}
+  catch(e){console.warn("site config unavailable",e);}
+}
+function attach(n){
+  name=n;ref=true;
+  refreshMe(false).then(()=>{showApp();render();settleUserSportsBets();initSportScoreFeed();}).catch(e=>{logout(e.message||"سجّل دخول من جديد");});
+}
+async function logout(t){
+  if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=0;crStop();
+  try{if(csrfToken)await apiCall("logout",{});}catch(e){console.warn("logout",e);}
+  ref=null;name=null;U=null;csrfToken="";hold=false;busy=false;chatOn=false;
+  localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");show("home");showAuth(t);
+}
+function setAuth(m){
+  authMode=m;$("p2").hidden=m!=="reg";
+  $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
+  $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;$("aerr").textContent="";
+}
+async function auth(){
+  const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
+  if(!/^[a-z0-9_]{3,20}$/.test(n))return err("اسم المستخدم من 3 إلى 20 حرف إنجليزي أو أرقام أو _ بدون مسافات");
+  if(reg&&p.length<10)return err("كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل");
+  if(!reg&&p.length<1)return err("اكتب كلمة السر");
+  if(reg){if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");}
+  err("جارٍ التحقق...");$("agb").disabled=true;
+  try{
+    const data=await authCall(reg?"register":"login",{username:n,password:p});
+    csrfToken=data.csrfToken||"";$("p").value="";$("p2").value="";localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+    err("");attach(n);
+  }catch(e){err(e.message||C.texts.errNet);}
+  finally{$("agb").disabled=false;}
+}
+$("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
+$("agb").onclick=auth;
+$("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
+$("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
+$("mout").onclick=()=>logout();
+$("pgback").onclick=()=>show("more");
+$("gamesQ").oninput=renderGames;
+$("banbtn").onclick=()=>show("games");
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+setAuth("login");applyCfg();loadPublicConfig();
+(async()=>{
+  try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
+  catch(e){showAuth();}
+})();
+setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
+</script>
+</body></html>
