@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const ORIGIN = "https://qoeefydvmkdigixsbpuy.supabase.co";
+const ORIGIN = "https://alkhbaralawl-max.github.io";
 const COOKIE = "rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const PBKDF2_ROUNDS = 600_000;
@@ -49,7 +49,7 @@ function getCookie(req: Request) {
   return null;
 }
 function cookie(value: string,maxAge: number) {
-  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age="+maxAge;
+  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=None; Secure; Partitioned; Max-Age="+maxAge;
 }
 async function bodyOf(req: Request): Promise<Obj> {
   const n=Number(req.headers.get("content-length") ?? 0); if(n>12000) throw new Error("too_large");
