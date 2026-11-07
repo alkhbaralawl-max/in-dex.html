@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
     if(action==="register") {
       const username=usernameOf(body.username), password=String(body.password ?? "");
       if(!validUsername(username)) return reply({error:"invalid_username"},400);
-      if(password.length<10 || password.length>128) return reply({error:"password_policy"},400);
+      if(password.length<10 || password.length>128 || password.toLowerCase()===username) return reply({error:"password_policy"},400);
       const ip=(req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim(), ipHash=await secretHash(ip);
       const {data:attemptId,error:claimError}=await db.rpc("claim_auth_attempt",{p_username:username,p_ip_hash:ipHash});
       if(claimError) throw new Error("registration_rate_limit_failed");
@@ -160,7 +160,7 @@ Deno.serve(async (req: Request) => {
       const {error:updateError}=await db.from("app_users").update({password_hash:upgraded,legacy_password_hash:null}).eq("id",session.user_id);
       if(updateError) throw new Error("password_update_failed");
       await db.from("app_sessions").update({revoked_at:new Date().toISOString()})
-        .eq("user_id",session.user_id).neq("id",session.id).is("revoked_at",null);
+        .eq("user_id",session.user_id).is("revoked_at",null);
       await audit(db,session.user_id,"auth.password_changed");
       return reply({ok:true},200,{"set-cookie":cookie("",0)});
     }
