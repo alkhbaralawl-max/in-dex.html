@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
 const COOKIE = "__Host-rw_session";
@@ -9,7 +9,7 @@ type Obj = Record<string, unknown>;
 
 function headers() {
   return { "access-control-allow-origin": ORIGIN, "access-control-allow-credentials": "true",
-    "access-control-allow-headers": "content-type,x-csrf-token", "access-control-allow-methods": "POST,OPTIONS", "vary": "Origin",
+    "access-control-allow-headers": "content-type,apikey,x-csrf-token", "access-control-allow-methods": "POST,OPTIONS", "vary": "Origin",
     "cache-control": "no-store", "pragma": "no-cache", "x-content-type-options": "nosniff", "referrer-policy": "no-referrer" };
 }
 function reply(data: Obj, status = 200, extra: Record<string,string> = {}) {
