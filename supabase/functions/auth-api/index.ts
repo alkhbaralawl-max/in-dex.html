@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
-const ORIGIN = Deno.env.get("APP_ORIGIN") ?? "";
+const ORIGIN = "https://qoeefydvmkdigixsbpuy.supabase.co";
 const COOKIE = "rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const PBKDF2_ROUNDS = 600_000;
@@ -31,8 +31,11 @@ async function hashHex(value: string) {
   return [...new Uint8Array(a)].map(x => x.toString(16).padStart(2,"0")).join("");
 }
 async function secretHash(value: string) {
-  const pepper = Deno.env.get("SESSION_PEPPER");
-  if (!pepper || pepper.length < 32) throw new Error("session_pepper_missing");
+  const explicitPepper = Deno.env.get("SESSION_PEPPER");
+  let platformPepper = "";
+  try { platformPepper = JSON.parse(Deno.env.get("SUPABASE_SECRET_KEYS") ?? "{}").default ?? ""; } catch { platformPepper = ""; }
+  const pepper = explicitPepper && explicitPepper.length >= 32 ? explicitPepper : platformPepper;
+  if (!pepper || pepper.length < 32) throw new Error("server_pepper_missing");
   return hashHex(pepper + ":" + value);
 }
 function equal(a: string,b: string) {
@@ -46,7 +49,7 @@ function getCookie(req: Request) {
   return null;
 }
 function cookie(value: string,maxAge: number) {
-  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=None; Max-Age="+maxAge;
+  return COOKIE+"="+encodeURIComponent(value)+"; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age="+maxAge;
 }
 async function bodyOf(req: Request): Promise<Obj> {
   const n=Number(req.headers.get("content-length") ?? 0); if(n>12000) throw new Error("too_large");
