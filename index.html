@@ -207,7 +207,7 @@ canvas{display:block;width:100%}
 .ap{height:49px;border:1px solid #ffffff25;border-radius:14px;background:linear-gradient(145deg,#ffffff1c,#ffffff0b);box-shadow:inset 0 1px #ffffff10;transition:transform .18s,background .18s,border-color .18s}
 .ap:not(:disabled):active{transform:scale(.95)}
 .ap.act{background:#f1d17d;color:#302712;border-color:#ffebba;box-shadow:0 0 0 3px #f1d17d2b;animation:applePulse 1.7s ease-in-out infinite}
-.ap.safe{background:linear-gradient(135deg,#36bd78,#187e50);border-color:#8ce4b2;color:white}
+.ap.safe{background:linear-gradient(135deg,#36bd78,#187e50);border-color:#8ce4b2;color:white;animation:appleReveal .28s ease}
 .ap.bad{background:linear-gradient(135deg,#e46b70,#9e303c);border-color:#ffabb0;color:white;animation:appleReveal .28s ease}
 .ap.dim{opacity:.64}
 @keyframes applePulse{0%,100%{box-shadow:0 0 0 2px #f1d17d20}50%{box-shadow:0 0 0 5px #f1d17d13}}
@@ -901,7 +901,7 @@ async function slotSpin(g,scale){
     iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));
     const symbols=data.outcome.symbols||[0,0,0];
     for(let i=0;i<3;i++){await sleep(180);rs[i].textContent=SYM[symbols[i]][0];}
-    U.balance=Number(data.balance);hold=false;busy=false;await refreshMe(false);render();result(Number(data.payout),bet);
+    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet);refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){iv.forEach(clearInterval);rs.forEach(r=>r.classList.remove("spin"));hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 function secureClientSymbol(){return Math.floor(rnd()*6);}
@@ -980,8 +980,8 @@ async function apPick(g,c){
   try{
     const a=U.ap,data=await apiCall("apple_pick",{roundId:a.roundId,cell:c});
     U.balance=Number(data.balance);hold=false;busy=false;
-    if(data.lost){apLast={row:data.row,col:data.cell,picks:data.picks,hazards:data.hazards,safeN:a.safeN,bet:a.bet};U.ap=null;await refreshMe(false);render();result(0,a.bet);}
-    else if(data.won){apLast=null;U.ap=null;await refreshMe(false);render();result(Number(data.payout),a.bet);}
+    if(data.lost){apLast={row:data.row,col:data.cell,picks:data.picks,hazards:data.hazards,safeN:a.safeN,bet:a.bet};U.ap=null;render();result(0,a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
+    else if(data.won){apLast=null;U.ap=null;render();result(Number(data.payout),a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
     else{U.ap={k:g.id,roundId:data.active.id,bet:a.bet,level:data.active.level,picks:data.active.picks,safeN:data.active.safeN,hazards:data.active.revealedHazards||[],version:data.active.version};render();gmsg("✓ اختيار آمن. اختار الصف التالي أو اسحب رصيدك.","ok");}
   }catch(e){hold=false;busy=false;await refreshMe(false).catch(()=>{});render();gmsg(e.message||C.texts.errNet,"er");}
 }
@@ -989,7 +989,7 @@ async function apCash(g){
   if(busy||!U?.ap)return;busy=true;lastAction=Date.now();
   try{
     const a=U.ap,data=await apiCall("apple_cash",{roundId:a.roundId});
-    U.balance=Number(data.balance);U.ap=null;apLast=null;busy=false;await refreshMe(false);render();result(Number(data.payout),a.bet);
+    U.balance=Number(data.balance);U.ap=null;apLast=null;busy=false;render();result(Number(data.payout),a.bet);refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 
@@ -1141,8 +1141,8 @@ async function wheelSpin(g){
   try{
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
     const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
-    $("wrot").style.transform="rotate("+wRot+"deg)";await sleep(900);
-    U.balance=Number(data.balance);hold=false;busy=false;await refreshMe(false);render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));
+    $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
+    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
@@ -1185,7 +1185,7 @@ async function plDrop(g,M){
   try{
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()}),o=data.outcome;
     await plAnimate(o.path||[]);document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",Number(x.dataset.i)===Number(o.bucket)));
-    await sleep(300);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);await refreshMe(false);render();result(Number(data.payout),bet,"×"+multText(o.multiplier));
+    await sleep(300);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);render();result(Number(data.payout),bet,"×"+multText(o.multiplier));refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){plAnimating=false;hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 function plAnimate(path){
