@@ -90,6 +90,18 @@ function cleanNumber(v:any,min:number,max:number) {
   const n=Number(v); if(!Number.isFinite(n)||n<min||n>max) throw new HttpError(400,"invalid_number"); return n;
 }
 function money(v:number) { return Math.round((v+Number.EPSILON)*100)/100; }
+
+async function passwordHash(password:string) {
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const key=await crypto.subtle.importKey("raw",enc.encode(password),"PBKDF2",false,["deriveBits"]);
+  const bits=await crypto.subtle.deriveBits({name:"PBKDF2",salt,iterations:600000,hash:"SHA-256"},key,256);
+  const hex=(a:Uint8Array)=>[...a].map(x=>x.toString(16).padStart(2,"0")).join("");
+  return "pbkdf2-sha256$600000$"+hex(salt)+"$"+hex(new Uint8Array(bits));
+}
+function makeLegacyId() {
+  const n=new Uint32Array(1);crypto.getRandomValues(n);
+  return String(100000000+(n[0]%900000000));
+}
 function secureRandom() {
   const x=new Uint32Array(1);crypto.getRandomValues(x);return x[0]/4294967296;
 }
@@ -224,7 +236,8 @@ async function main(req:Request) {
     const writes=new Set([
       "logout","play","active_start","apple_pick","apple_cash","crash_tick","crash_cash",
       "sports_bet","chat_send","credit_request","admin_adjust","admin_status","admin_match_save",
-      "admin_market_settle","admin_credit_review","admin_config_save","admin_chat_send"
+      "admin_market_settle","admin_credit_review","admin_config_save","admin_chat_send",
+      "admin_create_account","admin_update_account","admin_set_scale","admin_reset_stats","admin_delete_account","admin_match_delete"
     ]);
     const {session,user}=await authenticate(db,req,writes.has(action));
     if(action==="me") {
@@ -418,15 +431,123 @@ async function main(req:Request) {
       if(error) throw new HttpError(400,error.message||"request_failed");
       return response({ok:true,requestId:data});
     }
+
+    if(action==="admin_config_get") {
+      requireAdmin(user);
+      const [configResult,matchResult]=await Promise.all([
+        db.from("app_config").select("config").eq("singleton",true).single(),
+        db.from("matches").select("id,payload,status,kickoff_at").order("updated_at",{ascending:false}).limit(300)
+      ]);
+      if(configResult.error||matchResult.error) throw new HttpError(500,"admin_config_unavailable");
+      const config=configResult.data?.config||{},matches:Obj={};
+      for(const m of matchResult.data||[]) matches[m.id]={...(m.payload||{}),id:m.id,status:m.status,kickoffAt:m.kickoff_at?new Date(m.kickoff_at).getTime():0};
+      return response({...config,matches});
+    }
     if(action==="admin_accounts") {
       requireAdmin(user);
       const [us,ws]=await Promise.all([
-        db.from("app_users").select("id,username,display_name,role,status,profile,created_at,last_login_at,legacy_user_id").order("created_at",{ascending:false}).limit(1000),
-        db.from("wallets").select("user_id,balance,rounds,wins,losses,wagered,returned")
+        db.from("app_users").select("id,username,display_name,role,status,profile,customer_data,created_at,last_login_at,legacy_user_id").order("created_at",{ascending:false}).limit(1000),
+        db.from("wallets").select("user_id,balance,registration_bonus,rounds,wins,losses,wagered,returned")
       ]);
       if(us.error||ws.error) throw new HttpError(500,"accounts_unavailable");
       const map=new Map((ws.data||[]).map((x:any)=>[x.user_id,x]));
-      return response({accounts:(us.data||[]).map((x:any)=>({...x,wallet:map.get(x.id)||null}))});
+      return response({accounts:(us.data||[]).map((x:any)=>{
+        const wallet:any=map.get(x.id)||{};
+        const data=x.customer_data||{};
+        return {
+          id:x.id,username:x.username,displayName:x.display_name,role:x.role,status:x.status,
+          legacyUserId:x.legacy_user_id||data.id||null,
+          createdAt:x.created_at,lastLoginAt:x.last_login_at,
+          customer:{
+            ...data,id:x.legacy_user_id||data.id,
+            balance:Number(wallet.balance??0),regBonus:Number(wallet.registration_bonus??data.regBonus??0),
+            rounds:Number(wallet.rounds??0),wins:Number(wallet.wins??0),losses:Number(wallet.losses??0),
+            wagered:Number(wallet.wagered??0),returned:Number(wallet.returned??0),
+            closed:x.status!=="active"||!!data.closed,
+            scale:Number(data.scale)||100
+          },
+          wallet
+        };
+      })});
+    }
+    if(action==="admin_create_account") {
+      requireAdmin(user);
+      const username=String(body.username||"").trim().toLowerCase();
+      const password=String(body.password||"");
+      if(!/^[a-z0-9_]{3,20}$/.test(username)) throw new HttpError(400,"invalid_username");
+      if(password.length<10||password.length>128||password.toLowerCase()===username) throw new HttpError(400,"password_policy");
+      let balance:number;
+      if(body.initialBalance===null||body.initialBalance===undefined||String(body.initialBalance).trim()==="") {
+        const {data:s,error}=await db.from("app_settings").select("initial_virtual_balance,new_accounts_start_at_zero").eq("singleton",true).single();
+        if(error) throw new HttpError(500,"settings_unavailable");
+        balance=s.new_accounts_start_at_zero?0:Number(s.initial_virtual_balance);
+      } else balance=cleanNumber(body.initialBalance,0,1000000000);
+      for(let attempt=0;attempt<5;attempt++) {
+        const legacyId=makeLegacyId();
+        const {data,error}=await db.rpc("admin_create_player_account",{
+          p_actor_user_id:user.id,p_username:username,p_password_hash:await passwordHash(password),
+          p_initial_balance:money(balance),p_legacy_user_id:legacyId
+        });
+        if(!error) {
+          await audit(db,user.id,data.userId,"account.created","user",data.userId,{username,legacy_user_id:legacyId});
+          return response({ok:true,...data});
+        }
+        if(String(error.message||"").includes("duplicate key")&&attempt<4) continue;
+        if(String(error.message||"").includes("username_normalized")) throw new HttpError(409,"username_taken");
+        throw new HttpError(400,error.message||"account_create_failed");
+      }
+      throw new HttpError(409,"legacy_id_generation_failed");
+    }
+    if(action==="admin_update_account") {
+      requireAdmin(user);
+      const target=String(body.userId||"");
+      const legacyId=String(body.legacyUserId||"").trim();
+      const wallet=body.wallet;
+      if(!target||!/^\\d{9}$/.test(legacyId)||!wallet||typeof wallet!=="object") throw new HttpError(400,"invalid_account_data");
+      const pw=String(body.password||"");
+      if(pw&&(pw.length<10||pw.length>128)) throw new HttpError(400,"password_policy");
+      const values={
+        balance:money(cleanNumber(wallet.balance,0,1000000000000)),
+        registration_bonus:money(cleanNumber(wallet.registration_bonus,0,1000000000000)),
+        rounds:Math.floor(cleanNumber(wallet.rounds,0,Number.MAX_SAFE_INTEGER)),
+        wins:Math.floor(cleanNumber(wallet.wins,0,Number.MAX_SAFE_INTEGER)),
+        losses:Math.floor(cleanNumber(wallet.losses,0,Number.MAX_SAFE_INTEGER)),
+        wagered:money(cleanNumber(wallet.wagered,0,1000000000000)),
+        returned:money(cleanNumber(wallet.returned,0,1000000000000))
+      };
+      const {data,error}=await db.rpc("admin_update_player_account",{
+        p_actor_user_id:user.id,p_target_user_id:target,p_legacy_user_id:legacyId,
+        p_wallet:values,p_password_hash:pw?await passwordHash(pw):null
+      });
+      if(error) throw new HttpError(400,error.message||"account_update_failed");
+      return response({ok:true,...data});
+    }
+    if(action==="admin_set_scale") {
+      requireAdmin(user);
+      const scale=cleanNumber(body.scale,5,100);
+      const {data,error}=await db.rpc("admin_set_player_scale",{
+        p_actor_user_id:user.id,p_target_user_id:String(body.userId||""),p_scale:scale
+      });
+      if(error) throw new HttpError(400,error.message||"scale_update_failed");
+      return response({ok:!!data});
+    }
+    if(action==="admin_reset_stats") {
+      requireAdmin(user);
+      const {data,error}=await db.rpc("admin_reset_player_stats",{
+        p_actor_user_id:user.id,p_target_user_id:String(body.userId||"")
+      });
+      if(error) throw new HttpError(400,error.message||"stats_reset_failed");
+      return response({ok:!!data,historyPreserved:true});
+    }
+    if(action==="admin_delete_account") {
+      requireAdmin(user);
+      const target=String(body.userId||"");
+      const {data,error}=await db.rpc("admin_set_user_status",{
+        p_actor_user_id:user.id,p_target_user_id:target,p_status:"closed"
+      });
+      if(error) throw new HttpError(400,error.message||"account_close_failed");
+      await audit(db,user.id,target,"account.soft_deleted","user",target,{history_preserved:true});
+      return response({ok:!!data,softDeleted:true});
     }
     if(action==="admin_adjust") {
       requireAdmin(user);
@@ -447,6 +568,19 @@ async function main(req:Request) {
       });
       if(error) throw new HttpError(400,error.message||"status_change_failed");
       return response({ok:!!data});
+    }
+
+    if(action==="admin_match_delete") {
+      requireAdmin(user);
+      const id=String(body.matchId||"");
+      if(!id) throw new HttpError(400,"invalid_match_id");
+      const {data:existing,error:readError}=await db.from("matches").select("payload").eq("id",id).maybeSingle();
+      if(readError||!existing) throw new HttpError(404,"match_not_found");
+      const payload={...(existing.payload||{}),visible:false};
+      const {error}=await db.from("matches").update({payload,status:"cancelled",updated_at:new Date().toISOString()}).eq("id",id);
+      if(error) throw new HttpError(500,"match_close_failed");
+      await audit(db,user.id,null,"match.cancelled","match",id,{hidden:true,history_preserved:true});
+      return response({ok:true,archived:true});
     }
     if(action==="admin_match_save") {
       requireAdmin(user);
@@ -477,10 +611,10 @@ async function main(req:Request) {
         .order("created_at",{ascending:false}).limit(300);
       if(error) throw new HttpError(500,"credit_requests_unavailable");
       const ids=[...new Set((data||[]).map((x:any)=>x.user_id))];
-      const {data:users,error:userError}=ids.length?await db.from("app_users").select("id,username").in("id",ids):{data:[],error:null};
+      const {data:users,error:userError}=ids.length?await db.from("app_users").select("id,username,legacy_user_id").in("id",ids):{data:[],error:null};
       if(userError) throw new HttpError(500,"credit_requests_unavailable");
-      const names=new Map((users||[]).map((x:any)=>[x.id,x.username]));
-      return response({requests:(data||[]).map((x:any)=>({...x,username:names.get(x.user_id)||"—"}))});
+      const names=new Map((users||[]).map((x:any)=>[x.id,x]));
+      return response({requests:(data||[]).map((x:any)=>({...x,username:names.get(x.user_id)?.username||"—",legacyUserId:names.get(x.user_id)?.legacy_user_id||null}))});
     }
     if(action==="admin_credit_review") {
       requireAdmin(user);
@@ -493,7 +627,7 @@ async function main(req:Request) {
     if(action==="admin_config_save") {
       requireAdmin(user);
       const section=String(body.section||"");
-      const allowed=["games","texts","colors","settings"];
+      const allowed=["games","texts","colors","settings","pages"];
       if(!allowed.includes(section)||!body.value||typeof body.value!=="object"||Array.isArray(body.value))
         throw new HttpError(400,"invalid_config_section");
       const current=await appConfig(db);
@@ -523,13 +657,13 @@ async function main(req:Request) {
         .order("created_at",{ascending:false}).limit(500);
       if(error) throw new HttpError(500,"admin_chat_unavailable");
       const userIds=[...new Set((data||[]).map((x:any)=>x.user_id))];
-      const {data:us,error:ue}=userIds.length?await db.from("app_users").select("id,username").in("id",userIds):{data:[],error:null};
+      const {data:us,error:ue}=userIds.length?await db.from("app_users").select("id,username,legacy_user_id").in("id",userIds):{data:[],error:null};
       if(ue) throw new HttpError(500,"admin_chat_unavailable");
-      const names=new Map((us||[]).map((x:any)=>[x.id,x.username]));
+      const names=new Map((us||[]).map((x:any)=>[x.id,x]));
       const rooms:Obj={};
       for(const m of [...(data||[])].reverse()){
         const key=m.user_id;
-        if(!rooms[key])rooms[key]={userId:key,username:names.get(key)||"—",messages:[]};
+        if(!rooms[key])rooms[key]={userId:key,username:names.get(key)?.username||"—",legacyUserId:names.get(key)?.legacy_user_id||null,messages:[]};
         rooms[key].messages.push(m);
       }
       return response({rooms:Object.values(rooms)});
