@@ -1024,8 +1024,9 @@ function plAnimate(targetK,path){
       const elapsed=Math.min(total,(now-started)/stepMs),seg=Math.min(total-1,Math.floor(elapsed)),u=Math.min(1,elapsed-seg);
       const a=points[seg],b=points[seg+1],ease=u*u*(3-2*u),bounce=Math.sin(Math.PI*u)*(seg===0?1.1:2.5);
       ball.style.left=(a.x+(b.x-a.x)*ease)+"%";ball.style.top=(a.y+(b.y-a.y)*ease-bounce)+"%";
+      ball.style.transform="translate(-50%,-50%) rotate("+Math.round(elapsed*180)+"deg)";
       if(elapsed<total)requestAnimationFrame(frame);
-      else{ball.style.left=points[points.length-1].x+"%";ball.style.top=points[points.length-1].y+"%";resolve();}
+      else{ball.style.left=points[points.length-1].x+"%";ball.style.top=points[points.length-1].y+"%";ball.style.transform="translate(-50%,-50%) rotate(1440deg)";resolve();}
     }
     requestAnimationFrame(frame);
   });
