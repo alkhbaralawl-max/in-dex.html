@@ -264,8 +264,8 @@ canvas{display:block;width:100%}
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
-const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
-const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api-preview";
+const APP_API=SUPABASE_URL+"/functions/v1/app-api-preview";
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
 async function sendApi(url,action,payload={},useCsrf=true){
@@ -297,26 +297,19 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess3";
 const CAP=20;
 
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,dice:96,cards:95};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#334155","#60a5fa","#0f172a"],cards:["#7f1d1d","#ef4444","#1f1015"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"🎲",cards:"🂡"};
+const BASE={crash:97};
+const THEME={crash:["#081b31","#1787a7","#06101e"]};
+const EMO={crash:"✈️"};
 const DEFG=[
-{id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
-{id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
-{id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
-{id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
-{id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
-{id:"dice",name:"النرد",desc:"توقع مجموع حجرَي النرد واربح أو اخسر من رصيدك الوهمي.",engine:"dice",cat:"نرد",tag:"نرد",order:7},
-{id:"cards",name:"أحمر أم أسود",desc:"اختار لون الورقة قبل كشفها، والرهان والمكسب من الرصيد الوهمي.",engine:"cards",cat:"كروت",tag:"كروت",order:8}
+{id:"crash",name:"الطيارة",desc:"حط رهانك الوهمي، تابع الطيارة وهي بتطير، واسحب قبل الانفجار.",engine:"crash",cat:"الطيارة",tag:"Aviator",order:1,rtp:97}
 ]
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
-notice:"⚠️ المراهنات خطر حقيقي على الفرد والمجتمع. هذه تجربة توعوية: الألعاب مضبوطة لصالح المنصة كما في منصات المراهنات الحقيقية.",
-banT:"ألعاب جديدة 🔥",banD:"جرّب الألعاب برصيد وهمي، واعرف بنفسك إزاي الخسارة هي النتيجة المتوقعة.",banBtn:"ابدأ اللعب",banImg:"",
-searchPh:"ابحث عن لعبة...",featTitle:"⭐ ألعاب مميزة",allTitle:"🎮 كل الألعاب",noGames:"مفيش لعبة بالاسم ده",
-eduNote:"الألعاب هنا من تنفيذنا بنفس فكرة الألعاب المعروفة، وليست النسخ الأصلية المرخّصة. نسب الربح للمنصة زي المواقع الحقيقية.",
+notice:"⚠️ لعبة الطيارة دي نسخة تجريبية مستقلة برصيد وهمي فقط. لا يوجد إيداع أو سحب أموال حقيقية.",
+banT:"✈️ لعبة الطيارة",banD:"تابع المضاعف وهو بيزيد واسحب رهانك الوهمي قبل ما الطيارة تنفجر.",banBtn:"ابدأ الطيران",banImg:"",
+searchPh:"ابحث عن لعبة الطيارة...",featTitle:"✈️ اللعبة الرئيسية",allTitle:"✈️ لعبة الطيارة",noGames:"لعبة الطيارة غير متاحة حاليًا",
+eduNote:"نسخة تجريبية مستوحاة من ألعاب Crash، برسم طيارة أصلي ومضاعف ونتيجة محسوبين على الخادم. ليست نسخة رسمية من SPRIBE أو Aviator.",
 actTitle:"🕘 النشاط",moreTitle:"⋯ المزيد",noPages:"لا توجد صفحات بعد",supTitle:"💬 الدعم المباشر",chatPh:"اكتب رسالتك...",
 meTitle:"👤 حسابي",lblRounds:"جولات",lblWins:"كسب",lblLoss:"خسر",lblWager:"إجمالي الرهان",lblReturn:"إجمالي العائد",lblNet:"الخسارة الصافية",lblBal:"الرصيد (وهمي)",
 navHome:"الرئيسية",navGames:"الألعاب",navSup:"الدعم",navAct:"النشاط",navMore:"المزيد",navMe:"حسابي",
@@ -335,7 +328,7 @@ errNet:"تعذر الاتصال، تأكد من الإنترنت وجرّب تا
 msgStart:"حط رهانك واضغط ابدأ",
 ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تمامًا، وتطابق الرموز النادرة بيدي مكسب كبير. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
-ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
+ruleCrash:"اضغط ابدأ لخصم الرهان الوهمي وبدء الطيران. المضاعف يزيد مع الوقت؛ اضغط اسحب لتثبيت العائد قبل الانفجار. إذا تأخر الاتصال، يظل الموقع يسترجع القرار النهائي من الخادم. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 rulePlinko:"الكرة بتنزل على 8 صفوف من الدبابيس، وكل مسار يمين أو شمال يحدد مكانها النهائي من 9 خانات. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleDice:"اختار مجموعًا من 2 إلى 6 أو 7 بالضبط أو 8 إلى 12. كل رمية بحجرَي نرد افتراضيين، وفرصة الاختيار واضحة قبل اللعب. أقصى عائد ×{cap}، والعائد النظري {rtp}%.",
@@ -358,7 +351,8 @@ function games(){
   const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));
   const o=C.games||{};
   for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
-  return Object.values(m).filter(g=>g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
+  return Object.values(m).filter(g=>g.id==="crash"&&g.engine==="crash"&&g.name&&BASE.crash!=null)
+    .sort((a,b)=>(a.order||99)-(b.order||99));
 }
 const gOn=g=>g.on!==false;
 const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
@@ -765,7 +759,7 @@ async function apCash(g){
 }
 
 /* ======== Crash / Red Rocket ======== */
-const K=0.35;
+const K=0.06;
 const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
 function genCp(g){
   const r=rnd();
@@ -774,23 +768,66 @@ function genCp(g){
   return c;
 }
 function drawCr(skin,t,m,st,limit=CAP){
-  const cv=$("cv");if(!cv)return;const x=cv.getContext("2d"),W=cv.width,H=cv.height;
-  x.clearRect(0,0,W,H);
-  const g=x.createLinearGradient(0,0,0,H);
-  if(skin==="rocket"){g.addColorStop(0,"#1a0508");g.addColorStop(1,"#5a0f1c");}else{g.addColorStop(0,"#0B1E3A");g.addColorStop(1,"#154a80");}
-  x.fillStyle=g;x.fillRect(0,0,W,H);
-  if(skin==="rocket"){x.fillStyle="#ffffff99";STARS.forEach(s=>{x.beginPath();x.arc(s[0]*W,s[1]*H,s[2],0,7);x.fill();});}
-  else{x.strokeStyle="#ffffff18";x.lineWidth=1;for(let i=1;i<6;i++){x.beginPath();x.moveTo(0,H*i/6);x.lineTo(W,H*i/6);x.stroke();}}
-  const tx=Math.max(8,t*1.15),my=Math.max(2,Math.min(m,limit)*1.25),L=18,B=22;
-  const px=a=>L+(a/tx)*(W-2*L),py=a=>H-B-((a-1)/(my-1))*(H-B-34);
-  x.beginPath();x.moveTo(px(0),py(1));
-  for(let i=1;i<=60;i++){const a=t*i/60;x.lineTo(px(a),py(Math.min(Math.exp(K*a),limit)));}
-  x.lineWidth=4;x.strokeStyle=st==="crash"?"#E5484D":(skin==="rocket"?"#ff8a3d":"#FFC83D");x.stroke();
-  if(skin!=="rocket"){x.lineTo(px(t),H-B);x.lineTo(px(0),H-B);x.closePath();x.fillStyle=st==="crash"?"#E5484D33":"#FFC83D26";x.fill();}
-  x.font="32px serif";x.textBaseline="middle";x.textAlign="start";
-  x.fillText(st==="crash"?"💥":(skin==="rocket"?"🚀":"✈️"),px(t)-16,py(Math.min(Math.exp(K*t),limit))-4);
-  x.textAlign="center";x.font="bold 46px Tahoma";x.fillStyle=st==="crash"?"#ff7b80":"#fff";x.fillText("×"+m.toFixed(2),W/2,H/2-6);
-  x.font="14px Tahoma";x.fillStyle="#cfe1f5";x.fillText(st==="crash"?"انفجر!":st==="run"?"اسحب قبل الانفجار":"جاهز",W/2,H/2+34);x.textAlign="start";
+  const cv=$("cv");if(!cv)return;
+  const rect=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
+  const W=Math.max(320,rect.width||720),H=Math.max(220,rect.height||420);
+  const bw=Math.round(W*dpr),bh=Math.round(H*dpr);
+  if(cv.width!==bw||cv.height!==bh){cv.width=bw;cv.height=bh;}
+  const x=cv.getContext("2d");if(!x)return;
+  x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+  const bg=x.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,"#07172a");bg.addColorStop(.6,"#0a2740");bg.addColorStop(1,"#04101c");
+  x.fillStyle=bg;x.fillRect(0,0,W,H);
+  STARS.forEach((a,i)=>{
+    const sx=(a[0]*W+(t*8*(i%3+1)))%W,sy=a[1]*H;
+    x.fillStyle="rgba(210,235,255,"+(a[2]/3.5)+")";x.beginPath();x.arc(sx,sy,Math.max(.5,a[2]*.7),0,Math.PI*2);x.fill();
+  });
+  const left=36,right=22,top=25,bottom=34,plotW=W-left-right,plotH=H-top-bottom;
+  x.strokeStyle="rgba(174,211,239,.13)";x.lineWidth=1;
+  for(let r=0;r<5;r++){const yy=top+plotH*r/4;x.beginPath();x.moveTo(left,yy);x.lineTo(W-right,yy);x.stroke();}
+  for(let c=0;c<7;c++){const xx=left+plotW*c/6;x.beginPath();x.moveTo(xx,top);x.lineTo(xx,H-bottom);x.stroke();}
+  const elapsed=Math.max(0,Number(t)||0),current=Math.max(1,Math.min(Number(m)||1,limit));
+  const tx=Math.max(7,elapsed*1.18),maxM=Math.max(2.1,Math.min(limit,current*1.22));
+  const px=v=>left+(v/tx)*plotW;
+  const py=v=>top+plotH-((v-1)/(maxM-1))*plotH;
+  const points=[];
+  for(let i=0;i<=120;i++){
+    const sec=elapsed*i/120,mult=Math.min(Math.exp(K*sec),limit);
+    points.push({x:px(sec),y:py(mult)});
+  }
+  if(points.length>1){
+    x.beginPath();x.moveTo(points[0].x,H-bottom);
+    points.forEach(p=>x.lineTo(p.x,p.y));x.lineTo(points[points.length-1].x,H-bottom);x.closePath();
+    const area=x.createLinearGradient(0,top,0,H-bottom);
+    area.addColorStop(0,st==="crash"?"rgba(255,84,98,.24)":"rgba(42,220,180,.23)");
+    area.addColorStop(1,"rgba(24,128,165,.015)");x.fillStyle=area;x.fill();
+    x.beginPath();x.moveTo(points[0].x,points[0].y);points.slice(1).forEach(p=>x.lineTo(p.x,p.y));
+    x.strokeStyle=st==="crash"?"#ff5366":st==="pending"?"#f6b74b":"#37e5c1";
+    x.lineWidth=3.5;x.lineJoin="round";x.lineCap="round";x.shadowColor=x.strokeStyle;x.shadowBlur=13;x.stroke();x.shadowBlur=0;
+  }
+  const planeX=px(elapsed),planeY=py(current);
+  if(st==="crash"){
+    const radius=18+Math.min(16,(elapsed%2)*10);
+    x.save();x.translate(planeX,planeY);x.strokeStyle="#ff7885";x.lineWidth=3;
+    for(let i=0;i<12;i++){const a=i*Math.PI/6;x.beginPath();x.moveTo(Math.cos(a)*radius*.45,Math.sin(a)*radius*.45);x.lineTo(Math.cos(a)*radius,Math.sin(a)*radius);x.stroke();}
+    x.fillStyle="#ffb25f";x.beginPath();x.arc(0,0,7,0,Math.PI*2);x.fill();x.restore();
+  }else{
+    const prevSec=Math.max(0,elapsed-.08),nextSec=elapsed+.08;
+    const dx=px(nextSec)-px(prevSec),dy=py(Math.min(Math.exp(K*nextSec),limit))-py(Math.min(Math.exp(K*prevSec),limit));
+    const angle=Math.atan2(dy,dx)+Math.PI/2;
+    x.save();x.translate(planeX,planeY);x.rotate(angle);
+    const flame=x.createLinearGradient(0,15,0,36);
+    flame.addColorStop(0,"#fff5a0");flame.addColorStop(.35,"#ff9a38");flame.addColorStop(1,"rgba(255,84,35,0)");
+    x.fillStyle=flame;x.beginPath();x.moveTo(-5,13);x.quadraticCurveTo(0,23,0,38);x.quadraticCurveTo(8,24,5,13);x.closePath();x.fill();
+    x.shadowColor="#5de8ff";x.shadowBlur=18;x.fillStyle="#e9f8ff";x.strokeStyle="#4fa9d1";x.lineWidth=1.4;
+    x.beginPath();x.moveTo(0,-29);x.lineTo(5,-7);x.lineTo(24,4);x.lineTo(24,9);x.lineTo(5,5);x.lineTo(8,18);x.lineTo(15,24);x.lineTo(14,28);x.lineTo(0,24);x.lineTo(-14,28);x.lineTo(-15,24);x.lineTo(-8,18);x.lineTo(-5,5);x.lineTo(-24,9);x.lineTo(-24,4);x.lineTo(-5,-7);x.closePath();x.fill();x.stroke();x.shadowBlur=0;x.restore();
+  }
+  x.textAlign="center";x.textBaseline="middle";x.font="900 "+Math.min(48,Math.max(34,W*.08))+"px Tahoma";
+  x.fillStyle=st==="crash"?"#ff7b8b":"#f4fbff";x.shadowColor=st==="crash"?"#ff354d":"#35dbff";x.shadowBlur=18;
+  x.fillText("×"+current.toFixed(2),W/2,H*.47);x.shadowBlur=0;
+  x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ff9aa4":st==="pending"?"#ffd48a":"#a8cce4";
+  const label=st==="crash"?"انتهت الجولة":st==="pending"?"الطيارة وصلت للنهاية • جارٍ تأكيد النتيجة من الخادم":st==="run"?"اسحب قبل انفجار الطيارة":"جاهز للإقلاع";
+  x.fillText(label,W/2,H*.47+34);
 }
 function crStop(){
   if(raf)cancelAnimationFrame(raf);raf=0;
@@ -815,11 +852,13 @@ function crLoop(){
   if(!raf){
     const frame=()=>{
       const c=U&&U.cr;if(!c){raf=0;return;}
-      const elapsed=Math.max(0,(Date.now()-Number(c.t0))/1000);
+      const serverNow=Date.now()+Number(c.serverOffset||0);
+      const elapsed=Math.max(0,(serverNow-Number(c.t0))/1000);
       const multiplier=Math.min(Math.exp(K*elapsed),capOf(cur?.g||{engine:"crash"}));
       if(cur&&cur.g.id===c.k&&!$("gl").hidden){
-        drawCr(cur.g.engine,elapsed,multiplier,"run",capOf(cur.g));
-        const cb=$("ccash");if(cb)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
+        drawCr(cur.g.engine,elapsed,multiplier,c.crashDetectedAt?"pending":"run",capOf(cur.g));
+        const cb=$("ccash");
+        if(cb)cb.textContent=c.cashPending?"جارٍ تأكيد السحب…":C.texts.btnCash+" "+f(c.bet*multiplier);
       }
       raf=requestAnimationFrame(frame);
     };
@@ -828,79 +867,136 @@ function crLoop(){
   if(U&&U.cr&&!crPollTimer){
     const tick=async()=>{
       const c=U&&U.cr;if(!c){crPollTimer=0;return;}
+      let delay=170;
       try{
-        const status=await apiCall("crash_status",{roundId:c.roundId},false);
+        const sentAt=Date.now(),status=await apiCall("crash_status",{roundId:c.roundId},false),receivedAt=Date.now();
         if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
+        if(Number.isFinite(Number(status.serverNow))){
+          const rtt=receivedAt-sentAt;
+          if(rtt<=Number(c.bestRtt||Infinity)){
+            c.bestRtt=rtt;c.serverOffset=Number(status.serverNow)-(sentAt+receivedAt)/2;
+          }
+        }
+        if(status.settled||status.active===false){
+          await crResolve(status,c);crPollTimer=0;return;
+        }
         const multiplier=Number(status.multiplier)||1;
-        const cb=$("ccash");if(cb&&cur&&cur.g.id===c.k)cb.textContent=C.texts.btnCash+" "+f(c.bet*multiplier);
-        if(status.autoDue){
-          if(crLock){crPollTimer=setTimeout(tick,100);return;}
-          crLock=true;
-          try{
-            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
-            if(final.active){crPollTimer=setTimeout(tick,120);return;}
-            await crResolve(final,c);
-          }finally{crLock=false;}
+        const cb=$("ccash");
+        if(cb&&cur&&cur.g.id===c.k)cb.textContent=c.cashPending?"جارٍ تأكيد السحب…":C.texts.btnCash+" "+f(c.bet*multiplier);
+        if(c.cashPending){
+          delay=130;
+        }else if(status.autoDue){
+          if(!c.settlePromise){
+            c.settlePromise=(async()=>{
+              try{
+                const final=await apiCall("crash_tick",{roundId:c.roundId});
+                if(final.settled||final.active===null)await crResolve(final,c);
+              }catch(e){console.warn("auto crash settlement pending",e);}
+            })();
+          }
+          await c.settlePromise;c.settlePromise=null;delay=120;
         }else if(status.crashed){
           c.crashDetectedAt=c.crashDetectedAt||Date.now();
-          const remaining=Math.max(0,850-(Date.now()-c.crashDetectedAt));
-          if(remaining>0){crPollTimer=setTimeout(tick,Math.min(remaining,150));return;}
-          if(crLock){crPollTimer=setTimeout(tick,100);return;}
-          crLock=true;
-          try{
-            const final=await apiCall("crash_tick",{roundId:c.roundId},false);
-            if(final.active){crPollTimer=setTimeout(tick,120);return;}
-            await crResolve(final,c);
-          }finally{crLock=false;}
-        }else{c.crashDetectedAt=0;crPollTimer=setTimeout(tick,250);}
+          if(cur&&cur.g.id===c.k&&!$("gl").hidden)drawCr(cur.g.engine,Number(status.elapsed)||0,multiplier,"pending",capOf(cur.g));
+          const remaining=Number.isFinite(Number(status.settleAfter))
+            ?Math.max(0,Number(status.settleAfter)-Number(status.serverNow||Date.now())):5500;
+          if(remaining<=0&&!c.settlePromise){
+            c.settlePromise=(async()=>{
+              try{
+                const final=await apiCall("crash_tick",{roundId:c.roundId});
+                if(final.settled||final.active===null)await crResolve(final,c);
+              }catch(e){console.warn("crash settlement pending",e);}
+            })();
+            await c.settlePromise;c.settlePromise=null;delay=110;
+          }else delay=Math.min(180,Math.max(100,remaining));
+        }else{
+          c.crashDetectedAt=0;
+          delay=160;
+        }
+        c.syncErrors=0;
       }catch(e){
-        if(U?.cr&&U.cr.roundId===c.roundId)crPollTimer=setTimeout(tick,500);
-        else crPollTimer=0;
+        c.syncErrors=(Number(c.syncErrors)||0)+1;
+        if(c.syncErrors===2)gmsg("الاتصال اتأخر؛ بنسترجع حالة الجولة من الخادم…","er");
+        delay=Math.min(1000,250+c.syncErrors*120);
       }
+      if(U?.cr&&U.cr.roundId===c.roundId)crPollTimer=setTimeout(tick,delay);
+      else crPollTimer=0;
     };
-    tick();
+    crPollTimer=setTimeout(tick,0);
   }
 }
-
 const crashEng={open(g,b){
-  b.innerHTML='<div class="gc" style="padding:0;overflow:hidden"><canvas id="cv" width="360" height="240"></canvas></div><div class="strip" id="cstrip"></div>'+
+  b.innerHTML='<div class="gc" style="padding:0;overflow:hidden;background:#06172a"><canvas id="cv" width="720" height="420" style="width:100%;height:auto;aspect-ratio:12/7"></canvas></div><div class="strip" id="cstrip"></div>'+
     betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
     rulesBox(tpl(C.texts.ruleCrash,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   bindBet(b);safeClick($("cgo"),()=>crStart(g));safeClick($("ccash"),()=>crSettle("cash"));
   cur.upd=()=>{
     base();const mine=U.cr&&U.cr.k===g.id;
-    $("cgo").disabled=!!U.cr;$("ccash").disabled=!mine;if(!mine)$("ccash").textContent=C.texts.btnCash;
+    $("cgo").disabled=!!U.cr;
+    $("ccash").disabled=!mine||!!U.cr?.cashPending;
+    if(!mine)$("ccash").textContent=C.texts.btnCash;
+    else if(U.cr.cashPending)$("ccash").textContent="جارٍ تأكيد السحب…";
     const S=$("cstrip");S.innerHTML="";
-    histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const s=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(s);});
+    histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const cp=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(cp);});
     $("hist").innerHTML=histHTML(g);
     if(mine){crLoop();}
     else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle",capOf(g));}
   };
 }};
-ENG.crash=crashEng;ENG.rocket=crashEng;
+ENG.crash=crashEng;
 async function crStart(g){
   if(busy||crLock||!U)return;
   const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   let auto=parseFloat(nd($("auto").value));if(!(auto>=1.01))auto=0;
   lastAction=Date.now();busy=true;gmsg("جارٍ بدء الجولة على الخادم...");
   try{
-    const data=await apiCall("active_start",{gameId:g.id,stake:bet,auto,idempotencyKey:crypto.randomUUID()});
+    const sentAt=Date.now(),data=await apiCall("active_start",{gameId:g.id,stake:bet,auto,idempotencyKey:crypto.randomUUID()}),receivedAt=Date.now();
     U.balance=Number(data.balance);
-    U.cr={k:g.id,bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version};
-    crFinal=null;busy=false;render();gmsg("الجولة بدأت: اسحب قبل الانفجار!");crLoop();
+    const offset=Number.isFinite(Number(data.serverNow))?Number(data.serverNow)-(sentAt+receivedAt)/2:0;
+    U.cr={k:g.id,bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version,
+      serverOffset:offset,bestRtt:receivedAt-sentAt,cashPending:false,syncErrors:0};
+    crFinal=null;busy=false;render();gmsg("الجولة بدأت على الخادم. اسحب قبل انفجار الطيارة!");crLoop();
   }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
 }
 async function crSettle(mode){
-  if(crLock||!U?.cr)return;
-  crLock=true;lastAction=Date.now();
-  try{
-    const c=U.cr,data=await apiCall(mode==="cash"?"crash_cash":"crash_tick",mode==="cash"?{roundId:c.roundId,cashClickAt:Date.now()}:{roundId:c.roundId});
-    if(data.active){gmsg("المضاعف ما زال يرتفع. اسحب قبل الانفجار.");return;}
-    await crResolve(data,c);
-  }catch(e){gmsg(e.message||C.texts.errNet,"er");}
-  finally{crLock=false;}
+  const c=U?.cr;if(!c)return;
+  if(mode!=="cash"){
+    if(crLock)return;
+    crLock=true;
+    try{
+      const data=await apiCall("crash_tick",{roundId:c.roundId});
+      if(data.settled||data.active===null)await crResolve(data,c);
+    }catch(e){gmsg("الخادم لسه بيأكد نتيجة الجولة…","er");}
+    finally{crLock=false;}
+    return;
+  }
+  if(c.cashPromise||c.cashPending)return c.cashPromise;
+  const clickAt=Date.now()+Number(c.serverOffset||0);
+  c.cashPending=true;lastAction=Date.now();upd();
+  c.cashPromise=(async()=>{
+    let lastError=null;
+    for(let attempt=0;attempt<2;attempt++){
+      try{
+        const data=await apiCall("crash_cash",{roundId:c.roundId,cashClickAt:clickAt});
+        if(data.settled||data.active===null){await crResolve(data,c);return;}
+        if(data.active){gmsg("الطلب وصل؛ الخادم بيأكد توقيت السحب…","");return;}
+      }catch(e){lastError=e;if(attempt===0)await sleep(220);}
+    }
+    try{
+      const status=await apiCall("crash_status",{roundId:c.roundId},false);
+      if(status.settled||status.active===false)await crResolve(status,c);
+      else gmsg("الطلب اتبعت، ولسه بنسترجع حالة الجولة من الخادم…","");
+    }catch(e){
+      gmsg("الشبكة اتأخرت. ما تقفلش اللعبة؛ بنحاول نسترجع النتيجة من الخادم…","er");
+    }
+  })();
+  try{await c.cashPromise;}
+  finally{
+    if(U?.cr&&U.cr.roundId===c.roundId){
+      c.cashPending=false;c.cashPromise=null;upd();
+    }
+  }
 }
-
 /* ======== Spin and Win ======== */
 const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
 const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
