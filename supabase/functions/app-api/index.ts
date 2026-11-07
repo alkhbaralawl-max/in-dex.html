@@ -265,6 +265,7 @@ async function main(req:Request) {
       if(idempotency.length<12||idempotency.length>100) throw new HttpError(400,"invalid_idempotency_key");
       const cfg=await appConfig(db),games=cfg.games||{};
       const game=gameConfig(cfg,gameId),rtp=rtpOf(game,{slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96});
+      if(game.on===false) throw new HttpError(403,"game_disabled");
       const scale=await userScale(user),cap=20;
       let payout=0,outcome:Obj={};
       if(game.engine==="slot") {
@@ -304,6 +305,7 @@ async function main(req:Request) {
       const key=String(body.idempotencyKey||"");
       if(key.length<12||key.length>100) throw new HttpError(400,"invalid_idempotency_key");
       const cfg=await appConfig(db),game=gameConfig(cfg,gameId),rtp=rtpOf(game,{apple:96,crash:96,rocket:96});
+      if(game.on===false) throw new HttpError(403,"game_disabled");
       const scale=await userScale(user);
       let state:Obj={};
       if(game.engine==="apple") {
@@ -496,6 +498,20 @@ async function main(req:Request) {
         throw new HttpError(400,"invalid_config_section");
       const current=await appConfig(db);
       const next={...current,[section]:body.value};
+      if(section==="settings"){
+        const setting=body.value;
+        const initial=Number(setting.initial),min=Number(setting.minBet),max=Number(setting.maxBet);
+        if(!Number.isFinite(initial)||initial<0||!Number.isFinite(min)||min<=0||!Number.isFinite(max)||max<0)
+          throw new HttpError(400,"invalid_site_settings");
+        const {error:settingError}=await db.from("app_settings").update({
+          registration_enabled:setting.registration!==false,
+          initial_virtual_balance:initial,
+          new_accounts_start_at_zero:!!setting.newZero,
+          min_virtual_stake:min,
+          max_virtual_stake:max
+        }).eq("singleton",true);
+        if(settingError) throw new HttpError(500,"settings_save_failed");
+      }
       const {error}=await db.from("app_config").update({config:next,updated_at:new Date().toISOString()}).eq("singleton",true);
       if(error) throw new HttpError(500,"config_save_failed");
       await audit(db,user.id,null,"config.updated","config",section);
