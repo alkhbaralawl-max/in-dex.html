@@ -59,8 +59,7 @@ begin
       initial_virtual_balance=coalesce(nullif(v_settings->>'initial','')::numeric,initial_virtual_balance),
       new_accounts_start_at_zero=coalesce(nullif(v_settings->>'newZero','')::boolean,new_accounts_start_at_zero),
       min_virtual_stake=coalesce(nullif(v_settings->>'minBet','')::numeric,min_virtual_stake),
-      max_virtual_stake=coalesce(nullif(v_settings->>'maxBet','')::numeric,max_virtual_stake),
-      updated_at=now()
+      max_virtual_stake=coalesce(nullif(v_settings->>'maxBet','')::numeric,max_virtual_stake)
   where singleton;
 
   insert into public.legacy_archive(source_path,legacy_key,payload)
