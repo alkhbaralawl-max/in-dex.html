@@ -124,18 +124,15 @@ function pickWeighted(weights:number[]) {
 function rtpOf(game:Obj,defaults:Record<string,number>) {
   const n=Number(game?.rtp); return n>=1&&n<=99.9?n:(defaults[game?.engine]??96);
 }
+const ENGINE_RTP:Record<string,number>={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,dice:96,cards:95};
+const ENGINE_CAP:Record<string,number>={slot:20,apple:8,rocket:20,crash:20,wheel:8,plinko:20,dice:20,cards:20};
 function gameConfig(config:Obj,id:string) {
-  const defaults:Record<string,Obj>={
-    wwg:{id:"wwg",engine:"slot",rtp:96},
-    apple:{id:"apple",engine:"apple",rtp:96},
-    rocket:{id:"rocket",engine:"rocket",rtp:96},
-    crash:{id:"crash",engine:"crash",rtp:96},
-    wheel:{id:"wheel",engine:"wheel",rtp:95},
-    plinko:{id:"plinko",engine:"plinko",rtp:96}
-  };
-  const base=defaults[id];
+  const defaults:Record<string,Obj>={wwg:{id:"wwg",engine:"slot",rtp:96},apple:{id:"apple",engine:"apple",rtp:96},rocket:{id:"rocket",engine:"rocket",rtp:96},crash:{id:"crash",engine:"crash",rtp:96},wheel:{id:"wheel",engine:"wheel",rtp:95},plinko:{id:"plinko",engine:"plinko",rtp:96},dice:{id:"dice",engine:"dice",rtp:96},cards:{id:"cards",engine:"cards",rtp:95}};
+  const configured=config?.games?.[id]||{};
+  const base=defaults[id]||(ENGINE_RTP[configured.engine]!=null?{id,engine:configured.engine,rtp:ENGINE_RTP[configured.engine]}:null);
   if(!base) throw new HttpError(400,"unknown_game");
-  return {...base,...(config?.games?.[id]||{}),id};
+  if(ENGINE_RTP[configured.engine||base.engine]==null) throw new HttpError(400,"unknown_game_engine");
+  return {...base,...configured,id};
 }
 async function appConfig(db:Client) {
   const {data,error}=await db.from("app_config").select("config").eq("singleton",true).single();
@@ -167,6 +164,12 @@ async function userScale(user:Obj) {
   const n=Number(data.scale);
   return n>0&&n<=100?n/100:1;
 }
+function userGameCap(user:Obj,game:Obj,gameId:string) {
+  const configured=Number(game?.maxMultiplier);
+  const fallback=configured>=1&&configured<=100?configured:(ENGINE_CAP[game?.engine]??20);
+  const personal=Number(user?.customer_data?.gameCaps?.[gameId]);
+  return personal>=1&&personal<=100?personal:fallback;
+}
 async function getActiveRound(db:Client,userId:string,roundId?:string) {
   let q=db.from("active_game_rounds").select("*").eq("user_id",userId).eq("status","active");
   if(roundId) q=q.eq("id",roundId);
@@ -197,14 +200,13 @@ async function finishActive(db:Client,userId:string,round:Obj,state:Obj,payout:n
   if(error) throw new HttpError(409,error.message||"game_finish_conflict");
   return data;
 }
-function appleMultiplier(rtp:number,k:number,safeN:number) {
-  // Match the original player-site rules: 80% survival per row; account scale
-  // changes the risk of a wrong pick, not the advertised payout multiplier.
-  return money(Math.min(Math.pow(1/0.8,k)*(rtp/100),8));
+function appleMultiplier(rtp:number,k:number,safeN:number,cap=8) {
+  return money(Math.min(Math.pow(1/0.8,k)*(rtp/100),cap));
 }
-function genCrashPoint(rtp:number,scale:number) {
+function genCrashPoint(rtp:number,scale:number,cap=20) {
   const raw=Math.floor((rtp/100)/(1-secureRandom())*100)/100;
-  let cp=Math.max(1,Math.min(20,raw));
+  const limit=Math.max(1,Math.min(100,cap));
+  let cp=Math.max(1,Math.min(limit,raw));
   if(secureRandom()>(scale)) cp=Math.min(cp,money(1+secureRandom()*.3));
   return cp;
 }
@@ -214,12 +216,12 @@ function slotRaw(a:number,b:number,c:number) {
   if(a===b||b===c||a===c)return 2;
   return 0;
 }
-function slotScale(rtp:number) {
+function slotScale(rtp:number,cap=20) {
   const p=[.44,.26,.16,.09,.04,.01];let lo=0,hi=100;
   for(let i=0;i<52;i++){
     const s=(lo+hi)/2;let exp=0;
     for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++)
-      exp+=p[a]*p[b]*p[c]*Math.min(slotRaw(a,b,c)*s,20);
+      exp+=p[a]*p[b]*p[c]*Math.min(slotRaw(a,b,c)*s,cap);
     if(exp<rtp/100)lo=s;else hi=s;
   }
   return (lo+hi)/2;
@@ -248,7 +250,7 @@ async function main(req:Request) {
       "logout","play","active_start","apple_pick","apple_cash","crash_tick","crash_cash",
       "sports_bet","chat_send","credit_request","admin_adjust","admin_status","admin_match_save",
       "admin_market_settle","admin_credit_review","admin_config_save","admin_chat_send",
-      "admin_create_account","admin_update_account","admin_set_scale","admin_reset_stats","admin_delete_account","admin_match_delete"
+      "admin_create_account","admin_update_account","admin_set_scale","admin_set_game_caps","admin_reset_stats","admin_delete_account","admin_match_delete"
     ]);
     const {session,user}=await authenticate(db,req,writes.has(action));
     if(action==="me") {
@@ -260,7 +262,7 @@ async function main(req:Request) {
       ]);
       if(hist.error||bets.error) throw new HttpError(500,"account_history_unavailable");
       return response({
-        user:{id:user.id,legacyUserId:user.legacy_user_id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{},scale:Number(user.customer_data?.scale)||100},
+        user:{id:user.id,legacyUserId:user.legacy_user_id,username:user.username,displayName:user.display_name,role:user.role,status:user.status,profile:user.profile||{},scale:Number(user.customer_data?.scale)||100,gameCaps:user.customer_data?.gameCaps||{}},
         csrfToken:session.csrf_token,
         wallet,history:(hist.data||[]).map((x:any)=>({g:x.game_id,bet:Number(x.stake),win:Number(x.payout),t:new Date(x.created_at).getTime(),i:x.outcome?.multiplier??x.outcome?.level??x.outcome?.index??0})),
         active:active.data?publicActive(active.data):null,
@@ -290,10 +292,10 @@ async function main(req:Request) {
       const cfg=await appConfig(db),games=cfg.games||{};
       const game=gameConfig(cfg,gameId),rtp=rtpOf(game,{slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96});
       if(game.on===false) throw new HttpError(403,"game_disabled");
-      const scale=await userScale(user),cap=20;
+      const scale=await userScale(user),cap=userGameCap(user,game,gameId);
       let payout=0,outcome:Obj={};
       if(game.engine==="slot") {
-        const weights=[.44,.26,.16,.09,.04,.01],factor=slotScale(rtp);
+        const weights=[.44,.26,.16,.09,.04,.01],factor=slotScale(rtp,cap);
         let triple=[0,0,0],raw=0;
         const forceLoss=secureRandom()>(scale);
         for(let n=0;n<120;n++){
@@ -305,7 +307,7 @@ async function main(req:Request) {
       } else if(game.engine==="wheel") {
         const sectors=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
         const expected=sectors.reduce((a,b)=>a+b,0)/sectors.length;
-        const values=sectors.map(x=>Math.min(x*(rtp/100)/expected,8));
+        const values=sectors.map(x=>Math.min(x*(rtp/100)/expected,cap));
         let index=secureInt(20);
         if(secureRandom()>(scale)) {
           const losing=values.map((v,i)=>v<1?i:-1).filter(i=>i>=0);
@@ -315,7 +317,7 @@ async function main(req:Request) {
       } else if(game.engine==="plinko") {
         const raw=[16,5,2,1.1,.4,1.1,2,5,16],weights=[1,8,28,56,70,56,28,8,1];
         const expected=weights.reduce((sum,w,i)=>sum+w*raw[i]/256,0);
-        const values=raw.map(x=>Math.min(x*(rtp/100)/expected,20));
+        const values=raw.map(x=>Math.min(x*(rtp/100)/expected,cap));
         let bucket=4,path:number[]=[];
         if(secureRandom()>(scale)) {
           const losing=values.map((v,i)=>v<1?i:-1).filter(i=>i>=0);
@@ -329,6 +331,30 @@ async function main(req:Request) {
         }
         const multiplier=values[bucket];
         payout=money(stake*multiplier);outcome={path,bucket,multiplier};
+      } else if(game.engine==="dice") {
+        const choice=String(body.choice||"");
+        if(!["low","seven","high"].includes(choice)) throw new HttpError(400,"invalid_dice_choice");
+        const wins=(sum:number)=>choice==="low"?sum>=2&&sum<=6:choice==="seven"?sum===7:sum>=8&&sum<=12;
+        let die1=secureInt(6)+1,die2=secureInt(6)+1,sum=die1+die2;
+        if(secureRandom()>scale&&wins(sum)) {
+          for(let i=0;i<120&&wins(sum);i++){die1=secureInt(6)+1;die2=secureInt(6)+1;sum=die1+die2;}
+        }
+        const probability=choice==="seven"?6/36:15/36;
+        const multiplier=money(Math.min(cap,(rtp/100)/probability));
+        const won=wins(sum);
+        payout=won?money(stake*multiplier):0;
+        outcome={dice:[die1,die2],sum,choice,won,multiplier:won?multiplier:0};
+      } else if(game.engine==="cards") {
+        const choice=String(body.choice||"");
+        if(!["red","black"].includes(choice)) throw new HttpError(400,"invalid_card_choice");
+        const suits=["♥","♦","♣","♠"],red=(s:number)=>s===0||s===1;
+        let suit=secureInt(4),rank=secureInt(13)+1;
+        if(secureRandom()>scale&&((choice==="red")===red(suit))) {
+          for(let i=0;i<120&&((choice==="red")===red(suit));i++){suit=secureInt(4);rank=secureInt(13)+1;}
+        }
+        const won=(choice==="red")===red(suit),multiplier=money(Math.min(cap,(rtp/100)/.5));
+        payout=won?money(stake*multiplier):0;
+        outcome={suit:suits[suit],rank,red:red(suit),choice,won,multiplier:won?multiplier:0};
       } else {
         throw new HttpError(400,"unsupported_one_shot_game");
       }
@@ -339,16 +365,16 @@ async function main(req:Request) {
       const gameId=String(body.gameId||""),stake=await validatedStake(db,body.stake);
       const key=String(body.idempotencyKey||"");
       if(key.length<12||key.length>100) throw new HttpError(400,"invalid_idempotency_key");
-      const cfg=await appConfig(db),game=gameConfig(cfg,gameId),rtp=rtpOf(game,{apple:96,crash:96,rocket:96});
+      const cfg=await appConfig(db),game=gameConfig(cfg,gameId),rtp=rtpOf(game,ENGINE_RTP);
       if(game.on===false) throw new HttpError(403,"game_disabled");
-      const scale=await userScale(user);
+      const scale=await userScale(user),maxMultiplier=userGameCap(user,game,gameId);
       let state:Obj={};
       if(game.engine==="apple") {
         const safeN=Math.max(1,Math.min(5,Math.round(5*.8*scale)));
-        state={level:0,picks:[],safeN,rtp};
+        state={level:0,picks:[],safeN,rtp,maxMultiplier};
       } else if(game.engine==="crash"||game.engine==="rocket") {
-        let cp=genCrashPoint(rtp,scale);
-        state={cp,t0:Date.now(),auto:Number(body.auto)>=1.01&&Number(body.auto)<20?Number(body.auto):0,rtp};
+        let cp=genCrashPoint(rtp,scale,maxMultiplier);
+        state={cp,t0:Date.now(),auto:Number(body.auto)>=1.01&&Number(body.auto)<maxMultiplier?Number(body.auto):0,rtp,maxMultiplier};
       } else throw new HttpError(400,"not_an_active_game");
       const {data,error}=await db.rpc("start_active_virtual_game",{
         p_user_id:user.id,p_game_id:gameId,p_stake:stake,p_state:state,p_idempotency_key:key
@@ -374,8 +400,8 @@ async function main(req:Request) {
       }
       state.level=level+1;state.picks=nextPicks;state.lastPick={row:level,cell,lost:false};
       if(state.level>=5) {
-        const cfg=await appConfig(db),rtp=rtpOf(gameConfig(cfg,"apple"),{apple:96});
-        const mult=appleMultiplier(rtp,5,Number(s.safeN));
+        const cfg=await appConfig(db),game=gameConfig(cfg,"apple"),rtp=rtpOf(game,ENGINE_RTP);
+        const mult=appleMultiplier(rtp,5,Number(s.safeN),Number(s.maxMultiplier)||8);
         const payout=money(Number(round.stake)*mult);
         const finished=await finishActive(db,user.id,round,state,payout,{level:5,multiplier:mult,picks:nextPicks,completed:true});
         return response({ok:true,won:true,payout,stake:Number(round.stake),multiplier:mult,active:null,balance:Number(finished.balance),picks:nextPicks});
@@ -393,18 +419,20 @@ async function main(req:Request) {
       if(round.game_id!=="apple") throw new HttpError(400,"wrong_game");
       const s=round.state||{},level=Number(s.level)||0;
       if(level<1) throw new HttpError(400,"cash_requires_safe_pick");
-      const cfg=await appConfig(db),rtp=rtpOf(gameConfig(cfg,"apple"),{apple:96});
-      const multiplier=appleMultiplier(rtp,level,Number(s.safeN));
+      const cfg=await appConfig(db),game=gameConfig(cfg,"apple"),rtp=rtpOf(game,ENGINE_RTP);
+      const multiplier=appleMultiplier(rtp,level,Number(s.safeN),Number(s.maxMultiplier)||8);
       const payout=money(Number(round.stake)*multiplier);
       const finished=await finishActive(db,user.id,round,s,payout,{level,multiplier,picks:s.picks||[],cashedOut:true});
       return response({ok:true,payout,multiplier,stake:Number(round.stake),balance:Number(finished.balance),active:null});
     }
-    if(action==="crash_tick"||action==="crash_cash") {
+    if(action==="crash_status"||action==="crash_tick"||action==="crash_cash") {
       const round=await getActiveRound(db,user.id,String(body.roundId||""));
       if(round.game_id!=="crash"&&round.game_id!=="rocket") throw new HttpError(400,"wrong_game");
       const s=round.state||{},elapsed=Math.max(0,(Date.now()-Number(s.t0))/1000);
-      const raw=Math.min(Math.exp(.35*elapsed),20),multiplier=Math.floor(raw*100)/100;
+      const limit=Math.max(1,Math.min(100,Number(s.maxMultiplier)||20));
+      const raw=Math.min(Math.exp(.35*elapsed),limit),multiplier=Math.floor(raw*100)/100;
       const crashed=raw>=Number(s.cp),auto=Number(s.auto)>1&&raw>=Number(s.auto)&&Number(s.auto)<Number(s.cp);
+      if(action==="crash_status") return response({ok:true,active:true,crashPending:crashed||auto,crashed,autoDue:auto,elapsed,multiplier,stake:Number(round.stake)});
       if(action==="crash_cash"&&!crashed) {
         const payout=money(Number(round.stake)*multiplier);
         const finished=await finishActive(db,user.id,round,{...s,cashedAt:Date.now(),cashMultiplier:multiplier},payout,{multiplier,cashedOut:true});
@@ -513,7 +541,8 @@ async function main(req:Request) {
             rounds:Number(wallet.rounds??0),wins:Number(wallet.wins??0),losses:Number(wallet.losses??0),
             wagered:Number(wallet.wagered??0),returned:Number(wallet.returned??0),
             closed:x.status!=="active"||!!data.closed,
-            scale:Number(data.scale)||100
+            scale:Number(data.scale)||100,
+            gameCaps:data.gameCaps||{}
           },
           wallet
         };
@@ -579,6 +608,25 @@ async function main(req:Request) {
       });
       if(error) throw new HttpError(400,error.message||"scale_update_failed");
       return response({ok:!!data});
+    }
+    if(action==="admin_set_game_caps") {
+      requireAdmin(user);
+      const target=String(body.userId||""),caps=body.caps;
+      if(!target||!caps||typeof caps!=="object"||Array.isArray(caps)) throw new HttpError(400,"invalid_game_caps");
+      const cleaned:Obj={};
+      for(const [gameId,value] of Object.entries(caps)) {
+        const cap=Number(value);
+        if(!/^[a-z0-9_-]{1,60}$/.test(gameId)||!Number.isFinite(cap)||cap<1||cap>100)
+          throw new HttpError(400,"invalid_game_cap");
+        cleaned[gameId]=money(cap);
+      }
+      const {data:targetUser,error:readError}=await db.from("app_users").select("customer_data").eq("id",target).single();
+      if(readError||!targetUser) throw new HttpError(404,"account_not_found");
+      const next={...(targetUser.customer_data||{}),gameCaps:cleaned};
+      const {error:updateError}=await db.from("app_users").update({customer_data:next}).eq("id",target);
+      if(updateError) throw new HttpError(400,"game_caps_save_failed");
+      await audit(db,user.id,target,"account.game_caps_updated","account",target,{gameCaps:cleaned});
+      return response({ok:true,gameCaps:cleaned});
     }
     if(action==="admin_reset_stats") {
       requireAdmin(user);
