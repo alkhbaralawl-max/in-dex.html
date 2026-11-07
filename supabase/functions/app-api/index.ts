@@ -445,6 +445,10 @@ async function main(req:Request) {
           return response({ok:true,cashedOut:true,payout,multiplier:cashMultiplier,crashPoint:Number(s.cp),startedAt:Number(s.t0),elapsed,stake:Number(round.stake),balance:Number(finished.balance),active:null,networkGraceUsed:!!(crashed&&clickBeforeCrash)});
         }
       }
+      if(action==="crash_tick"&&crashed&&!auto) {
+        const crashAt=Math.log(Math.max(1,Number(s.cp)))/.35;
+        if(elapsed<crashAt+1) return response({ok:true,active:publicActive(round),elapsed,multiplier,crashPending:true,networkGrace:true});
+      }
       if(crashed||auto) {
         const paid=auto&&!crashed?money(Number(round.stake)*Number(s.auto)):0;
         const result=await finishActive(db,user.id,round,{...s,endedAt:Date.now(),crashed,autoSettled:auto&&!crashed},paid,
