@@ -1288,7 +1288,28 @@ function crLoop(){
       const elapsed=Math.max(0,(serverNow-Number(c.t0))/1000);
       const multiplier=Math.min(Math.exp(K*elapsed),capOf(cur?.g||{engine:"crash"}));
       if(cur&&cur.g.id===c.k&&!$("gl").hidden){
-        drawCr(cur.g.engine,elapsed,multiplier,c.crashDetectedAt?"pending":"run",capOf(cur.g));
+        const crashed=!!c.crashDetectedAt;
+        drawCr(cur.g.engine,elapsed,multiplier,crashed?"crash":c.cashPending?"pending":"run",capOf(cur.g));
+        const cb=$("ccash");
+        if(cb){cb.textContent=crashed?"انفجرت الطيارة":c.cashPending?"جارٍ تأكيد السحب…":C.texts.btnCash+" "+f(c.bet*multiplier);if(crashed)cb.disabled=true;}
+      }
+      raf=requestAnimationFrame(frame);
+    };
+    raf=requestAnimationFrame(frame);
+  }
+  if(U&&U.cr&&!crPollTimer){
+    const tick=async()=>{
+      const c=U&&U.cr;if(!c){crPollTimer=0;return;}
+      let delay=170;
+      try{
+        const sentAt=Date.now(),status=await apiCall("crash_status",{roundId:c.roundId},false),receivedAt=Date.now();
+        if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
+        if(Number.isFinite(Number(status.serverNow))){
+          const rtt=receivedAt-sentAt;
+          if(rtt<=Number(c.bestRtt||Infinity)){c.bestRtt=rtt;c.serverOffset=Number(status.serverNow)-(sentAt+receivedAt)/2;}
+        }
+        if(status.settled||status.active===false){await crResolve(status,c);crPollTimer=0;return;}
+        const multiplier=Number(status.multiplier)||1;
         const cb=$("ccash");
         if(cb&&cur&&cur.g.id===c.k&&!c.crashDetectedAt)cb.textContent=c.cashPending?"جارٍ تأكيد السحب…":C.texts.btnCash+" "+f(c.bet*multiplier);
         if(status.crashed){
