@@ -59,7 +59,7 @@ button,input,textarea,select{font-family:inherit}
 .row{display:flex;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
 .row:last-child{border:0}.up{color:var(--ok);font-weight:bold}.dn{color:var(--er);font-weight:bold}
 .mrow{display:flex;justify-content:space-between;align-items:center;width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:8px;font-size:15px;font-weight:bold;color:var(--tx);text-align:right}
-.prof{text-align:center}.av{width:70px;height:70px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:6px auto}
+.prof{text-align:center}.av{width:70px;height:70px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:6px auto;overflow:hidden}.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .idb{display:inline-block;background:#E8F1FB;color:var(--b2);border-radius:12px;padding:6px 14px;font-weight:bold;letter-spacing:.2px;font-size:13px;margin:6px 0;max-width:100%;overflow-wrap:anywhere}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .sb{background:#F3F6FA;border-radius:12px;padding:10px 4px;font-size:12px;color:var(--tx2)}.sb b{display:block;font-size:17px;color:var(--tx)}
@@ -470,12 +470,26 @@ canvas{display:block;width:100%}
 
 <main id="v_me" hidden>
   <div class="gh"><h1 data-t="meTitle"></h1></div>
-  <div class="card prof"><div class="av">👤</div><b id="mname" style="font-size:18px"></b><br><div class="idb">ID: <span id="mid"></span></div>
+  <div class="card prof"><div class="av" id="profileAvatar"><span>👤</span></div><b id="mname" style="font-size:18px"></b><br><div class="idb">ID: <span id="mid"></span></div>
     <div class="note" style="margin:8px 0" id="mscn" hidden></div>
     <div class="grid3"><div class="sb"><b id="m1">0</b><span data-t="lblRounds"></span></div><div class="sb"><b id="m2">0</b><span data-t="lblWins"></span></div><div class="sb"><b id="m3">0</b><span data-t="lblLoss"></span></div>
       <div class="sb"><b id="m4">0</b><span data-t="lblWager"></span></div><div class="sb"><b id="m5">0</b><span data-t="lblReturn"></span></div><div class="sb"><b id="m6">0</b><span data-t="lblNet"></span></div></div>
     <div style="margin-top:12px;color:var(--tx2)" data-t="lblBal"></div><div style="font-size:26px;font-weight:bold;color:var(--b)" id="mbal"></div>
     <div class="note" style="margin-top:10px" id="mrtp"></div></div>
+  <div class="card">
+    <div class="sec">معلوماتي الشخصية</div>
+    <label class="plb" for="profileDisplayName">اسم العرض</label>
+    <input class="fi" id="profileDisplayName" type="text" maxlength="40" placeholder="اكتب الاسم الذي يظهر للآخرين">
+    <label class="plb" for="profileBio">نبذة شخصية</label>
+    <textarea class="fi" id="profileBio" rows="3" maxlength="160" placeholder="اكتب نبذة قصيرة عنك"></textarea>
+    <label class="plb">صورة الحساب</label>
+    <label class="upbox" for="profileAvatarFile">اختر صورة من جهازك</label>
+    <input id="profileAvatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
+    <img id="profileAvatarPreview" hidden style="width:86px;height:86px;object-fit:cover;border-radius:50%;margin:0 auto 10px">
+    <button class="btn full" id="profileSave" type="button">حفظ المعلومات والصورة</button>
+    <div class="msg" id="profileMessage" aria-live="polite"></div>
+    <div class="activity-entry-meta">رقم الحساب ثابت ولا يمكن تغييره.</div>
+  </div>
   <div style="margin:0 12px 12px"><button class="btn er full" id="mout" data-t="btnOut"></button></div>
 </main>
 
@@ -1052,12 +1066,22 @@ function openPage(p){
   show("page");
 }
 function renderMe(){
-  $("mname").textContent=name;$("mid").textContent=U.id||"—";$("mbal").textContent=f(U.balance);
+  $("mname").textContent=U.displayName||name;
+  $("mid").textContent=U.id||"—";$("mbal").textContent=f(U.balance);
   const w=U.wagered||0,r=U.returned||0;
   $("m1").textContent=U.rounds||0;$("m2").textContent=U.wins||0;$("m3").textContent=U.losses||0;
   $("m4").textContent=f(w);$("m5").textContent=f(r);$("m6").textContent=f(Math.max(0,w-r));
   $("mrtp").textContent=tpl(C.texts.rtpNote,{rtp:(w?(r/w*100).toFixed(1):"—")+"%"});
   const sc=scU(),n=$("mscn");n.hidden=sc>=1;n.textContent=tpl(C.texts.scaleNote,{pct:Math.round((1-sc)*100)});
+  const dn=$("profileDisplayName"),bio=$("profileBio");
+  if(dn&&document.activeElement!==dn)dn.value=U.displayName||"";
+  if(bio&&document.activeElement!==bio)bio.value=String(U.profile?.bio||"");
+  const av=$("profileAvatar");
+  if(av){
+    av.innerHTML="";
+    if(U.profile?.avatarUrl){const im=document.createElement("img");im.src=U.profile.avatarUrl;im.alt="صورة الحساب";av.appendChild(im);}
+    else av.textContent="👤";
+  }
 }
 function renderPayBanner(){
   const box=$("payreqbanner");box.innerHTML="";
@@ -1792,7 +1816,7 @@ function mapAccount(data){
   return {
     id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
     scale:Number(a.scale)||100,balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
-    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,
+    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,displayName:a.displayName||"",profile:a.profile||{},
     hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:x.i})),sportsBets:bets,
     ap:active&&active.gameId==="apple"?{k:active.gameId,bet:active.stake,level:active.level,picks:active.picks||[],safeN:active.safeN,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
     cr:active&&(active.gameId==="crash"||active.gameId==="rocket")?{k:active.gameId,bet:active.stake,t0:active.startedAt,auto:active.auto,roundId:active.id,version:active.version}:null,
@@ -1845,6 +1869,37 @@ $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
 $("agb").onclick=auth;
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
+let profileAvatarData="";
+$("profileAvatarFile").onchange=async()=>{
+  const file=$("profileAvatarFile").files?.[0];
+  if(!file){profileAvatarData="";return;}
+  if(!/^image\\/(png|jpeg|webp)$/.test(file.type)){ $("profileMessage").textContent="اختار صورة JPG أو PNG أو WEBP.";return; }
+  if(file.size>5*1024*1024){$("profileMessage").textContent="حجم الصورة أكبر من 5 ميجابايت.";return;}
+  try{
+    const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=reject;reader.readAsDataURL(file);});
+    const img=await new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=data;});
+    const scale=Math.min(1,640/Math.max(img.width,img.height)),canvas=document.createElement("canvas");
+    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
+    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
+    profileAvatarData=canvas.toDataURL("image/jpeg",.78);
+    $("profileAvatarPreview").src=profileAvatarData;$("profileAvatarPreview").hidden=false;
+    $("profileMessage").textContent="تم تجهيز الصورة. اضغط حفظ.";
+    $("profileMessage").style.color="var(--ok)";
+  }catch(e){profileAvatarData="";$("profileMessage").textContent="تعذر تجهيز الصورة.";}
+};
+$("profileSave").onclick=async()=>{
+  const msg=$("profileMessage"),button=$("profileSave");
+  const displayName=$("profileDisplayName").value.trim(),bio=$("profileBio").value.trim();
+  if(displayName&&displayName.length<2){msg.textContent="اسم العرض يجب أن يكون حرفين على الأقل.";msg.style.color="var(--er)";return;}
+  button.disabled=true;msg.textContent="جارٍ حفظ المعلومات...";msg.style.color="";
+  try{
+    await apiCall("profile_update",{displayName,bio,avatarData:profileAvatarData});
+    profileAvatarData="";$("profileAvatarFile").value="";$("profileAvatarPreview").hidden=true;
+    await refreshMe(false);renderMe();
+    msg.textContent="✅ تم حفظ المعلومات الشخصية.";msg.style.color="var(--ok)";
+  }catch(e){msg.textContent=e.message||"تعذر حفظ المعلومات.";msg.style.color="var(--er)";}
+  finally{button.disabled=false;}
+};
 $("mout").onclick=()=>logout();
 $("pgback").onclick=()=>show("more");
 $("matchBack").onclick=()=>{show("home");requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo(0,sportsScrollY)));};
