@@ -572,12 +572,17 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script>
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
 const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+if(!window.supabase?.createClient)throw new Error("Supabase browser SDK did not load.");
+const googleOAuthClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:false,detectSessionInUrl:false,storageKey:"rukn_google_oauth"}
+});
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
 async function sendApi(url,action,payload={},useCsrf=true){
@@ -2047,24 +2052,37 @@ async function startGoogleAuth(){
   const button=$("googleAuth"),message=$("aerr");
   button.disabled=true;message.textContent="جارٍ فتح صفحة Google الآمنة...";message.style.color="var(--tx)";
   try{
-    const params=new URLSearchParams({provider:"google",redirect_to:"https://rukn-algharb-main.vercel.app/"});
-    const response=await fetch(SUPABASE_URL+"/auth/v1/authorize?"+params.toString(),{method:"GET",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,accept:"application/json"}});
-    const data=await response.json().catch(()=>({}));
-    if(!response.ok||!data.url)throw new Error(data.msg||data.message||"لم يتم تفعيل Google OAuth في إعدادات المشروع بعد.");
+    const {data,error}=await googleOAuthClient.auth.signInWithOAuth({
+      provider:"google",
+      options:{redirectTo:"https://rukn-algharb-main.vercel.app/",skipBrowserRedirect:true}
+    });
+    if(error||!data?.url)throw error||new Error("لم يتم تفعيل Google OAuth في إعدادات المشروع بعد.");
     window.location.assign(data.url);
-  }catch(e){message.textContent=e.message||"تعذر بدء تسجيل Google.";message.style.color="var(--er)";button.disabled=false;}
+  }catch(e){
+    message.textContent=e.message||"تعذر بدء تسجيل Google.";
+    message.style.color="var(--er)";button.disabled=false;
+  }
 }
 async function handleGoogleCallback(){
-  const values=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):location.hash);
-  const accessToken=values.get("access_token"),callbackError=values.get("error_description")||values.get("error");
-  if(!accessToken&&!callbackError)return false;
-  history.replaceState({},document.title,location.pathname+location.search);
+  const query=new URLSearchParams(location.search);
+  const hash=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):location.hash);
+  const code=query.get("code");
+  const callbackError=query.get("error_description")||query.get("error")||hash.get("error_description")||hash.get("error");
+  if(!code&&!callbackError)return false;
+  history.replaceState({},document.title,location.pathname);
   if(callbackError){showAuth("تعذر تسجيل الدخول عبر Google: "+callbackError.slice(0,220));return true;}
   try{
-    const data=await authCall("google_exchange",{accessToken});
-    csrfToken=data.csrfToken||"";localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+    const {data:sessionData,error:exchangeError}=await googleOAuthClient.auth.exchangeCodeForSession(code);
+    if(exchangeError||!sessionData?.session?.access_token)throw exchangeError||new Error("تعذر استلام جلسة Google.");
+    const data=await authCall("google_exchange",{accessToken:sessionData.session.access_token});
+    await googleOAuthClient.auth.signOut({scope:"local"}).catch(()=>{});
+    csrfToken=data.csrfToken||"";
+    localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");localStorage.removeItem("rukn_google_oauth");
     name=data.user?.username||"";attach(name);
-  }catch(e){showAuth(e.message||"تعذر التحقق من حساب Google.");}
+  }catch(e){
+    await googleOAuthClient.auth.signOut({scope:"local"}).catch(()=>{});
+    showAuth(e.message||"تعذر التحقق من حساب Google.");
+  }
   return true;
 }
 $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
