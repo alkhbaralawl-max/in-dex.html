@@ -389,102 +389,172 @@ canvas{display:block;width:100%}
 .chain-saved-item .chain-pick{margin-top:7px}.chain-history-entry .activity-entry{padding:8px 0}
 .sports-modal-actions{display:flex;gap:8px;margin-top:8px}.sports-modal-actions button{flex:1}
 
-/* ===== Design 3: dark navy sports dashboard ===== */
-:root{--b:#087fff;--bd:#06142e;--b2:#123d7a;--bg:#06142d;--card:#0d2348;--tx:#f0f6ff;--tx2:#a8bddc;--ok:#20cf73;--er:#ff566b;--yl:#f5cb55;--line:#274771}
-html,body{background:radial-gradient(ellipse at 50% 0%,#12396d 0%,#071a38 42%,#040e21 100%);color:var(--tx)}
-.app{background:linear-gradient(180deg,#081a38e8,#06142df0);box-shadow:0 0 42px #0005}
-.top{background:linear-gradient(105deg,#06142f,#123c79 58%,#081a38);border-bottom:1px solid #1d64b8;box-shadow:0 5px 20px #0003}
-.brand b{color:#fff}.brand small{color:#c3dcff}
-.lg{background:linear-gradient(145deg,#087fff,#08428c);border-color:#70baff66;color:#fff}
-.usd{background:linear-gradient(145deg,#0e9aff,#0754a5)}
-.bal{background:#04142f;border:1px solid #2c66aa;color:#ffda6b}
-.ribbon{background:#10294d;color:#d9e9ff;border-color:#244b7c}
-.btn{background:linear-gradient(135deg,#0b92ff,#0755c9);box-shadow:0 5px 14px #001b4a66}
-.btn.y{background:linear-gradient(135deg,#f6d56d,#d69e32);color:#241c0a}
-.btn.ok{background:linear-gradient(135deg,#25d477,#078744)}
-.btn.g{background:#17345f;color:#e7f2ff;border:1px solid #315b91}
-.ban{background:linear-gradient(120deg,#087fff,#08224d);border:1px solid #3189e8;box-shadow:0 8px 22px #001b4666}
-.warn{background:#3d2039;border-color:#86455d;color:#ffdfe6}
-.search input,.fi,.chatin input{background:#f7faff;color:#152b48;border-color:#345883}
-.chip{background:#10284d;color:#dceaff;border-color:#31537e}
-.chip.on{background:#087fff;color:#fff;border-color:#53b4ff}
-.card,.gcard,.matches-empty,.sportscore-panel{background:linear-gradient(145deg,#102b55,#091b39);border-color:#294d7d;color:#eff6ff;box-shadow:0 7px 22px #0003}
-.sec,.matches-heading b,.home-types-head b,.sportscore-heading b{color:#eff6ff}
-.sec small,.matches-heading small,.home-types-head small,.games-heading small,.sportscore-heading small{color:#a9c1df}
-.matches-count,.games-count{background:#10294d;color:#dceaff;border-color:#315580}
-.match-card,.sports-detail-card{background:linear-gradient(145deg,#102d5c,#081a39);border-color:#2b5a92;color:#f0f6ff;box-shadow:0 7px 22px #0004}
-.match-meta,.sports-detail-meta{color:#b1c8e7}
-.match-live{background:#0a633f;color:#b5ffda}
-.match-teams>.match-team{background:#0b2148;border-color:#254a7a}
-.team-logo{background:#fff;border-color:#e8f0fa}
-.team-logo-fallback{background:#16345d;color:#ddecff;border-color:#315882}
-.match-vs{color:#65bfff}
-.match-market,.sports-detail-market{border-color:#284b78}
-.match-market-title,.sports-detail-section-title{color:#d8e9ff}
-.match-outcome,.match-quick-outcomes .match-outcome{background:#132f5b;border-color:#315786;color:#f2f7ff}
-.match-outcome small{color:#76caff}
-.match-result{background:#10294d;color:#dcecff;border:1px solid #315580}
-.matches-empty{color:#c5d8f2}
-.activity-menu{background:#0b2044;border-color:#2c4f80}
-.activity-menu button{background:#0b2044;color:#f1f6ff}
-.activity-menu button:hover{background:#173761}
-.activity-pick,.back{background:#10294d;color:#eaf4ff;border-color:#315580}
-.nav{background:#061630;border-color:#1c477c;box-shadow:0 -7px 24px #0005}
-.nav button{color:#9bb4d5}.nav button.on{color:#55b8ff;background:linear-gradient(180deg,#0c3c7a66,#087fff22)}
-.mrow{background:#10284d;color:#ecf5ff;border-color:#2b4f7e}
-.sb{background:#102b52;color:#aac3e3;border:1px solid #254875}
-.sb b{color:#f5f8ff}
-.note{background:#44361c;color:#ffe7a6;border:1px solid #80622c}
-.idb{background:#123766;color:#91caff}
-.empty,.edu{color:#a9bfdc}
-.bub.them{background:#10294d;color:#edf5ff;border-color:#315580}
-.resbox.ap{background:#0f4835;color:#b9ffda;border-color:#1d8f5d}
-.resbox.rj{background:#51232f;color:#ffd9df;border-color:#a34a5a}
-.authw{background:radial-gradient(ellipse at 50% 0%,#123e77 0%,#071a37 58%,#041126 100%)}
-.auth-hero h2{color:#f1f6ff}.auth-hero p,.alogo small{color:#b5cae6}
-.auth-card{background:linear-gradient(145deg,#102b55,#081a38);border-color:#315787}
-.auth-label{color:#e1edfc}
-.auth-card .tabs{background:#071b39}
-.auth-card .tabs button{color:#c9dcf6}
-.auth-card .fi{background:#f7faff;color:#172d49}
-.prof .av{background:linear-gradient(145deg,#0c8cff,#064a99)}
-.sports-modal{align-items:flex-start;padding:0;background:#03102ddd}
-.sports-modal-card{background:linear-gradient(145deg,#102c57,#071a37);color:#f1f6ff;border:1px solid #31619a;border-top:0;border-radius:0 0 22px 22px;padding:calc(22px + env(safe-area-inset-top)) 18px 20px;box-shadow:0 20px 55px #0008;animation:sports-sheet-down .22s ease-out}
-.sports-modal-card h3{color:#fff}
-.sports-modal-close{background:#1b3c68;color:#eaf4ff}
-.sports-modal-pick,.sports-modal-return{background:#0d2549;border-color:#2d5587;color:#dcecff}
-.sports-modal-card input{background:#f8fbff;color:#122844}
-@keyframes sports-sheet-down{from{transform:translateY(-35px);opacity:.6}to{transform:translateY(0);opacity:1}}
-.chain-hub{margin:12px}
-.chain-draft-card{background:linear-gradient(145deg,#102d5c,#071a38);border:1px solid #2d5d96;box-shadow:0 9px 24px #0004;color:#f1f6ff}
-.chain-card-title{color:#f1f6ff}
-.chain-hub-title b{color:#f5f9ff}
-.chain-hub-title small,.chain-help,.chain-empty,.chain-balance-note{color:#b2c8e5}
-.chain-pick{background:#0c2349;border-color:#2c5487}
-.chain-pick-info b{color:#f2f7ff}
-.chain-pick-info small{color:#b5cae5}
-.chain-pick-info strong{color:#75c6ff}
-.chain-order-btn,.chain-remove-btn{background:#15345e;color:#e8f3ff;border-color:#315987}
-.chain-remove-btn{color:#ff8c9b}
-.chain-stake-input{background:#f8fbff;color:#172d49;border-color:#3a6da5}
-.chain-estimate{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-.chain-estimate-item{background:linear-gradient(145deg,#0c3e70,#0b2a52);border:1px solid #3479b9;border-radius:13px;padding:11px;text-align:center}
-.chain-estimate-item small{display:block;font-size:11px;color:#c4dcf8}
-.chain-estimate-item b{display:block;margin-top:4px;font-size:21px;color:#49e48d;direction:ltr}
-.chain-formula-note{font-size:11px;line-height:1.8;color:#b7cdea;background:#0a2142;border:1px solid #244a79;border-radius:10px;padding:9px;margin-top:8px}
-.chain-pick-teams{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px}
-.chain-pick-team{display:flex;align-items:center;gap:5px;min-width:0}
-.chain-pick-team img,.chain-team-fallback{width:27px;height:27px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;border:1px solid #cbdcf1}
-.chain-team-fallback{display:inline-flex;align-items:center;justify-content:center;background:#1b3f6e;color:#fff}
-.chain-pick-team b{font-size:12px;color:#f5f9ff}
-.chain-vs{color:#77c9ff;font-weight:900}
-.chain-main-actions button{min-width:0}
-.chain-history-entry{border-color:#294d7a}
-.chain-history-entry summary{color:#eaf4ff}
-.chain-history-entry .activity-entry-title{color:#f0f6ff}
-.activity-entry-meta{color:#abc3e0}
-.activity-entry{border-color:#274974}
-@media(prefers-reduced-motion:reduce){.sports-modal-card{animation:none!important}}
+
+/* ===== RUKN ALGHARB — LUXURY BLACK & GOLD MOBILE DESIGN ===== */
+:root{--b:#d7a934;--bd:#080705;--b2:#8c6417;--bg:#080806;--card:#14120d;--tx:#fff8e8;--tx2:#c2b28c;--ok:#2ed47a;--er:#f25a56;--yl:#f4c75d;--line:#4b3a18;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:#050504;color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif}
+body{background:radial-gradient(ellipse at 50% 0%,#33230c 0%,#100d07 24%,#050504 67%);overflow-x:hidden}
+.app{width:100%;max-width:560px;min-height:100dvh;margin:0 auto;background:linear-gradient(180deg,#0c0a06 0%,#080806 60%,#050504 100%);box-shadow:0 0 42px #000b;position:relative;overflow:hidden}
+#shell{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+[hidden]{display:none!important}
+button,input,textarea,select{font:inherit}button{touch-action:manipulation}
+.top{position:sticky;top:0;z-index:40;min-height:66px;padding:8px 12px calc(8px + env(safe-area-inset-top));display:flex;align-items:center;justify-content:space-between;gap:8px;background:linear-gradient(180deg,#151109f5,#080705f5);border-bottom:1px solid #74551d;box-shadow:0 5px 20px #0009;backdrop-filter:blur(14px)}
+.hr{display:flex;align-items:center;gap:8px;min-width:0}.brand{display:flex;align-items:center;gap:8px;min-width:0}
+.brand .lg{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,#3e2b0d,#100d07);border:1px solid #d9ad46;color:#ffdc78;font-size:21px;box-shadow:0 0 14px #c28a2633}
+.brand b{font-size:15px;color:#f9d77a;display:block;white-space:nowrap}.brand small{font-size:10px;color:#b9a475;white-space:nowrap}
+.usd{width:38px;height:38px;border-radius:12px;border:1px solid #9b7126;background:linear-gradient(145deg,#34230a,#100c05);color:#ffdc7c;font-size:22px;font-weight:900;box-shadow:inset 0 1px #fff2}
+.bal{max-width:46%;min-height:38px;padding:8px 12px;border:1px solid #8f6b26;border-radius:13px;background:linear-gradient(145deg,#34240c,#120e07);color:#ffdf87;font-size:12px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ribbon{padding:7px 11px;text-align:center;background:linear-gradient(90deg,#171106,#33220a,#171106);border-bottom:1px solid #634918;color:#d9c18c;font-size:10px;line-height:1.65}
+main{padding-bottom:15px}
+.btn{min-height:46px;border:1px solid #e5bd59;border-radius:13px;padding:11px 15px;background:linear-gradient(180deg,#f6d477 0%,#d6a12c 55%,#a87312 100%);color:#1b1204;font-weight:900;font-size:14px;box-shadow:0 4px 13px #c28d2c33,inset 0 1px #fff9;cursor:pointer}
+.btn:active{transform:translateY(1px);filter:brightness(.96)}.btn:disabled{opacity:.45;cursor:not-allowed}.btn.full{width:100%}
+.btn.ok{background:linear-gradient(180deg,#31d37b,#0b8549);border-color:#55e99c;color:#04170d}
+.btn.y{background:linear-gradient(180deg,#ffe59a,#d7a438);border-color:#ffe19a;color:#231705}
+.btn.er{background:linear-gradient(180deg,#ed6862,#a8322d);border-color:#ff9690;color:#fff}
+.btn.g{background:linear-gradient(180deg,#29251c,#15120c);border-color:#67501f;color:#f6dfaa;box-shadow:inset 0 1px #fff1}
+.ban{margin:12px;border:1px solid #9f772b;border-radius:18px;min-height:166px;padding:17px 16px;color:#fff7e7;background:radial-gradient(circle at 18% 80%,#8c6221a0,transparent 35%),linear-gradient(110deg,#0d0a05,#24190a 55%,#090806);box-shadow:0 8px 24px #0008;overflow:hidden}
+.ban:before{width:180px;height:180px;left:-52px;top:-78px;background:#e7b8441b}.ban h2{font-size:21px;color:#f7d274;margin:0 0 7px}
+.ban p{font-size:12px;line-height:1.8;color:#eadcbb;max-width:72%;margin:0 0 12px}.ban .em{font-size:62px;filter:drop-shadow(0 5px 14px #e5b94888)}
+.warn{margin:10px 12px;padding:10px 12px;border-radius:12px;background:#2a1c0d;border:1px solid #866327;color:#f1d89c;font-size:11px;line-height:1.8}
+.card,.sports-detail-card,.match-card,.matches-empty,.sportscore-panel,.gcard{background:linear-gradient(155deg,#1b1710,#0d0c09 70%);border:1px solid #59451d;border-radius:17px;color:var(--tx);box-shadow:0 5px 17px #0008,inset 0 1px #fff08}
+.card{padding:13px;margin:0 12px 12px}.sec{color:#f5d47c;font-size:16px;margin:13px 14px 9px}
+.gh{display:flex;align-items:center;gap:10px;margin:13px 12px}.gh h1{font-size:18px;color:#f6d57b;margin:0;flex:1}
+.back{width:42px;height:42px;border:1px solid #71531d;border-radius:12px;background:#1b160b;color:#f6d27a;font-size:20px}
+.empty{color:#bdad8c;text-align:center;padding:20px 12px;font-size:13px}.edu{color:#a99a79;font-size:10px;line-height:1.8;margin:12px 14px;text-align:center}
+.row{border-bottom:1px solid #3a2e18;color:#eadbb7}.row:last-child{border-bottom:0}
+.search{margin:0 12px 10px;position:relative}.search input,.fi,.chain-stake-input,.chatin input,.sports-modal-card input{width:100%;min-height:47px;border:1px solid #655022;border-radius:12px;background:linear-gradient(180deg,#211b10,#100e09);color:#fff3d1;padding:0 13px;font-size:15px;outline:none}
+.search input:focus,.fi:focus,.chain-stake-input:focus,.chatin input:focus,.sports-modal-card input:focus{border-color:#e1b64e;box-shadow:0 0 0 3px #e0b54b22}
+textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-stake-label{display:block;color:#dec58f;font-size:12px;font-weight:800;margin:9px 0 5px}
+.lnk{background:none;border:0;color:#f1cc6b;font-size:12px}.msg,.err{font-size:12px;line-height:1.8}
+.authw{min-height:100dvh;padding:calc(30px + env(safe-area-inset-top)) 16px 32px;background:radial-gradient(ellipse at 50% 10%,#51340c 0%,#1a1207 29%,#060504 76%);color:#fff5dc}
+.auth-hero{text-align:center;margin:0 auto 18px;max-width:430px}.auth-hero .alogo{margin-bottom:13px}
+.auth-hero .lg.big{width:76px;height:76px;border-radius:50%;margin:0 auto 12px;background:radial-gradient(circle,#63430f,#140e05);border:1px solid #efc65b;color:#ffe28c;box-shadow:0 0 30px #d6a13f55;font-size:36px}
+.auth-hero h2{color:#ffdc7c;font-size:22px;margin:7px 0}.auth-hero p{color:#d2c19a;font-size:12px;line-height:1.8;margin:0}
+.authw .warn{max-width:430px;margin:0 auto 12px}.auth-card{max-width:430px;margin:0 auto;padding:17px;border:1px solid #806027;border-radius:19px;background:linear-gradient(155deg,#21190b,#0c0a06);box-shadow:0 14px 38px #000a}
+.auth-card .tabs{gap:7px;margin-bottom:14px}.auth-card .tabs button{min-height:43px;border:1px solid #59451f;border-radius:11px;background:#151109;color:#cfbd91;font-size:13px}
+.auth-card .tabs button.on{background:linear-gradient(180deg,#f6d477,#b47a19);color:#211504;border-color:#ffdf82}
+.auth-label{display:block;margin:8px 1px 5px;color:#e5d2a5;font-size:12px;font-weight:800}.auth-card .fi{height:49px;margin-bottom:7px}.auth-submit{margin-top:8px}
+.auth-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-top:9px}.auth-foot small{color:#ad9b72;font-size:10px}
+.matches-section{margin:17px 12px 12px}.matches-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 1px 10px}
+.matches-heading b{color:#f9d574;font-size:17px}.matches-heading small{display:block;color:#b9a77e;font-size:11px;margin-top:4px}
+.matches-count,.games-count{background:#1d180d;border:1px solid #6a511e;border-radius:18px;color:#f4d17b;padding:7px 10px;font-size:10px}
+.matches-list{display:grid;gap:11px}.match-card{padding:12px;border-radius:16px}.match-meta{color:#b6a47e;font-size:10px;margin-bottom:10px}
+.match-teams{gap:7px;padding-bottom:12px}.match-teams>.match-team{min-height:104px;padding:8px 4px;background:linear-gradient(145deg,#201a0e,#100e08);border:1px solid #403217;border-radius:13px}
+.match-team{gap:6px}.team-logo,.team-logo-fallback{width:56px;height:56px}.team-logo{background:#fff;border:1px solid #e9d6a9;padding:5px}
+.team-logo-fallback{background:#2b210f;color:#f6d477;border:1px solid #8a6826}.match-team b{font-size:12px;color:#f7edd4}
+.match-vs{color:#d5a83e;font-weight:900}.match-market{border-top:1px solid #423319;padding-top:10px}
+.match-market-title{font-size:11px;color:#e5c66e;font-weight:900;margin-bottom:7px}.match-outcomes{gap:6px}
+.match-outcome{min-height:52px;background:linear-gradient(160deg,#2a2110,#151109);border:1px solid #5a451c;border-radius:10px;color:#f8e8c1;padding:8px 4px}
+.match-outcome b{font-size:10px}.match-outcome small{font-size:12px;color:#f4c95c}.match-outcome:disabled{opacity:.42}
+.match-result{background:#2b2110;color:#f4d77f;border:1px solid #74551e}.match-live{background:#4a230f;color:#ffcf76}
+.sports-detail-head{display:flex;align-items:center;gap:9px;margin:12px}.sports-detail-head h1{font-size:17px;color:#f6d477}
+.sports-detail-card{margin:0 12px 12px;padding:13px}.sports-detail-meta{color:#b9a77d;font-size:10px;margin-bottom:11px}
+.sports-detail-teams{gap:6px}.sports-detail-teams .team-logo,.sports-detail-teams .team-logo-fallback{width:64px;height:64px}
+.sports-detail-teams .match-team b{font-size:12px}.sports-detail-score{color:#f9d574;font-size:20px}.sports-detail-score small{color:#baa87e}
+.sports-detail-market{border-color:#57421a;margin-top:14px;padding-top:12px}.sports-detail-section-title{color:#f1cf70;font-size:13px}
+.sports-detail-options{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.sports-longpick{min-height:66px;padding:8px 3px}
+.sports-longpick b{font-size:10px}.sports-longpick small{font-size:12px}.sports-longpick.selected{background:#42320e;border-color:#e5bc4e;box-shadow:0 0 0 2px #e8bc4a33}
+.sports-longpick.selected .pick-check{background:#d8aa3c;color:#181006}.sports-detail-hint{color:#b9a77e}
+.sports-my-bets{margin:0 12px 14px}.sports-my-bet{background:#17130b;border:1px solid #55401a;border-radius:12px;color:#f4e6c6}
+.sports-my-bet-state.won{color:#4ee28a}.sports-my-bet-state.lost{color:#ff7770}.sports-my-bet-state.pending{color:#f1cb6c}
+.sports-modal{position:fixed;inset:0;z-index:500;display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:calc(env(safe-area-inset-top) + 9px) 10px calc(12px + env(safe-area-inset-bottom));background:#000d;backdrop-filter:blur(8px)}
+.sports-modal-card{width:100%;max-width:540px;margin:0 auto;border:1px solid #b48734;border-radius:19px;background:linear-gradient(155deg,#241b0b,#090805);color:#fff1d0;padding:18px 15px calc(17px + env(safe-area-inset-bottom));box-shadow:0 20px 60px #000d;max-height:calc(100dvh - 20px);overflow-y:auto;animation:gold-sheet .2s ease-out}
+.sports-modal-card h3{color:#f8d576;font-size:17px}.sports-modal-kicker{color:#d7ae4c}
+.sports-modal-close{background:#2a210f;color:#f4d47a;border:1px solid #6d5121}
+.sports-modal-pick{background:#17130b;border:1px solid #57421b;color:#f7e8c9}
+.sports-modal-return{background:#1b1509;border:1px solid #654b1d;border-radius:11px;padding:9px 11px;color:#f4d989}
+.sports-modal-returns{display:grid;gap:7px;margin:11px 0}
+.sports-modal-return{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sports-modal-return b{font-size:15px;color:#f7cf62;direction:ltr}
+.sports-modal-return.total{background:linear-gradient(90deg,#38280b,#1a1307);border-color:#c59634}
+.sports-modal-return.total b{color:#56e28a;font-size:18px}
+.sports-modal-msg{color:#ffaaa4;min-height:19px}.sports-modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}
+@keyframes gold-sheet{from{transform:translateY(-14px);opacity:.4}to{transform:translateY(0);opacity:1}}
+.search span{color:#c8a14b}.cats{display:flex;gap:7px;margin:0 12px 12px;overflow-x:auto;padding:2px 0 5px;scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}.chip{border:1px solid #5c451a;background:#17130b;color:#e9d7a6;border-radius:18px;padding:8px 13px;font-size:11px;font-weight:900}
+.chip.on{background:linear-gradient(180deg,#f3d47a,#b98220);color:#1d1404;border-color:#f4d57a}
+.games-heading h1{color:#f5d275;font-size:18px}.games-heading small{color:#b7a77d}
+.games-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:0 12px 15px}
+.games-list .gcard{display:flex;flex-direction:column;min-width:0;overflow:hidden;border-radius:15px}
+.games-list .art{aspect-ratio:1.35/1;height:auto;min-height:0;font-size:42px;background-image:linear-gradient(140deg,#4c3610,#100d07)!important}
+.games-list .gi{padding:10px;min-width:0}.games-list .gi b{font-size:13px;color:#f6d478}
+.games-list .gi p{font-size:10px;line-height:1.6;color:#c6b58f;margin:5px 0 9px}
+.games-list .gi .btn{width:100%;min-height:38px;padding:8px;font-size:11px}
+.feat{gap:9px;margin:0 12px}.feat .gcard{border-radius:14px}.feat .art{font-size:40px}.feat .gi b{color:#f4d172}
+.home-types{gap:9px;margin:0 12px}.home-type{background:linear-gradient(150deg,#32230c,#0f0c06);border:1px solid #806027;color:#ffe5a2;min-height:112px;border-radius:15px}
+.home-type .ht-icon{font-size:26px}.home-type b{color:#f7d779}.home-type small{color:#c9b587}
+.list{gap:10px}.activity-head{align-items:center}.activity-head h1{color:#f5d378}.activity-switch{margin-right:auto}
+.activity-pick{background:#1a150b;color:#f5d478;border-color:#735720}.activity-menu{background:#171209;border:1px solid #775a23;box-shadow:0 12px 28px #000b;border-radius:13px}
+.activity-menu button{background:#171209;color:#f2dfb2}.activity-menu button:hover{background:#2c210d}
+.activity-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:0 12px 10px}
+.sb{background:linear-gradient(150deg,#241b0c,#100e08);border:1px solid #514019;border-radius:12px;color:#cbb98e;padding:11px 4px}
+.sb b{color:#f5d071;font-size:17px}.activity-entry{border-color:#403116;padding:12px 0}
+.activity-entry-title{color:#f4dfae;font-size:13px}.activity-entry-meta{color:#baaa86;font-size:11px}
+.activity-entry-state.up{color:#54df91}.activity-entry-state.dn{color:#ff7770}
+.chain-hub{margin:12px}.chain-hub-title b{font-size:17px;color:#f5d276}
+.chain-hub-title small,.chain-help,.chain-empty,.chain-balance-note{color:#b8a77d}
+.chain-draft-card,.chain-saved-card{background:linear-gradient(150deg,#21190b,#0c0a06);border:1px solid #7b5a22;border-radius:16px;padding:12px;box-shadow:0 8px 22px #0008}
+.chain-card-title{color:#f6d478}.chain-pick{background:linear-gradient(90deg,#1d170b,#100e08);border-color:#60491d;border-radius:11px}
+.chain-pick-info b{color:#fff0c8;font-size:12px}.chain-pick-info small{color:#c0ae83}.chain-pick-info strong{color:#f6d06a}
+.chain-order-btn,.chain-remove-btn{background:#1b160b;color:#f4dfa9;border-color:#745622}.chain-remove-btn{color:#ff8e82}
+.chain-stake-input{background:#100d08;color:#ffedc2;border-color:#765923}
+.chain-estimate{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}
+.chain-estimate-item{background:linear-gradient(145deg,#2b200c,#110d06);border:1px solid #71531e;border-radius:12px;padding:10px 7px;text-align:center}
+.chain-estimate-item small{font-size:10px;color:#d4c197;line-height:1.5}.chain-estimate-item b{display:block;margin-top:4px;font-size:18px;color:#f7d36c;direction:ltr}
+.chain-estimate-item.total{grid-column:1/-1;background:linear-gradient(90deg,#30220b,#151006);border-color:#c49a38}
+.chain-estimate-item.total b{font-size:22px;color:#5ce592}
+.chain-formula-note{font-size:10px;line-height:1.8;color:#ddc99a;background:#171209;border:1px solid #59431a;border-radius:10px;padding:9px;margin-top:8px}
+.chain-pick-teams{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-bottom:5px}
+.chain-pick-team{display:flex;align-items:center;gap:4px;min-width:0}
+.chain-pick-team img,.chain-team-fallback{width:25px;height:25px;border-radius:50%;background:#fff;padding:3px;border:1px solid #e2c16b}
+.chain-team-fallback{display:inline-flex;align-items:center;justify-content:center;background:#30220c;color:#f8d777}
+.chain-pick-team b{font-size:11px;color:#f7e7bd}.chain-vs{color:#e6b94e}
+.chain-main-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.chain-main-actions button{min-width:0;padding:10px 7px;font-size:11px}
+.chain-history-entry{border-color:#55401a}.chain-history-entry summary{color:#f5d57b;font-size:12px}
+.chain-history-entry .activity-entry-title{color:#f8e8c5}
+.activity-pick,.back,.mrow{background:#171209;color:#f4dca6;border-color:#624a1e}.mrow{border-radius:12px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);z-index:70;width:100%;max-width:560px;display:flex;background:linear-gradient(180deg,#171209f5,#070604fa);border-top:1px solid #806027;padding:5px 3px calc(5px + env(safe-area-inset-bottom));box-shadow:0 -9px 25px #000b;backdrop-filter:blur(14px)}
+.nav button{flex:1;min-width:0;min-height:55px;padding:6px 1px 3px;border:0;border-radius:11px;background:transparent;color:#ad9a6d;font-size:9px}
+.nav button span{display:block;font-size:19px;line-height:1.2;margin-bottom:3px}
+.nav button.on{color:#ffdb78;background:linear-gradient(180deg,#4d340e77,#1d150766);box-shadow:inset 0 0 0 1px #c09332,inset 0 2px 10px #e4b75020;font-weight:900}
+.prof{text-align:center}.av{border:1px solid #c89b3a;background:radial-gradient(circle,#60420e,#120d05);color:#f5d477;box-shadow:0 0 18px #c18d2f33}
+.idb{background:#241a09;border:1px solid #73551d;color:#f3d47b}.note{background:#2d210d;color:#efdbad;border:1px solid #72521d}
+.grid3{gap:7px}.activity-stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.chatwrap{height:calc(100dvh - 160px);min-height:360px}.chatbox{padding:4px 10px}.bub{max-width:84%;border-radius:14px}
+.bub.me{background:linear-gradient(145deg,#b47b19,#e3b94d);color:#1c1204}.bub.them{background:#17130b;border:1px solid #624a1e;color:#f3e4c0}
+.chatin{padding:0 12px 8px}.chatin input{flex:1}.chatin button{width:48px;height:48px;border-radius:13px;background:linear-gradient(180deg,#f5d477,#b77e18);color:#1b1204;border:1px solid #f2ce6f}
+.amsgbox{background:#261b0b;color:#edd39a;border:1px solid #73551f}
+.resbox.ap{background:#123322;color:#a9f2c7;border-color:#267e4a}.resbox.rj{background:#3d1713;color:#ffc0b6;border-color:#944034}
+.fakewarn{color:#ff8277}.upbox{border:1px dashed #997331;color:#cdb985;background:#171209;border-radius:12px}
+.toast{background:#191207;color:#f7dda0;border:1px solid #886522;box-shadow:0 6px 18px #000a;bottom:calc(76px + env(safe-area-inset-bottom))}
+#fatal{background:#35120e;color:#ffcec7;border:1px solid #a64c39}
+.gl{background:radial-gradient(ellipse at 50% 0%,#35230c,#090806 45%,#030303)!important}
+.gtop{background:#0a0805ed;border-bottom:1px solid #73541e}.gt{color:#ffda7b;font-weight:900}
+.gb{background:#211807;border:1px solid #81601f;color:#f5d378}.gx{background:#211807;color:#f6d57c;border:1px solid #72531d}
+.gc,.gd{background:linear-gradient(145deg,#21190b,#0d0b07);border:1px solid #654c1c;color:#f7e9c6;box-shadow:0 6px 18px #0008}
+.gmsg{color:#f5e5c1}.gmsg.ok{color:#5de59a}.gmsg.er{color:#ff8a7f}.sm2,.fld label{color:#d9c493}
+.bar button{background:#21190b;color:#f5dfae;border:1px solid #72531d}.bar button.on{background:linear-gradient(180deg,#f2d478,#b68121);color:#241705;border-color:#f8dc82}
+.fld input{background:#100d08;color:#fff0c8;border:1px solid #6b501d}.gd p,.gd .row2{color:#cbb98e}
+.result-chip{background:#33230c;color:#f7d77c;border:1px solid #88652a}.result-chip.win{background:#123522;color:#a7f0bd;border-color:#267e4a}.result-chip.loss{background:#3a1713;color:#ffc1b5;border-color:#99463c}
+.ov{background:#000d}.ovb.w{background:linear-gradient(#21683e,#0b2617);border:1px solid #5ad78b}.ovb.l{background:linear-gradient(#842f26,#3a0d0a);border:1px solid #e16b5d}
+.sportscore-section{margin:15px 12px}.sportscore-heading b{color:#f1d176}.sportscore-heading small,.sportscore-status,.sportscore-note{color:#c1b087}
+.sportscore-panel{padding:10px}.sportscore-match{background:#17130b;border:1px solid #5b441a;border-radius:11px}.sportscore-match-meta{color:#b9a77b}
+.sportscore-team{color:#f4e5c1}.sportscore-score{color:#f6d477}.sportscore-live{color:#ff8379}
+.sportscore-footer a{background:#30220b;color:#f5d57a;border:1px solid #71531f}.odds-factor-note{background:#21190c;color:#d9c28d;border:1px solid #5d461c}
+.matches-heading b,.home-types-head b,.sportscore-heading b{color:#f5d374}.home-types-head small{color:#bcab82}
+.games-list .art{color:#ffdb77}
+@media(max-width:390px){
+ .top{padding-left:8px;padding-right:8px}.brand b{font-size:13px}.brand small{font-size:9px}.usd{width:34px;height:36px}.bal{font-size:10px;padding:7px 8px}
+ .ban{min-height:150px;padding:14px}.ban h2{font-size:19px}.ban p{font-size:11px}
+ .match-teams>.match-team{min-height:90px}.team-logo,.team-logo-fallback{width:48px;height:48px}
+ .sports-detail-options{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .games-list{gap:7px}.games-list .gi{padding:8px}.games-list .gi b{font-size:12px}
+ .chain-pick{align-items:flex-start}.chain-pick-actions{flex-direction:column}.sports-modal-actions{grid-template-columns:1fr}
+}
+@media(min-width:561px){body{padding:0 12px;background:#050504}.app{border-left:1px solid #584019;border-right:1px solid #584019}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body><div class="app">
@@ -509,14 +579,14 @@ html,body{background:radial-gradient(ellipse at 50% 0%,#12396d 0%,#071a38 42%,#0
 
 <div id="shell" hidden>
 <header class="top">
-  <div class="hr"><button class="usd" id="usd">$</button>
+  <div class="hr"><button class="usd" id="usd" aria-label="شحن الرصيد">＋</button>
     <div class="brand"><div class="lg">👑</div><div><b data-t="title"></b><small data-t="subtitle"></small></div></div></div>
   <button class="bal" id="hbal"></button>
 </header>
 <div class="ribbon" data-t="ribbon"></div>
 
 <main id="v_home">
-  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">🚀</div></div>
+  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">⚽</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
   <section class="matches-section">
@@ -637,7 +707,11 @@ html,body{background:radial-gradient(ellipse at 50% 0%,#12396d 0%,#071a38 42%,#0
     <div id="sportsModalPick" class="sports-modal-pick"></div>
     <label for="sportsStake" data-t="sportsStakeLabel">المبلغ</label>
     <input id="sportsStake" type="number" min="1" step="0.01" inputmode="decimal" placeholder="اكتب المبلغ">
-    <div class="sports-modal-return"><span data-t="expectedProfitLabel">المكسب المتوقع</span><b id="sportsPotential">0</b></div>
+    <div class="sports-modal-returns">
+      <div class="sports-modal-return"><span>المكسب المتوقع</span><b id="sportsPotential">0</b></div>
+      <div class="sports-modal-return"><span>أصل الرهان المسترد</span><b id="sportsStakeReturn">0</b></div>
+      <div class="sports-modal-return total"><span>إجمالي العائد المتوقع</span><b id="sportsTotalReturn">0</b></div>
+    </div>
     <div id="sportsModalMsg" class="sports-modal-msg"></div>
     <div class="sports-modal-actions">
       <button type="button" class="btn g" id="sportsChainAddBtn">إضافة الاختيار للسلسلة</button>
@@ -1139,7 +1213,10 @@ function chainOddsTotal(){return sportsChainDraft.reduce((sum,p)=>sum+Math.max(0
 function updateChainEstimate(){
   const odds=chainOddsTotal(),stake=Number(nd($("chainStake")?.value||sportsChainStake))||0;
   if($("chainTotalOdds"))$("chainTotalOdds").textContent="×"+odds.toFixed(2);
-  if($("chainPotentialReturn"))$("chainPotentialReturn").textContent=f(r2(stake*odds));
+  const profit=r2(stake*odds),principal=r2(stake),total=r2(profit+principal);
+  if($("chainPotentialReturn"))$("chainPotentialReturn").textContent=f(profit);
+  if($("chainPrincipalReturn"))$("chainPrincipalReturn").textContent=f(principal);
+  if($("chainTotalReturn"))$("chainTotalReturn").textContent=f(total);
 }
 function renderChainHub(){
   const box=$("chainActivity");if(!box)return;
@@ -1174,19 +1251,23 @@ function renderChainHub(){
     actions.appendChild(up);actions.appendChild(down);actions.appendChild(del);row.appendChild(actions);list.appendChild(row);
   });
   draft.appendChild(list);
-  const estimate=el("div","chain-estimate"),oddsBox=el("div","chain-estimate-item"),returnBox=el("div","chain-estimate-item");
-  oddsBox.appendChild(el("small","","المعامل الإجمالي (مجموع الاختيارات)"));
+  const estimate=el("div","chain-estimate"),oddsBox=el("div","chain-estimate-item"),profitBox=el("div","chain-estimate-item"),principalBox=el("div","chain-estimate-item"),totalBox=el("div","chain-estimate-item total");
+  oddsBox.appendChild(el("small","","المعامل الإجمالي — مجموع الاختيارات"));
   const ov=el("b","","×0.00");ov.id="chainTotalOdds";oddsBox.appendChild(ov);
-  returnBox.appendChild(el("small","","العائد المتوقع"));
-  const rv=el("b","","0");rv.id="chainPotentialReturn";returnBox.appendChild(rv);
-  estimate.appendChild(oddsBox);estimate.appendChild(returnBox);draft.appendChild(estimate);
+  profitBox.appendChild(el("small","","المكسب المتوقع"));
+  const rv=el("b","","0");rv.id="chainPotentialReturn";profitBox.appendChild(rv);
+  principalBox.appendChild(el("small","","أصل الرهان المسترد"));
+  const pv=el("b","","0");pv.id="chainPrincipalReturn";principalBox.appendChild(pv);
+  totalBox.appendChild(el("small","","إجمالي العائد المتوقع"));
+  const tv=el("b","","0");tv.id="chainTotalReturn";totalBox.appendChild(tv);
+  estimate.appendChild(oddsBox);estimate.appendChild(profitBox);estimate.appendChild(principalBox);estimate.appendChild(totalBox);draft.appendChild(estimate);
   const label=el("label","chain-stake-label","مبلغ السلسلة");
   const stake=el("input","chain-stake-input");stake.id="chainStake";stake.type="number";stake.min="0.01";stake.step="0.01";stake.inputMode="decimal";
   stake.value=String(sportsChainStake||C.settings.defBet||100);
   stake.oninput=()=>{sportsChainStake=Number(stake.value)||0;updateChainEstimate();};
   draft.appendChild(label);draft.appendChild(stake);
   draft.appendChild(el("div","chain-balance-note","الرصيد الافتراضي المتاح: "+f(U.balance||0)));
-  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × معامل 2.00 لكل اختيار = 10.00x. رهان 1,000 = عائد متوقع 10,000 إذا نجحت كل الاختيارات."));
+  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × 2.00 = 10.00x. رهان 1,000: مكسب 10,000 + استرداد أصل الرهان 1,000 = إجمالي عائد 11,000 عند نجاح كل الاختيارات."));
   const msg=el("div","chain-message");msg.id="chainMessage";draft.appendChild(msg);
   const actions=el("div","chain-main-actions");
   const place=el("button","btn full","تأكيد السلسلة");place.id="chainPlace";place.type="button";place.onclick=placeSportsChain;actions.appendChild(place);
@@ -1196,7 +1277,11 @@ function renderChainHub(){
 }
 function updateSportsPotential(){
   const amount=Number(nd($("sportsStake").value)),odds=sportsPick?Number(sportsPick.option.odds):0;
-  $("sportsPotential").textContent=amount>0&&odds>1?f(r2(amount*(odds-1))):"0";
+  const profit=amount>0&&odds>0?r2(amount*odds):0;
+  const principal=amount>0?amount:0;
+  $("sportsPotential").textContent=f(profit);
+  $("sportsStakeReturn").textContent=f(principal);
+  $("sportsTotalReturn").textContent=f(r2(profit+principal));
 }
 async function placeSportsBet(){
   if(!sportsPick||!U||busy)return;
@@ -1267,7 +1352,7 @@ function renderAct(){
   }
   sports.forEach(b=>{
     const won=b.status==="won",lost=b.status==="lost",pendingStatus=b.status==="pending";
-    const state=won?"كسبت "+f(Math.max(0,Number(b.payout||0)-Number(b.stake||0))):
+    const state=won?"مكسب "+f(Math.max(0,Number(b.payout||0)-Number(b.stake||0)))+" + استرداد أصل الرهان "+f(b.stake||0):
       lost?"خسرت "+f(b.stake||0):pendingStatus?"قيد المتابعة":(C.texts.betVoidStatus||"ملغي");
     const teams=b.team1&&b.team2?arabicTeamName(b.team1)+" ضد "+arabicTeamName(b.team2):arabicTeamName(b.matchTitle||"مباراة");
     const item=el("div","activity-entry");
@@ -1284,8 +1369,11 @@ function renderAct(){
     const chainState=chain.status==="active"?"تنتظر النتائج":chain.status==="completed"?"مكتملة":chain.status==="lost"?"خسرت السلسلة":"انتهت";
     summary.textContent="⛓️ سلسلة ×"+combinedOdds.toFixed(2)+" • "+chainState+" • "+chain.totalLegs+" اختيارات";
     details.appendChild(summary);
-    details.appendChild(el("div","activity-entry-meta","مبلغ السلسلة: "+f(chain.initialStake)+" • المعامل الإجمالي: ×"+combinedOdds.toFixed(2)));
-    if(chain.status==="completed")details.appendChild(el("div","activity-entry-state up","العائد الفعلي: "+f(chain.currentBalance)));
+    const principal=Number(chain.initialStake)||0,expectedProfit=r2(principal*combinedOdds),expectedTotal=r2(principal+expectedProfit);
+    details.appendChild(el("div","activity-entry-meta","مبلغ الرهان: "+f(principal)+" • المعامل الإجمالي: ×"+combinedOdds.toFixed(2)));
+    details.appendChild(el("div","activity-entry-meta","المكسب المتوقع: "+f(expectedProfit)+" • أصل الرهان المسترد: "+f(principal)));
+    details.appendChild(el("div","activity-entry-state up","إجمالي العائد المتوقع: "+f(expectedTotal)));
+    if(chain.status==="completed")details.appendChild(el("div","activity-entry-state up","تم إرجاع إجمالي: "+f(chain.currentBalance)+" • المكسب الفعلي: "+f(Math.max(0,Number(chain.currentBalance)-principal))));
     else if(chain.status==="lost")details.appendChild(el("div","activity-entry-state dn","لم تتحقق جميع الاختيارات؛ خُصم مبلغ السلسلة."));
     chain.legs.forEach(leg=>{
       const snap=leg.snapshot||{},row=el("div","activity-entry");
