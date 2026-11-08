@@ -42,7 +42,7 @@ jobs:
           packages: "platform-tools platforms;android-35 build-tools;35.0.0"
 
       - name: Build both native debug APKs
-        run: gradle -p native-android --no-daemon --stacktrace :player:assembleDebug :admin:assembleDebug
+        run: gradle -p native-android --no-daemon --console=plain --stacktrace :player:assembleDebug :admin:assembleDebug
 
       - name: Collect and verify separate APKs
         shell: bash
