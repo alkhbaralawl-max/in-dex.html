@@ -1,0 +1,13 @@
+{
+  "appId": "com.ruknalgharb.admin",
+  "appName": "ركن الغرب - المشرف",
+  "webDir": "www",
+  "backgroundColor": "#080806",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
