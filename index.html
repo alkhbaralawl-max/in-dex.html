@@ -1181,14 +1181,27 @@ function matchProfitFactor(match){
   return Math.max(.1,Math.min(5,(Number.isFinite(percent)&&percent>0?percent:100)/100));
 }
 let sportsDetailMatchId="";
+function sportsMarketKind(marketId,market){
+  const id=String(marketId||"").toLowerCase().trim();
+  const title=String(market?.title||"").toLowerCase().trim();
+  const entries=Object.entries(market?.options||{});
+  const ids=entries.map(([key])=>String(key).toLowerCase());
+  const labels=entries.map(([,value])=>String(value?.label||"").toLowerCase());
+  const all=[id,title,...ids,...labels].join(" ");
+  const scoreKeys=ids.filter(key=>/^\\d+\\s*[-:]\\s*\\d+$/.test(key));
+  const correctScore=/correct\\s*score|النتيجة\\s*(?:الصحيحة|الصحيحه)|نتيجة\\s*(?:صحيحة|صحيحه)/i.test(all);
+  if(correctScore||scoreKeys.length>=2)return "correct_score";
+  const knownGoals=["over_under_1_5","over_under_15","total_goals_1_5","goals_1_5"];
+  const hasOverUnder=/(?:over|under|أكثر\\s*من|أقل\\s*من|اقل\\s*من)/i.test(all);
+  const hasLine15=/1[.,_ ]5|واحد\\s*ونص/i.test(all)||Number(market?.line)===1.5;
+  if(knownGoals.includes(id)||(hasOverUnder&&hasLine15))return "over_under_1_5";
+  const aliases={home:["home","1","team1","home_win"],draw:["draw","x","tie"],away:["away","2","team2","away_win"]};
+  const hasResult=ids.some(x=>aliases.home.includes(x))&&ids.some(x=>aliases.draw.includes(x))&&ids.some(x=>aliases.away.includes(x));
+  if(["result","1x2","match_result","match_winner"].includes(id)||hasResult)return "result";
+  return "other";
+}
 function sportsResultMarket(match){
-  const entries=Object.entries(match.markets||{});
-  const exact=entries.find(([id])=>["result","1x2","match_result","match_winner"].includes(String(id).toLowerCase()));
-  if(exact)return exact;
-  return entries.find(([id,m])=>{
-    const keys=Object.keys(m.options||{}).map(x=>String(x).toLowerCase());
-    return keys.some(x=>["home","1","team1","home_win"].includes(x))&&keys.some(x=>["draw","x","tie"].includes(x))&&keys.some(x=>["away","2","team2","away_win"].includes(x));
-  })||null;
+  return Object.entries(match.markets||{}).find(([id,market])=>sportsMarketKind(id,market)==="result")||null;
 }
 function sportsSideOption(market,side){
   const aliases={home:["home","1","team1","home_win"],draw:["draw","x","tie"],away:["away","2","team2","away_win"]};
@@ -1261,36 +1274,42 @@ function renderMatches(){
 let sportsScrollY=0;
 function openSportsMatch(matchId){if(!sportsFeatureEnabled())return;sportsScrollY=window.scrollY||window.pageYOffset||0;sportsDetailMatchId=String(matchId||"");show("match");}
 function sportsMarketEntries(match){
-  const markets=match.markets||{};
+  const entries=Object.entries(match.markets||{});
   const result=sportsResultMarket(match);
-  const correct=markets.correct_score?["correct_score",markets.correct_score]:null;
-  const goals=markets.over_under_1_5||markets.total_goals_1_5||markets.goals_1_5||markets.over_under_15;
+  const correct=entries.find(([id,market])=>sportsMarketKind(id,market)==="correct_score")||null;
+  const goals=entries.find(([id,market])=>sportsMarketKind(id,market)==="over_under_1_5")||null;
   const ordered=[];
   if(result)ordered.push(result);
-  if(correct)ordered.push(correct);
-  if(goals)ordered.push([markets.over_under_1_5?"over_under_1_5":markets.total_goals_1_5?"total_goals_1_5":markets.goals_1_5?"goals_1_5":"over_under_15",goals]);
+  if(correct&&correct[0]!==result?.[0])ordered.push(correct);
+  if(goals&&goals[0]!==result?.[0]&&goals[0]!==correct?.[0])ordered.push(goals);
   return ordered;
 }
 function sportsMarketTitle(marketId,market){
   if(market.title)return arabicTeamName(market.title);
-  if(marketId==="result"||marketId==="1x2")return C.texts.marketResultTitle||"نتيجة المباراة";
-  if(marketId==="correct_score")return C.texts.marketCorrectScoreTitle||"النتيجة الصحيحة";
+  const kind=sportsMarketKind(marketId,market);
+  if(kind==="result")return C.texts.marketResultTitle||"نتيجة المباراة";
+  if(kind==="correct_score")return C.texts.marketCorrectScoreTitle||"النتيجة الصحيحة";
   return C.texts.marketOverUnder15Title||"أكثر / أقل من 1.5 هدف";
 }
 function sportsMarketOptionLabel(marketId,optionId,opt,match){
-  if(marketId==="result"||marketId==="1x2"){
-    if(optionId==="home"||optionId==="1"||optionId==="team1")return sportsOptionLabel(match,"home",opt);
-    if(optionId==="away"||optionId==="2"||optionId==="team2")return sportsOptionLabel(match,"away",opt);
-    if(optionId==="draw"||optionId==="x"||optionId==="tie")return C.texts.drawLabel||"التعادل";
+  const kind=sportsMarketKind(marketId,market);
+  const id=String(optionId||"").toLowerCase();
+  const label=String(opt?.label||"").trim();
+  if(kind==="result"){
+    if(["home","1","team1","home_win"].includes(id))return sportsOptionLabel(match,"home",opt);
+    if(["away","2","team2","away_win"].includes(id))return sportsOptionLabel(match,"away",opt);
+    if(["draw","x","tie"].includes(id))return sportsOptionLabel(match,"draw",opt);
   }
-  if(marketId==="correct_score"&&optionId==="other")return C.texts.otherScoreLabel||"نتيجة أخرى";
-  if(["over","over_1_5","more"].includes(optionId))return C.texts.over15Label||opt.label||"أكثر من 1.5";
-  if(["under","under_1_5","less"].includes(optionId))return C.texts.under15Label||opt.label||"أقل من 1.5";
-  return arabicTeamName(String(opt.label||optionId||"—"));
+  if(kind==="correct_score"&&(id==="other"||label.toLowerCase()==="other"))return C.texts.otherScoreLabel||"نتيجة أخرى";
+  if(kind==="over_under_1_5"){
+    if(["over","over_1_5","more"].includes(id)||/over|أكثر\\s*من/i.test(label))return C.texts.over15Label||"أكثر من 1.5";
+    if(["under","under_1_5","less"].includes(id)||/under|أقل\\s*من|اقل\\s*من/i.test(label))return C.texts.under15Label||"أقل من 1.5";
+  }
+  return arabicTeamName(String(opt?.label||optionId||"—"));
 }
 function sportsOptionEntries(marketId,market,match){
   const options=market.options||{};
-  if(marketId==="result"||marketId==="1x2"){
+  if(sportsMarketKind(marketId,market)==="result"){
     return ["home","draw","away"].map(side=>{
       const p=sportsSideOption(market,side);
       return p?[p[0],p[1],sportsMarketOptionLabel(marketId,p[0],p[1],match)]:null;
