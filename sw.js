@@ -1,4 +1,4 @@
-const CACHE_NAME = "rukn-gold-shell-v1";
+const CACHE_NAME = "rukn-gold-shell-v2";
 const SHELL = ["/", "/manifest.webmanifest", "/icons/app-icon.svg"];
 
 self.addEventListener("install", event => {
