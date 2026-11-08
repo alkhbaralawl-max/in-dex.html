@@ -1339,6 +1339,7 @@ function renderHomeGames(){
 }
 function applySportsAvailability(){
   const enabled=sportsFeatureEnabled();
+  if(enabled!==lastSportsEnabled){activityType=enabled?"sports":"games";lastSportsEnabled=enabled;}
   const sportsHome=$("sportsHomeSection"),gamesHome=$("gamesHomeSection");
   if(sportsHome)sportsHome.hidden=!enabled;
   const gamesNav=document.querySelector('.nav button[data-v="games"]');
@@ -1380,7 +1381,7 @@ function renderGames(){
   const list=$("gamesList");list.innerHTML="";F.forEach(g=>list.appendChild(gcard(g)));
   $("gamesEmpty").hidden=F.length>0;$("gamesCount").textContent=F.length+" لعبة";
 }
-let activityType="sports";
+let activityType="sports",lastSportsEnabled=true;
 function renderAct(){
   if(!sportsFeatureEnabled())activityType="games";
   const box=$("hist2"),stats=$("activityStats");box.innerHTML="";stats.innerHTML="";
@@ -2293,7 +2294,7 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
 });
 setAuth("login");showAuth();loadPublicConfig();
 (async()=>{
-  try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
+  try{const data=await apiCall("me",{},false);if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
   catch(e){showAuth();}
 })();
 setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
