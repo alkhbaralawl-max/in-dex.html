@@ -1213,7 +1213,7 @@ function chainOddsTotal(){return sportsChainDraft.reduce((sum,p)=>sum+Math.max(0
 function updateChainEstimate(){
   const odds=chainOddsTotal(),stake=Number(nd($("chainStake")?.value||sportsChainStake))||0;
   if($("chainTotalOdds"))$("chainTotalOdds").textContent="×"+odds.toFixed(2);
-  const profit=r2(stake*odds),principal=r2(stake),total=r2(profit+principal);
+  const total=r2(stake*odds),principal=r2(stake),profit=Math.max(0,r2(total-principal));
   if($("chainPotentialReturn"))$("chainPotentialReturn").textContent=f(profit);
   if($("chainPrincipalReturn"))$("chainPrincipalReturn").textContent=f(principal);
   if($("chainTotalReturn"))$("chainTotalReturn").textContent=f(total);
@@ -1267,7 +1267,7 @@ function renderChainHub(){
   stake.oninput=()=>{sportsChainStake=Number(stake.value)||0;updateChainEstimate();};
   draft.appendChild(label);draft.appendChild(stake);
   draft.appendChild(el("div","chain-balance-note","الرصيد الافتراضي المتاح: "+f(U.balance||0)));
-  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × 2.00 = 10.00x. رهان 1,000: مكسب 10,000 + استرداد أصل الرهان 1,000 = إجمالي عائد 11,000 عند نجاح كل الاختيارات."));
+  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × 2.00 = 10.00x. رهان 1,000: المكسب 9,000 + استرداد أصل الرهان 1,000 = إجمالي عائد 10,000 عند نجاح كل الاختيارات."));
   const msg=el("div","chain-message");msg.id="chainMessage";draft.appendChild(msg);
   const actions=el("div","chain-main-actions");
   const place=el("button","btn full","تأكيد السلسلة");place.id="chainPlace";place.type="button";place.onclick=placeSportsChain;actions.appendChild(place);
@@ -1277,11 +1277,12 @@ function renderChainHub(){
 }
 function updateSportsPotential(){
   const amount=Number(nd($("sportsStake").value)),odds=sportsPick?Number(sportsPick.option.odds):0;
-  const profit=amount>0&&odds>0?r2(amount*odds):0;
+  const total=amount>0&&odds>0?r2(amount*odds):0;
   const principal=amount>0?amount:0;
+  const profit=Math.max(0,r2(total-principal));
   $("sportsPotential").textContent=f(profit);
   $("sportsStakeReturn").textContent=f(principal);
-  $("sportsTotalReturn").textContent=f(r2(profit+principal));
+  $("sportsTotalReturn").textContent=f(total);
 }
 async function placeSportsBet(){
   if(!sportsPick||!U||busy)return;
@@ -1369,7 +1370,7 @@ function renderAct(){
     const chainState=chain.status==="active"?"تنتظر النتائج":chain.status==="completed"?"مكتملة":chain.status==="lost"?"خسرت السلسلة":"انتهت";
     summary.textContent="⛓️ سلسلة ×"+combinedOdds.toFixed(2)+" • "+chainState+" • "+chain.totalLegs+" اختيارات";
     details.appendChild(summary);
-    const principal=Number(chain.initialStake)||0,expectedProfit=r2(principal*combinedOdds),expectedTotal=r2(principal+expectedProfit);
+    const principal=Number(chain.initialStake)||0,expectedTotal=r2(principal*combinedOdds),expectedProfit=Math.max(0,r2(expectedTotal-principal));
     details.appendChild(el("div","activity-entry-meta","مبلغ الرهان: "+f(principal)+" • المعامل الإجمالي: ×"+combinedOdds.toFixed(2)));
     details.appendChild(el("div","activity-entry-meta","المكسب المتوقع: "+f(expectedProfit)+" • أصل الرهان المسترد: "+f(principal)));
     details.appendChild(el("div","activity-entry-state up","إجمالي العائد المتوقع: "+f(expectedTotal)));
@@ -2209,6 +2210,7 @@ async function auth(){
   }catch(e){err(e.message||C.texts.errNet);}
   finally{$("agb").disabled=false;}
 }
+$("agb").type="button";$("agb").onclick=auth;
 $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
 
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
