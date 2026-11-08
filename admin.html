@@ -172,15 +172,17 @@ const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=nu
 const btn=(par,txt,cls,fn)=>{const b=el("button",cls,txt);b.onclick=fn;par.appendChild(b);return b;};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function twoTap(b,label,fn){let armed=false,t;b.onclick=()=>{if(!armed){armed=true;b.textContent="⚠️ اضغط تاني للتأكيد";t=setTimeout(()=>{armed=false;b.textContent=label;},4000);return;}clearTimeout(t);armed=false;b.textContent=label;Promise.resolve(fn()).catch(e=>alert(e.message||"تعذر تنفيذ العملية"));};}
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96};
-const ENGL={slot:"🎰 سلوت",apple:"🍎 تفاح",rocket:"🚀 كراش صاروخ",crash:"📈 كراش منحنى",wheel:"🎡 عجلة",plinko:"🎯 بلينكو"};
+const BASE={slot:96,apple:96,rocket:96,crash:97,wheel:95,plinko:96,dice:96,cards:95};
+const ENGL={slot:"🎰 سلوت",apple:"🍎 تفاح",rocket:"✈ الطيارة",crash:"📈 كراش",wheel:"🎡 عجلة",plinko:"🎯 بلينكو",dice:"⚄ النرد",cards:"🂠 الأوراق"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
+{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
+{id:"dice",name:"Lucky Dice",desc:"اختار مجموع النرد: أقل من 7 أو يساوي 7 أو أكبر من 7",engine:"dice",cat:"النرد",tag:"النرد",order:7},
+{id:"cards",name:"Red or Black",desc:"اختار لون الورقة قبل كشفها: أحمر أم أسود",engine:"cards",cat:"الأوراق",tag:"أوراق",order:8}];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
 notice:"⚠️ المراهنات خطر حقيقي على الفرد والمجتمع. هذه تجربة توعوية: الألعاب مضبوطة لصالح المنصة كما في منصات المراهنات الحقيقية.",banT:"ألعاب جديدة 🔥",banD:"جرّب الألعاب برصيد وهمي، واعرف بنفسك إزاي الخسارة هي النتيجة المتوقعة.",banBtn:"ابدأ اللعب",banImg:"",searchPh:"ابحث عن لعبة...",featTitle:"⭐ ألعاب مميزة",allTitle:"🎮 كل الألعاب",noGames:"مفيش لعبة بالاسم ده",eduNote:"الألعاب هنا من تنفيذنا بنفس فكرة الألعاب المعروفة، وليست النسخ الأصلية المرخّصة. نسب الربح للمنصة زي المواقع الحقيقية.",
