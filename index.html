@@ -3,7 +3,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0B1E3A">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-4jOufq1ILUeIOWbHNZlJj+KjfaibsQ0tROCjvW1IY00='; connect-src 'self' https://qoeefydvmkdigixsbpuy.supabase.co wss://qoeefydvmkdigixsbpuy.supabase.co; upgrade-insecure-requests">
 <title>ركن الغرب</title>
 <style>
 :root{--b:#1677D2;--bd:#0B1E3A;--b2:#245A91;--bg:#F3F6FA;--card:#fff;--tx:#172B45;--tx2:#718096;--ok:#20A464;--er:#E5484D;--yl:#FFC83D;--line:#E1E8F0}
@@ -75,16 +74,11 @@ button,input,textarea,select{font-family:inherit}
 .auth-notice{max-width:420px;margin:0 auto 12px!important;border-radius:14px}
 .auth-card{max-width:420px;margin:0 auto;padding:18px;border-radius:22px;background:#fff;border:1px solid #dce5f0;box-shadow:0 16px 42px #18385d14}
 .auth-card .tabs{padding:4px;background:#f1f5fa;border-radius:14px;margin-bottom:16px}.auth-card .tabs button{border:0;background:transparent;padding:11px}.auth-card .tabs button.on{background:#195ba8;color:#fff;box-shadow:0 3px 10px #195ba833}
-.google-auth-btn{width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #cbd5e1;border-radius:13px;background:#fff;color:#263445;font-size:14px;font-weight:700;box-shadow:0 2px 5px #10243b0a;transition:background .15s,transform .15s}
-.google-auth-btn:hover{background:#f8fbff}.google-auth-btn:active{transform:scale(.99)}.google-auth-btn:disabled{opacity:.6;cursor:wait}
-.google-g{width:23px;height:23px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font:800 18px Arial,sans-serif;color:#4285f4;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75% 100%);-webkit-background-clip:text;background-clip:text}
-.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#8794a5;font-size:11px}.auth-divider:before,.auth-divider:after{content:"";height:1px;flex:1;background:#e6ebf2}
 .auth-label{display:block;margin:9px 2px 5px;color:#34465d;font-weight:700;font-size:12px}
 .auth-card .fi{height:49px;border-radius:12px;border:1px solid #d7e0eb;background:#fbfcfe;margin-bottom:6px;transition:border-color .15s,box-shadow .15s}
 .auth-card .fi:focus{outline:none;border-color:#3885d6;box-shadow:0 0 0 3px #3885d61c;background:#fff}
 .auth-submit{height:49px;margin-top:8px;border-radius:13px;font-weight:800}
 .auth-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px}.auth-foot small{color:#8a96a5;font-size:10px}.auth-foot .lnk{margin-top:0}
-.auth-privacy{text-align:center;max-width:400px;margin:13px auto 0;color:#7c899a;font-size:10px;line-height:1.7}
 
 textarea.fi{height:auto;padding:10px;min-height:80px}
 .err{color:var(--er);font-weight:bold;margin-top:8px;font-size:14px;min-height:20px}
@@ -407,8 +401,6 @@ canvas{display:block;width:100%}
   <div class="warn auth-notice" data-t="notice"></div>
   <div class="card auth-card">
     <div class="tabs"><button id="t_login" class="on" data-t="btnLogin2"></button><button id="t_reg" data-t="btnReg2"></button></div>
-    <button class="google-auth-btn" id="googleAuth" type="button"><span class="google-g" aria-hidden="true">G</span><span id="googleAuthText">الدخول باستخدام Google</span></button>
-    <div class="auth-divider"><span>أو باستخدام حساب الموقع</span></div>
     <label class="auth-label" for="u">اسم المستخدم</label><input class="fi" id="u" data-ph="phUser" autocomplete="username">
     <label class="auth-label" for="p">كلمة المرور</label><input class="fi" id="p" type="password" data-ph="phPass" autocomplete="current-password">
     <div id="confirmPasswordWrap" hidden><label class="auth-label" for="p2">تأكيد كلمة المرور</label><input class="fi" id="p2" type="password" data-ph="phPass2" autocomplete="new-password"></div>
@@ -416,7 +408,6 @@ canvas{display:block;width:100%}
     <div class="err" id="aerr" aria-live="polite"></div>
     <div class="auth-foot"><button class="lnk" id="forgot" data-t="forgotLink"></button><small>رقم الحساب يُنشأ تلقائيًا ويظل ثابتًا.</small></div>
   </div>
-  <div class="auth-privacy">باستخدام Google، سيتم التحقق من بريدك بواسطة Google قبل إنشاء جلسة الموقع.</div>
 </div>
 
 <div id="shell" hidden>
@@ -572,17 +563,12 @@ canvas{display:block;width:100%}
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.119.0"></script>
 <script>
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
 const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SUPABASE_URL+"/functions/v1/app-api";
-if(!window.supabase?.createClient)throw new Error("Supabase browser SDK did not load.");
-const googleOAuthClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
-  auth:{flowType:"pkce",persistSession:true,autoRefreshToken:false,detectSessionInUrl:false,storageKey:"rukn_google_oauth"}
-});
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
 async function sendApi(url,action,payload={},useCsrf=true){
@@ -594,7 +580,7 @@ async function sendApi(url,action,payload={},useCsrf=true){
     data=await response.json();
   }catch(e){throw new ApiError("تعذر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.",0);}
   if(!response.ok){
-    const messages={unauthorized:"انتهت جلسة الدخول. سجّل الدخول مرة أخرى.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",invalid_credentials:"اسم المستخدم أو كلمة السر غير صحيح.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل.",registration_closed:"التسجيل مغلق حاليًا.",too_many_attempts:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",google_provider_required:"تعذر التحقق من حساب Google.",google_email_unverified:"يجب استخدام حساب Google ببريد مؤكد.",google_account_link_failed:"تعذر إنشاء أو ربط حساب Google.",insufficient_virtual_balance:"الرصيد الافتراضي غير كافٍ.",active_game_exists:"أنهِ الجولة الحالية أولًا.",match_closed:"بدأت المباراة أو أُغلق السوق.",admin_required:"هذه العملية متاحة للإدارة فقط."};
+    const messages={unauthorized:"انتهت جلسة الدخول. سجّل الدخول مرة أخرى.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",invalid_credentials:"اسم المستخدم أو كلمة السر غير صحيح.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل.",registration_closed:"التسجيل مغلق حاليًا.",too_many_attempts:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",insufficient_virtual_balance:"الرصيد الافتراضي غير كافٍ.",active_game_exists:"أنهِ الجولة الحالية أولًا.",match_closed:"بدأت المباراة أو أُغلق السوق.",admin_required:"هذه العملية متاحة للإدارة فقط."};
     throw new ApiError(messages[data?.error]||data?.error||"حدث خطأ في الخادم.",response.status);
   }
   return data;
@@ -2031,7 +2017,6 @@ function setAuth(m){
   authMode=m;$("confirmPasswordWrap").hidden=m!=="reg";$("p2").hidden=m!=="reg";
   $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
   $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;
-  $("googleAuthText").textContent=m==="reg"?"إنشاء حساب باستخدام Google":"الدخول باستخدام Google";
   $("forgot").hidden=m==="reg";$("aerr").textContent="";$("aerr").style.color="";
 }
 async function auth(){
@@ -2048,45 +2033,8 @@ async function auth(){
   }catch(e){err(e.message||C.texts.errNet);}
   finally{$("agb").disabled=false;}
 }
-async function startGoogleAuth(){
-  const button=$("googleAuth"),message=$("aerr");
-  button.disabled=true;message.textContent="جارٍ فتح صفحة Google الآمنة...";message.style.color="var(--tx)";
-  try{
-    const {data,error}=await googleOAuthClient.auth.signInWithOAuth({
-      provider:"google",
-      options:{redirectTo:"https://rukn-algharb-main.vercel.app/",skipBrowserRedirect:true}
-    });
-    if(error||!data?.url)throw error||new Error("لم يتم تفعيل Google OAuth في إعدادات المشروع بعد.");
-    window.location.assign(data.url);
-  }catch(e){
-    message.textContent=e.message||"تعذر بدء تسجيل Google.";
-    message.style.color="var(--er)";button.disabled=false;
-  }
-}
-async function handleGoogleCallback(){
-  const query=new URLSearchParams(location.search);
-  const hash=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):location.hash);
-  const code=query.get("code");
-  const callbackError=query.get("error_description")||query.get("error")||hash.get("error_description")||hash.get("error");
-  if(!code&&!callbackError)return false;
-  history.replaceState({},document.title,location.pathname);
-  if(callbackError){showAuth("تعذر تسجيل الدخول عبر Google: "+callbackError.slice(0,220));return true;}
-  try{
-    const {data:sessionData,error:exchangeError}=await googleOAuthClient.auth.exchangeCodeForSession(code);
-    if(exchangeError||!sessionData?.session?.access_token)throw exchangeError||new Error("تعذر استلام جلسة Google.");
-    const data=await authCall("google_exchange",{accessToken:sessionData.session.access_token});
-    await googleOAuthClient.auth.signOut({scope:"local"}).catch(()=>{});
-    csrfToken=data.csrfToken||"";
-    localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");localStorage.removeItem("rukn_google_oauth");
-    name=data.user?.username||"";attach(name);
-  }catch(e){
-    await googleOAuthClient.auth.signOut({scope:"local"}).catch(()=>{});
-    showAuth(e.message||"تعذر التحقق من حساب Google.");
-  }
-  return true;
-}
 $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
-$("agb").onclick=auth;$("googleAuth").onclick=startGoogleAuth;
+
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
 let profileAvatarData="";
@@ -2137,9 +2085,8 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
   $("activityPick").setAttribute("aria-expanded","false");
   renderAct();
 });
-setAuth("login");applyCfg();loadPublicConfig();
+setAuth("login");showAuth();loadPublicConfig();
 (async()=>{
-  if(await handleGoogleCallback())return;
   try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
   catch(e){showAuth();}
 })();
