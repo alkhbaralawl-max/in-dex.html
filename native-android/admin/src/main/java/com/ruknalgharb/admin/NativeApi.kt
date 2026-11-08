@@ -1,5 +1,7 @@
 package com.ruknalgharb.admin
 
+class ApiFailure(message: String, val status: Int = 0) : Exception(message)
+
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
