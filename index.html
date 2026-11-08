@@ -626,8 +626,9 @@ function matchesList(){
 }
 function teamLogo(team){
   const wrap=el("div","match-team");
-  if(isUrl(team.logo)){
-    const im=document.createElement("img");im.className="team-logo";im.src=team.logo;im.alt=team.name||"شعار الفريق";im.loading="lazy";
+  const logoUrl=isUrl(team.logo)?team.logo:(Number(team.id)>0?APP_API+"?team_logo="+encodeURIComponent(String(team.id)):"");
+  if(logoUrl){
+    const im=document.createElement("img");im.className="team-logo";im.src=logoUrl;im.alt=team.name||"شعار الفريق";im.loading="lazy";
     im.onerror=()=>{const fb=el("div","team-logo-fallback",String(team.name||"؟").trim().slice(0,1));im.replaceWith(fb);};
     wrap.appendChild(im);
   }else{
@@ -1242,7 +1243,7 @@ function drawCr(skin,t,m,st,limit=CAP){
   }
   x.textAlign="center";x.textBaseline="middle";x.font="900 "+Math.min(48,Math.max(34,W*.08))+"px Tahoma";
   x.fillStyle=st==="crash"?"#ff7b8b":"#f4fbff";x.shadowColor=st==="crash"?"#ff354d":"#35dbff";x.shadowBlur=18;
-  x.fillText("×"+current.toFixed(2),W/2,H*.47);x.shadowBlur=0;
+  x.fillText(st==="crash"?"انفجرت":"×"+current.toFixed(2),W/2,H*.47);x.shadowBlur=0;
   x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ff9aa4":st==="pending"?"#ffd48a":"#a8cce4";
   const label=st==="crash"?"انتهت الجولة":st==="pending"?"الطيارة وصلت للنهاية • جارٍ تأكيد النتيجة من الخادم":st==="cash"?"تم السحب • الجولة مستمرة":st==="run"?"اسحب قبل انفجار الطيارة":"جاهز للإقلاع";
   x.fillText(label,W/2,H*.47+34);
@@ -1259,7 +1260,7 @@ async function crResolve(data,c){
   crStop();busy=false;hold=false;crLock=false;
   if(data.cashedOut||data.autoSettled){
     crFinal={k:c.k,cp,m:cp,status:"cash",t0:Number(data.startedAt)||Number(c.t0)};render();
-    result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier||0).toFixed(2));
+    result(Number(data.payout||0),Number(data.stake||c.bet),"أنت كسبت");
   }else{
     crFinal={k:c.k,cp,m:cp,status:"crash"};render();
     result(0,Number(data.stake||c.bet),"انفجرت الطيارة");
