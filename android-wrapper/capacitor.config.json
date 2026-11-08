@@ -1,13 +1,11 @@
 {
-  "appId": "com.ruknalgharb.app",
+  "appId": "com.ruknalgharb.player",
   "appName": "ركن الغرب",
-  "webDir": "www",
+  "webDir": "player/www",
+  "backgroundColor": "#080806",
   "server": {
-    "url": "https://rukn-algharb-main.vercel.app",
-    "cleartext": false,
-    "allowNavigation": [
-      "rukn-algharb-main.vercel.app"
-    ]
+    "hostname": "localhost",
+    "androidScheme": "https"
   },
   "android": {
     "allowMixedContent": false
