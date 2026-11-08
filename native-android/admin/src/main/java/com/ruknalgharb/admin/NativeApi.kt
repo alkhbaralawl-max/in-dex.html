@@ -1,7 +1,5 @@
 package com.ruknalgharb.admin
 
-class ApiFailure(message: String, val status: Int = 0) : Exception(message)
-
 import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
@@ -26,6 +24,8 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import java.util.concurrent.TimeUnit
+
+class ApiFailure(message: String, val status: Int = 0) : Exception(message)
 
 private class SecureSessionStore(context: Context) {
     private val prefs = context.getSharedPreferences("admin_secure", Context.MODE_PRIVATE)
