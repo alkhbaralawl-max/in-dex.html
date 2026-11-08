@@ -545,6 +545,15 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 .sportscore-footer a{background:#30220b;color:#f5d57a;border:1px solid #71531f}.odds-factor-note{background:#21190c;color:#d9c28d;border:1px solid #5d461c}
 .matches-heading b,.home-types-head b,.sportscore-heading b{color:#f5d374}.home-types-head small{color:#bcab82}
 .games-list .art{color:#ffdb77}
+
+.games-home-section{margin:16px 12px 18px}
+.games-home-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.games-home-grid .gcard{min-width:0;overflow:hidden;border-radius:16px;background:linear-gradient(155deg,#241a0a,#0b0906);border:1px solid #886326;box-shadow:0 7px 20px #0008}
+.games-home-grid .art{aspect-ratio:1.25/1;min-height:112px;background:radial-gradient(circle at 50% 30%,#72511b,#130d05 72%)!important;color:#f9d778;font-size:48px;filter:drop-shadow(0 0 9px #c79339)}
+.games-home-grid .gi{padding:10px}
+.games-home-grid .gi b{color:#f8d87e;font-size:13px}
+.games-home-grid .gi p{color:#cbb98e;font-size:10px;line-height:1.65}
+.games-home-grid .gi .btn{width:100%;min-height:40px;padding:8px;font-size:11px}
 @media(max-width:390px){
  .top{padding-left:8px;padding-right:8px}.brand b{font-size:13px}.brand small{font-size:9px}.usd{width:34px;height:36px}.bal{font-size:10px;padding:7px 8px}
  .ban{min-height:150px;padding:14px}.ban h2{font-size:19px}.ban p{font-size:11px}
@@ -589,12 +598,16 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
   <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">⚽</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
-  <section class="matches-section">
+  <section class="matches-section" id="sportsHomeSection">
     <div class="matches-heading"><div><b>⚽ <span data-t="matchesTitle">مباريات اليوم</span></b><small data-t="matchesSubtitle">اختر نتيجة المباراة</small></div><span id="matchesCount" class="matches-count">0 مباراة</span></div>
     <div id="matchesList" class="matches-list"></div>
     <div id="matchesEmpty" class="matches-empty" data-t="matchesEmpty">لا توجد مباريات مضافة حاليًا.</div>
   </section>
-    <div class="edu" data-t="eduNote"></div>
+  <section class="games-home-section" id="gamesHomeSection" hidden>
+    <div class="matches-heading"><div><b>🎮 ألعاب ركن الغرب</b><small>اختر لعبة وابدأ جولة جديدة برصيد افتراضي</small></div><span class="games-count" id="gamesHomeCount"></span></div>
+    <div class="games-home-grid" id="gamesHomeList"></div>
+  </section>
+  <div class="edu" data-t="eduNote"></div>
 </main>
 
 <main id="v_match" hidden>
@@ -807,7 +820,7 @@ rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهم
 btnDrop:"🎯 أسقط الكرة",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
 };
 const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"};
-const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000};
+const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000,sportsEnabled:true};
 let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{},matches:{}};
 function merge(c){
   c=c||{};
@@ -859,6 +872,7 @@ function overlay(win,amt,text){
 $("ov").onclick=()=>{clearTimeout(ovT);$("ov").hidden=true;};
 
 function show(v){
+  if(!sportsFeatureEnabled()&&(v==="match"||v==="games"))v="home";
   view=v;["home","match","games","act","more","page","pay","withdraw","me","sup"].forEach(x=>{const node=$("v_"+x);if(node)node.hidden=x!==v;});
   const nv=v==="page"?"more":v==="pay"||v==="withdraw"?"":v==="match"?"home":v;
   document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
@@ -1026,7 +1040,7 @@ function renderMatches(){
   empty.hidden=items.length>0;
 }
 let sportsScrollY=0;
-function openSportsMatch(matchId){sportsScrollY=window.scrollY||window.pageYOffset||0;sportsDetailMatchId=String(matchId||"");show("match");}
+function openSportsMatch(matchId){if(!sportsFeatureEnabled())return;sportsScrollY=window.scrollY||window.pageYOffset||0;sportsDetailMatchId=String(matchId||"");show("match");}
 function sportsMarketEntries(match){
   const markets=match.markets||{};
   const result=sportsResultMarket(match);
@@ -1307,6 +1321,44 @@ $("sportsModalClose").onclick=closeSportsModal;
 $("sportsModal").addEventListener("click",e=>{if(e.target.id==="sportsModal")closeSportsModal();});
 $("sportsPlaceBtn").onclick=placeSportsBet;
 $("sportsChainAddBtn").onclick=addSportsPickToChain;
+function sportsFeatureEnabled(){return C.settings.sportsEnabled!==false;}
+function renderHomeGames(){
+  const section=$("gamesHomeSection"),list=$("gamesHomeList"),count=$("gamesHomeCount");
+  if(!section||!list)return;
+  const enabled=sportsFeatureEnabled();section.hidden=enabled;
+  if(enabled){list.innerHTML="";if(count)count.textContent="";return;}
+  const available=games().filter(gOn);list.innerHTML="";
+  available.forEach(g=>list.appendChild(gcard(g)));
+  if(count)count.textContent=available.length+" لعبة";
+}
+function applySportsAvailability(){
+  const enabled=sportsFeatureEnabled();
+  const sportsHome=$("sportsHomeSection"),gamesHome=$("gamesHomeSection");
+  if(sportsHome)sportsHome.hidden=!enabled;
+  const gamesNav=document.querySelector('.nav button[data-v="games"]');
+  if(gamesNav)gamesNav.hidden=!enabled;
+  const sportsActivity=document.querySelector('#activityMenu [data-activity="sports"]');
+  if(sportsActivity)sportsActivity.hidden=!enabled;
+  const gameActivity=document.querySelector('#activityMenu [data-activity="games"]');
+  if(gameActivity)gameActivity.hidden=false;
+  const activityPick=$("activityPick"),activityMenu=$("activityMenu");
+  if(!enabled){
+    activityType="games";
+    if(activityPick)activityPick.hidden=true;
+    if(activityMenu)activityMenu.hidden=true;
+    if($("chainActivity"))$("chainActivity").hidden=true;
+    if($("sportsModal"))$("sportsModal").hidden=true;
+    if(view==="match"||view==="games"){
+      view="home";
+      ["home","match","games","act","more","page","pay","withdraw","me","sup"].forEach(x=>{const node=$("v_"+x);if(node)node.hidden=x!=="home";});
+      document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v==="home"));
+      window.scrollTo(0,0);
+    }
+  }else{
+    if(activityPick)activityPick.hidden=false;
+  }
+  renderHomeGames();
+}
 function renderHome(){
   const bn=$("ban"),im=String(C.texts.banImg||"").trim();
   bn.style.backgroundImage=isUrl(im)?'linear-gradient(120deg,#0B1E3Acc,#1677D299),url("'+im.replace(/["()\s]/g,"")+'")':"";
@@ -1324,6 +1376,7 @@ function renderGames(){
 }
 let activityType="sports";
 function renderAct(){
+  if(!sportsFeatureEnabled())activityType="games";
   const box=$("hist2"),stats=$("activityStats");box.innerHTML="";stats.innerHTML="";
   const games=histArr().slice(-100).reverse();
   const sports=Object.values(U.sportsBets||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
@@ -1429,7 +1482,7 @@ function renderPayBanner(){
   box.appendChild(d);
 }
 function render(){
-  applyCfg();
+  applyCfg();applySportsAvailability();
   $("hbal").textContent="💰 "+f(U.balance);
   renderHome();renderMatches();renderChainHub();renderGames();renderAct();renderMore();renderMe();updAdminMsg();renderPayBanner();
   if(view==="match")renderSportsMatchDetail();
@@ -2177,7 +2230,7 @@ async function refreshMe(shouldRender=true){
   return U;
 }
 async function loadPublicConfig(){
-  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();if(U)render();}
+  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();applySportsAvailability();if(U)render();}
   catch(e){console.warn("site config unavailable",e);}
 }
 function attach(n){
