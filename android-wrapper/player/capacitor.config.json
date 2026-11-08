@@ -1,0 +1,13 @@
+{
+  "appId": "com.ruknalgharb.player",
+  "appName": "ركن الغرب",
+  "webDir": "www",
+  "backgroundColor": "#080806",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
