@@ -1,0 +1,15 @@
+{
+  "appId": "com.ruknalgharb.app",
+  "appName": "ركن الغرب",
+  "webDir": "www",
+  "server": {
+    "url": "https://rukn-algharb-main.vercel.app",
+    "cleartext": false,
+    "allowNavigation": [
+      "rukn-algharb-main.vercel.app"
+    ]
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}
