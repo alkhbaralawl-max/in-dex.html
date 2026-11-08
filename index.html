@@ -455,7 +455,7 @@ canvas{display:block;width:100%}
     <input id="sportsStake" type="number" min="1" step="0.01" inputmode="decimal" placeholder="اكتب المبلغ">
     <div class="sports-modal-return"><span>المكسب المتوقع</span><b id="sportsPotential">0</b></div>
     <div id="sportsModalMsg" class="sports-modal-msg"></div>
-    <button type="button" class="btn full" id="sportsPlaceBtn">تأكيد الاختيار</button>
+    <button type="button" class="btn full" id="sportsPlaceBtn">تمام</button>
   </div>
 </div>
 
@@ -739,7 +739,7 @@ function renderSportsMatchDetail(){
       button.appendChild(el("b","",side==="draw"?"التعادل":label));button.appendChild(el("small","","×"+adjusted.toFixed(2)));button.appendChild(el("span","pick-check","✓"));
       let timer=0,longPicked=false;
       const cancel=()=>{if(timer){clearTimeout(timer);timer=0;}};
-      button.addEventListener("pointerdown",e=>{if(button.disabled||e.button!==0)return;longPicked=false;cancel();timer=setTimeout(()=>{timer=0;longPicked=true;options.querySelectorAll(".sports-longpick.selected").forEach(x=>x.classList.remove("selected"));button.classList.add("selected");openSportsModal(match,market,marketId,optionId,{...opt,label:label,odds:adjusted,baseOdds:Number(opt.odds||1),profitPercent:Number(match.profitPercent)||100});},1000);});
+      button.addEventListener("pointerdown",e=>{if(button.disabled||e.button!==0)return;longPicked=false;cancel();timer=setTimeout(()=>{timer=0;longPicked=true;options.querySelectorAll(".sports-longpick.selected").forEach(x=>x.classList.remove("selected"));button.classList.add("selected");setTimeout(()=>openSportsModal(match,market,marketId,optionId,{...opt,label:label,odds:adjusted,baseOdds:Number(opt.odds||1),profitPercent:Number(match.profitPercent)||100}),180);},1000);});
       ["pointerup","pointerleave","pointercancel"].forEach(ev=>button.addEventListener(ev,cancel));
       button.addEventListener("contextmenu",e=>e.preventDefault());
       button.addEventListener("click",e=>{e.stopPropagation();if(!longPicked)toast("اضغط مطولًا لمدة ثانية لاختيار النتيجة");longPicked=false;});
