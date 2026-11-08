@@ -749,7 +749,7 @@ function renderSportsMatchBets(match){
   bets.forEach(b=>{
     const item=el("div","sports-my-bet"),main=el("div","sports-my-bet-main");
     main.appendChild(el("b","",(b.marketTitle?b.marketTitle+" — ":"")+String(b.optionLabel||"الاختيار")+" • "+f(b.stake)));
-    const expected=r2(Number(b.stake)*Number(b.odds||0));
+    const expected=r2(Number(b.stake)*Math.max(0,Number(b.odds||0)-1));
     main.appendChild(el("div","",b.status==="pending"?(C.texts.expectedProfitLabel||"المكسب المتوقع")+": "+f(expected):b.status==="won"?(C.texts.wonProfitLabel||"المكسب")+": "+f(Number(b.payout||0)-Number(b.stake)):b.status==="lost"?(C.texts.matchEndedText||"انتهت المباراة"):(C.texts.betVoidedText||"تم إلغاء التوقع")));
     const status=b.status||"pending";
     const state=el("span","sports-my-bet-state "+(status==="won"?"won":status==="lost"?"lost":"pending"),status==="won"?(C.texts.betWonStatus||"✓ كسبت"):status==="lost"?(C.texts.betLostStatus||"✕ خسرت"):status==="pending"?(C.texts.betPendingStatus||"قيد المتابعة"):(C.texts.betVoidStatus||"ملغي"));
@@ -828,7 +828,7 @@ function initSportScoreFeed(){
   runSportsFeedSync();
   sportsFeedTimer=setInterval(()=>{
     if(U&&document.visibilityState!=="hidden")runSportsFeedSync();
-  },15*60*1000);
+  },5*60*1000);
 }
 
 function openSportsModal(match,market,marketId,optionId,option){
@@ -842,7 +842,7 @@ function openSportsModal(match,market,marketId,optionId,option){
 function closeSportsModal(){sportsPick=null;$("sportsModal").hidden=true;}
 function updateSportsPotential(){
   const amount=Number(nd($("sportsStake").value)),odds=sportsPick?Number(sportsPick.option.odds):0;
-  $("sportsPotential").textContent=amount>0&&odds>0?f(r2(amount*odds)):"0";
+  $("sportsPotential").textContent=amount>0&&odds>1?f(r2(amount*(odds-1))):"0";
 }
 async function placeSportsBet(){
   if(!sportsPick||!U||busy)return;
