@@ -160,7 +160,7 @@ private fun PlayerApp(api: NativeApi) {
                     .put("gameId", game.id)
                     .put("stake", amount)
                     .put("idempotencyKey", UUID.randomUUID().toString())
-                if (game.id == "dice" || game.id == "cards") body.put("pick", pick)
+                if (game.id == "dice" || game.id == "cards") body.put("choice", pick)
                 val data = api.app("play", body, true)
                 result = data
                 notice = if (data.optDouble("payout", 0.0) >= amount) "نتيجة الجولة جاهزة." else "انتهت الجولة."
@@ -249,7 +249,7 @@ private fun PlayerApp(api: NativeApi) {
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Column {
                         Text("ركن الغرب", style = MaterialTheme.typography.headlineSmall, color = Navy, fontWeight = FontWeight.Bold)
-                        Text("أهلًا \${user.optString("displayName", user.optString("username", "لاعب"))}", color = Muted)
+                        Text("أهلًا ${user.optString("displayName", user.optString("username", "لاعب"))}", color = Muted)
                     }
                     TextButton(onClick = { launchTask { api.auth("logout", JSONObject(), true); signedIn = false; api.clearSession() } }) { Text("خروج") }
                 }
@@ -258,7 +258,7 @@ private fun PlayerApp(api: NativeApi) {
                     Column(Modifier.padding(18.dp)) {
                         Text("رصيدك الافتراضي", color = Color.White)
                         Text(formatNumber(wallet.optDouble("balance", 0.0)), style = MaterialTheme.typography.headlineLarge, color = Gold, fontWeight = FontWeight.Bold)
-                        Text("الجولات \${wallet.optInt("rounds")}  •  كسب \${wallet.optInt("wins")}  •  خسارة \${wallet.optInt("losses")}", color = Color.White)
+                        Text("الجولات ${wallet.optInt("rounds")}  •  كسب ${wallet.optInt("wins")}  •  خسارة ${wallet.optInt("losses")}", color = Color.White)
                     }
                 }
                 Spacer(Modifier.height(18.dp))
@@ -289,7 +289,7 @@ private fun PlayerApp(api: NativeApi) {
                         val net = row.optDouble("win") - row.optDouble("bet")
                         Row(Modifier.fillMaxWidth().padding(vertical = 7.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                             Text(row.optString("g"), color = Ink)
-                            Text(if (net >= 0) "+\${formatNumber(net)}" else formatNumber(net), color = if (net >= 0) Green else Red, fontWeight = FontWeight.Bold)
+                            Text(if (net >= 0) "+${formatNumber(net)}" else formatNumber(net), color = if (net >= 0) Green else Red, fontWeight = FontWeight.Bold)
                         }
                         HorizontalDivider(color = Color(0xFFE1E8F0))
                     }
@@ -311,7 +311,7 @@ private fun PlayerApp(api: NativeApi) {
                         Text(game.subtitle, color = Color(0xFFD7E5F5))
                         if (game.id == "rocket" && active != null) {
                             Spacer(Modifier.height(12.dp))
-                            Text("×\${"%.2f".format(multiplier)}", style = MaterialTheme.typography.displayMedium, color = Gold, fontWeight = FontWeight.Bold)
+                            Text("×${"%.2f".format(multiplier)}", style = MaterialTheme.typography.displayMedium, color = Gold, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -331,7 +331,7 @@ private fun PlayerApp(api: NativeApi) {
                         Text(if (busy) "جارٍ التنفيذ..." else "ابدأ الجولة")
                     }
                 } else if (game.id == "apple") {
-                    Text("الصف \${active!!.optInt("level") + 1} من 5 — اختار تفاحة واحدة", color = Navy, fontWeight = FontWeight.Bold)
+                    Text("الصف ${active!!.optInt("level") + 1} من 5 — اختار تفاحة واحدة", color = Navy, fontWeight = FontWeight.Bold)
                     Spacer(Modifier.height(8.dp))
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                         repeat(5) { cell ->
@@ -353,10 +353,10 @@ private fun PlayerApp(api: NativeApi) {
                     Card(colors = CardDefaults.cardColors(containerColor = if (net >= 0) Color(0xFFE7F6EC) else Color(0xFFFDEBEC)), modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.padding(16.dp)) {
                             Text("نتيجة الجولة", fontWeight = FontWeight.Bold, color = Navy)
-                            Text("المشاركة: \${formatNumber(bet)}")
-                            Text("العائد: \${formatNumber(payout)}")
-                            Text("صافي النتيجة: \${if (net >= 0) "+" else ""}\${formatNumber(net)}", fontWeight = FontWeight.Bold, color = if (net >= 0) Green else Red)
-                            Text("الرصيد بعد الجولة: \${formatNumber(r.optDouble("balance", wallet.optDouble("balance")))}")
+                            Text("المشاركة: ${formatNumber(bet)}")
+                            Text("العائد: ${formatNumber(payout)}")
+                            Text("صافي النتيجة: ${if (net >= 0) "+" else ""}${formatNumber(net)}", fontWeight = FontWeight.Bold, color = if (net >= 0) Green else Red)
+                            Text("الرصيد بعد الجولة: ${formatNumber(r.optDouble("balance", wallet.optDouble("balance")))}")
                         }
                     }
                     Button(onClick = { selectedGame = null; result = null; notice = "" }, modifier = Modifier.fillMaxWidth()) { Text("العودة للألعاب") }
