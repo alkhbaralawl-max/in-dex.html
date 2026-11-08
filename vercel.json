@@ -33,7 +33,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-9qviwYc58iQorNE7upE0ESOAWBHgPLlsZNZILOJXZEI='; connect-src 'self' https://qoeefydvmkdigixsbpuy.supabase.co wss://qoeefydvmkdigixsbpuy.supabase.co; upgrade-insecure-requests"
+          "value": "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; font-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-U1TdCZrE4aip2u8gWcHw6/qDyVHPXQfUwI/N2SSa6CA='; connect-src 'self' https://qoeefydvmkdigixsbpuy.supabase.co wss://qoeefydvmkdigixsbpuy.supabase.co; upgrade-insecure-requests"
         },
         {
           "key": "Cache-Control",
