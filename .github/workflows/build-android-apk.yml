@@ -46,10 +46,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22"
-          cache: npm
-          cache-dependency-path: |
-            android-wrapper/player/package.json
-            android-wrapper/admin/package.json
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -90,8 +86,8 @@ jobs:
 
           for app in ("player", "admin"):
               html = Path(f"android-wrapper/{app}/www/index.html").read_text(encoding="utf-8")
-              scripts = re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>(.*?)</script>", html, flags=re.I | re.S)
-              Path(f"/tmp/{app}-inline.js").write_text("\\n".join(scripts), encoding="utf-8")
+              scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, flags=re.I | re.S)
+              Path(f"/tmp/{app}-inline.js").write_text("\n".join(scripts), encoding="utf-8")
               subprocess.run(["node", "--check", f"/tmp/{app}-inline.js"], check=True)
               print(f"{app}: inline JavaScript syntax OK")
           PY
