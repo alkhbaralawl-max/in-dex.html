@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
-const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-control-private.vercel.app", "https://rukn-algharb-main.vercel.app", "https://rukn-algharb-admin.vercel.app"]);
+const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-control-private.vercel.app", "https://rukn-algharb-main.vercel.app", "https://rukn-algharb-admin.vercel.app", "https://localhost"]);
 const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const enc = new TextEncoder();
