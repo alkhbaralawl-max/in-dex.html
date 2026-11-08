@@ -811,7 +811,9 @@ function renderSportsMatchDetail(){
       card.appendChild(section);
     });
   }else card.appendChild(el("div","matches-empty",C.texts.noMatchMarkets||"لا توجد اختيارات متاحة لهذه المباراة."));
-  box.appendChild(card);box.appendChild(renderSportsMatchBets(match));
+  box.appendChild(card);
+  box.appendChild(el("div","sports-detail-hint",C.texts.marketTimingHint||"تُحتسب توقعات المباراة على الوقت الأصلي والوقت بدل الضائع فقط. أكثر من 1.5 يتحسم عند تسجيل الهدف الثاني."));
+  box.appendChild(renderSportsMatchBets(match));
 }
 let sportsFeedTimer=0,sportsFeedBusy=false;
 async function runSportsFeedSync(){
