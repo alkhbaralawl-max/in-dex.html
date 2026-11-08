@@ -1451,6 +1451,9 @@ async function placeSportsChain(){
   const bad=t=>{msg.textContent=t;msg.style.color="var(--er)";};
   if(!Number.isFinite(stakeValue)||stakeValue<=0)return bad("اكتب مبلغًا صحيحًا للسلسلة.");
   if(stakeValue>Number(U.balance||0))return bad("المبلغ أكبر من رصيدك الافتراضي المتاح.");
+  const combinedOdds=chainOddsTotal();
+  if(!Number.isFinite(combinedOdds)||combinedOdds<1)return bad("تعذر حساب المعامل الإجمالي للاختيارات.");
+  if(stakeValue*combinedOdds>999999999999.99)return bad("إجمالي العائد المتوقع يتجاوز الحد الأعلى المسموح به. قلل مبلغ الرهان أو عدد الاختيارات.");
   button.disabled=true;msg.textContent="جارٍ التحقق من جميع اختيارات السلسلة...";msg.style.color="";
   try{
     const data=await apiCall("sports_chain",{
@@ -1463,7 +1466,7 @@ async function placeSportsChain(){
   }catch(e){bad(e.message||"تعذر تسجيل السلسلة.");}
   finally{button.disabled=false;}
 }
-function chainOddsTotal(){return sportsChainDraft.reduce((sum,p)=>sum+Math.max(0,Number(p.odds)||0),0);}
+function chainOddsTotal(){return sportsChainDraft.reduce((product,p)=>Math.round(product*Math.max(0,Number(p.odds)||0)*10000)/10000,1);}
 function updateChainEstimate(){
   const odds=chainOddsTotal(),stake=Number(nd($("chainStake")?.value||sportsChainStake))||0;
   if($("chainTotalOdds"))$("chainTotalOdds").textContent="×"+odds.toFixed(2);
@@ -1506,7 +1509,7 @@ function renderChainHub(){
   });
   draft.appendChild(list);
   const estimate=el("div","chain-estimate"),oddsBox=el("div","chain-estimate-item"),profitBox=el("div","chain-estimate-item"),principalBox=el("div","chain-estimate-item"),totalBox=el("div","chain-estimate-item total");
-  oddsBox.appendChild(el("small","","المعامل الإجمالي — مجموع الاختيارات"));
+  oddsBox.appendChild(el("small","","المعامل الإجمالي — ضرب معاملات الاختيارات"));
   const ov=el("b","","×0.00");ov.id="chainTotalOdds";oddsBox.appendChild(ov);
   profitBox.appendChild(el("small","","المكسب المتوقع"));
   const rv=el("b","","0");rv.id="chainPotentialReturn";profitBox.appendChild(rv);
@@ -1521,7 +1524,7 @@ function renderChainHub(){
   stake.oninput=()=>{sportsChainStake=Number(stake.value)||0;updateChainEstimate();};
   draft.appendChild(label);draft.appendChild(stake);
   draft.appendChild(el("div","chain-balance-note","الرصيد الافتراضي المتاح: "+f(U.balance||0)));
-  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × 2.00 = 10.00x. رهان 1,000: المكسب 9,000 + استرداد أصل الرهان 1,000 = إجمالي عائد 10,000 عند نجاح كل الاختيارات."));
+  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات بمعامل 2.00 لكل اختيار = 32.00x. رهان 1,000: المكسب 31,000 + استرداد أصل الرهان 1,000 = إجمالي عائد 32,000 عند نجاح كل الاختيارات."));
   const msg=el("div","chain-message");msg.id="chainMessage";draft.appendChild(msg);
   const actions=el("div","chain-main-actions");
   const place=el("button","btn full","تأكيد السلسلة");place.id="chainPlace";place.type="button";place.onclick=placeSportsChain;actions.appendChild(place);
@@ -1661,7 +1664,7 @@ function renderAct(){
   chains.forEach(chain=>{
     const details=document.createElement("details");details.className="chain-history-entry";
     const summary=document.createElement("summary");
-    const combinedOdds=chain.legs.reduce((sum,leg)=>sum+Number(leg.odds||0),0);
+    const combinedOdds=chain.legs.reduce((product,leg)=>Math.round(product*Math.max(0,Number(leg.odds)||0)*10000)/10000,1);
     const chainState=chain.status==="active"?"تنتظر النتائج":chain.status==="completed"?"مكتملة":chain.status==="lost"?"خسرت السلسلة":"انتهت";
     summary.textContent="⛓️ سلسلة ×"+combinedOdds.toFixed(2)+" • "+chainState+" • "+chain.totalLegs+" اختيارات";
     details.appendChild(summary);
