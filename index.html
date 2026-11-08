@@ -976,16 +976,26 @@ async function crSettle(mode){
   c.cashPromise=(async()=>{
     let lastError=null;
     for(let attempt=0;attempt<2;attempt++){
+      let timer;
       try{
-        const data=await apiCall("crash_cash",{roundId:c.roundId,cashClickAt:clickAt});
+        const request=apiCall("crash_cash",{roundId:c.roundId,cashClickAt:clickAt});
+        const data=await Promise.race([
+          request,
+          new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("cashout_timeout")),5200);})
+        ]);
+        clearTimeout(timer);
         if(data.settled||data.active===null){await crResolve(data,c);return;}
         if(data.active){gmsg("الطلب وصل؛ الخادم بيأكد توقيت السحب…","");return;}
-      }catch(e){lastError=e;if(attempt===0)await sleep(220);}
+      }catch(e){clearTimeout(timer);lastError=e;if(attempt===0)await sleep(220);}
     }
     try{
       const status=await apiCall("crash_status",{roundId:c.roundId},false);
       if(status.settled||status.active===false)await crResolve(status,c);
-      else gmsg("الطلب اتبعت، ولسه بنسترجع حالة الجولة من الخادم…","");
+      else if(status.crashed&&Number(status.serverNow)>=Number(status.settleAfter)){
+        const final=await apiCall("crash_tick",{roundId:c.roundId});
+        if(final.settled||final.active===null)await crResolve(final,c);
+        else gmsg("السيرفر ما زال بيأكد النتيجة؛ هانسترجعها تلقائيًا…","");
+      }else gmsg(lastError?.message==="cashout_timeout"?"الاتصال تأخر، ولسه بنحاول نحصل على قرار الخادم…":"الطلب اتبعت، ولسه بنسترجع حالة الجولة من الخادم…","");
     }catch(e){
       gmsg("الشبكة اتأخرت. ما تقفلش اللعبة؛ بنحاول نسترجع النتيجة من الخادم…","er");
     }
