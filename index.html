@@ -1173,6 +1173,18 @@ async function crResolve(data,c){
   }
   return true;
 }
+function showCrashNotice(c,cp){
+  if(c.crashShown||!cur||cur.g.id!==c.k||$("gl").hidden)return;
+  c.crashShown=true;
+  const label="انفجرت الطيارة عند ×"+Number(cp||1).toFixed(2)+" — جارٍ تأكيد النتيجة من الخادم";
+  gmsg(label,"er");
+  const chip=el("div","result-chip loss",label);
+  const field=document.querySelector("#gbody .fld");
+  const old=document.querySelector("#gbody .result-chip");
+  if(old)old.remove();
+  if(field)field.parentNode.insertBefore(chip,field);
+  else{const body=$("gbody");if(body)body.prepend(chip);}
+}
 function crLoop(){
   if(!raf){
     const frame=()=>{
@@ -1222,6 +1234,7 @@ function crLoop(){
           await c.settlePromise;c.settlePromise=null;delay=120;
         }else if(status.crashed){
           c.crashDetectedAt=c.crashDetectedAt||Date.now();
+          showCrashNotice(c,status.crashPoint);
           if(cur&&cur.g.id===c.k&&!$("gl").hidden)drawCr(cur.g.engine,Number(status.elapsed)||0,multiplier,"pending",capOf(cur.g));
           const remaining=Number.isFinite(Number(status.settleAfter))
             ?Math.max(0,Number(status.settleAfter)-Number(status.serverNow||Date.now())):5500;
