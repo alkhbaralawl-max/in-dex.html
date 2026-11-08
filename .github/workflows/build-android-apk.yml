@@ -1,4 +1,4 @@
-name: Build Rukn Algharb Android APK
+name: Build Rukn Algharb Android Apps
 
 on:
   push:
@@ -6,7 +6,12 @@ on:
       - main
     paths:
       - "index.html"
-      - "icons/app-icon.svg"
+      - "manifest.webmanifest"
+      - "install.html"
+      - "install.js"
+      - "pwa.js"
+      - "sw.js"
+      - "icons/**"
       - "android-wrapper/**"
       - ".github/workflows/build-android-apk.yml"
   workflow_dispatch:
@@ -15,22 +20,36 @@ permissions:
   contents: read
 
 concurrency:
-  group: rukn-android-apk-${{ github.ref }}
-  cancel-in-progress: true
+  group: rukn-android-apps-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-android:
-    name: Build installable Android APK
+    name: Build player and private admin APKs
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
-      - name: Checkout source
+      - name: Checkout player site source
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Checkout current private admin source
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository }}
+          ref: admin-private-domain-fix
+          path: admin-source
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
+          cache: npm
+          cache-dependency-path: |
+            android-wrapper/player/package.json
+            android-wrapper/admin/package.json
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -43,45 +62,82 @@ jobs:
         with:
           packages: "platform-tools platforms;android-36 build-tools;36.0.0"
 
-      - name: Install Capacitor dependencies
-        working-directory: android-wrapper
-        run: npm install --no-audit --no-fund
-
-      - name: Create native Android project
-        working-directory: android-wrapper
-        run: npx cap add android
-
-      - name: Generate branded Android icons
-        working-directory: android-wrapper
-        run: >-
-          npx capacitor-assets generate --android
-          --assetPath assets
-          --iconBackgroundColor "#080806"
-          --iconBackgroundColorDark "#080806"
-          --splashBackgroundColor "#080806"
-          --splashBackgroundColorDark "#080806"
-
-      - name: Sync Capacitor Android project
-        working-directory: android-wrapper
-        run: npx cap sync android
-
-      - name: Build debug APK
-        working-directory: android-wrapper
+      - name: Bundle the existing sites inside the two apps
+        shell: bash
         run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew --no-daemon --stacktrace assembleDebug
-          cd ..
-          mkdir -p dist
-          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Rukn-AlGharb.apk
-          sha256sum dist/Rukn-AlGharb.apk > dist/SHA256SUMS.txt
+          set -euo pipefail
+          mkdir -p android-wrapper/player/www/icons android-wrapper/player/assets
+          mkdir -p android-wrapper/admin/www android-wrapper/admin/assets android-wrapper/dist
+          cp index.html android-wrapper/player/www/index.html
+          cp manifest.webmanifest install.html install.js pwa.js sw.js android-wrapper/player/www/
+          cp icons/app-icon.svg android-wrapper/player/www/icons/app-icon.svg
+          cp icons/app-icon.svg android-wrapper/player/assets/icon.svg
+          cp admin-source/admin.html android-wrapper/admin/www/index.html
+          cp icons/app-icon.svg android-wrapper/admin/assets/icon.svg
+          test -s android-wrapper/player/www/index.html
+          test -s android-wrapper/admin/www/index.html
+          ! grep -q '"url"' android-wrapper/player/capacitor.config.json
+          ! grep -q '"url"' android-wrapper/admin/capacitor.config.json
 
-      - name: Upload APK artifact
+      - name: Check bundled JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import re
+          from pathlib import Path
+          import subprocess
+
+          for app in ("player", "admin"):
+              html = Path(f"android-wrapper/{app}/www/index.html").read_text(encoding="utf-8")
+              scripts = re.findall(r"<script(?![^>]*\\bsrc=)[^>]*>(.*?)</script>", html, flags=re.I | re.S)
+              Path(f"/tmp/{app}-inline.js").write_text("\\n".join(scripts), encoding="utf-8")
+              subprocess.run(["node", "--check", f"/tmp/{app}-inline.js"], check=True)
+              print(f"{app}: inline JavaScript syntax OK")
+          PY
+
+      - name: Build both standalone Android applications
+        shell: bash
+        run: |
+          set -euo pipefail
+          for APP in player admin; do
+            APP_DIR="$GITHUB_WORKSPACE/android-wrapper/$APP"
+            case "$APP" in
+              player) EXPECTED_ID="com.ruknalgharb.player"; OUTPUT_NAME="Rukn-AlGharb-Players.apk" ;;
+              admin)  EXPECTED_ID="com.ruknalgharb.admin";  OUTPUT_NAME="Rukn-AlGharb-Admin.apk" ;;
+            esac
+
+            cd "$APP_DIR"
+            npm install --no-audit --no-fund
+            npx cap add android
+            npx capacitor-assets generate --android --assetPath assets \
+              --iconBackgroundColor "#080806" \
+              --iconBackgroundColorDark "#080806" \
+              --splashBackgroundColor "#080806" \
+              --splashBackgroundColorDark "#080806"
+            npx cap sync android
+
+            cd android
+            chmod +x gradlew
+            ./gradlew --no-daemon --stacktrace assembleDebug
+            APK="app/build/outputs/apk/debug/app-debug.apk"
+            test -s "$APK"
+            "$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK" | grep -F "name='$EXPECTED_ID'"
+            cp "$APK" "$GITHUB_WORKSPACE/android-wrapper/dist/$OUTPUT_NAME"
+            cd "$GITHUB_WORKSPACE"
+          done
+
+          cd android-wrapper/dist
+          sha256sum Rukn-AlGharb-Players.apk Rukn-AlGharb-Admin.apk > SHA256SUMS.txt
+          ls -lh Rukn-AlGharb-Players.apk Rukn-AlGharb-Admin.apk SHA256SUMS.txt
+
+      - name: Upload both installable APKs
         uses: actions/upload-artifact@v4
         with:
-          name: Rukn-AlGharb-Android-APK
+          name: Rukn-AlGharb-Two-Android-Apps
           path: |
-            android-wrapper/dist/Rukn-AlGharb.apk
+            android-wrapper/dist/Rukn-AlGharb-Players.apk
+            android-wrapper/dist/Rukn-AlGharb-Admin.apk
             android-wrapper/dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
