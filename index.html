@@ -599,13 +599,142 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 .gl .result-chip{border-radius:13px;padding:12px;background:linear-gradient(145deg,#2b200d,#110d06);border:1px solid #a47a2c;color:#f8d979;font-weight:900}
 .gl .gc .reel,.gl .gd .row2 b{filter:grayscale(.65) sepia(.85) saturate(1.5)}
 
+
+/* RUKN ALGHARB — premium onboarding and responsive game lounge */
+:root{--gold:#e8bf67;--gold-hi:#ffe4a0;--gold-dark:#8a6125;--night:#080806;--night-2:#13100a}
+.authw{padding:calc(24px + env(safe-area-inset-top)) 15px 34px;background:radial-gradient(ellipse at 50% 0%,#3c2b11 0,#171107 33%,#060504 78%);color:#fff4d9}
+.auth-hero .alogo{display:none}
+.auth-install-link{display:inline-flex;align-items:center;gap:8px;float:left;border:1px solid #a47c32;border-radius:999px;padding:8px 12px;background:#191307;color:#f2d184;font-size:11px;font-weight:800;cursor:pointer}
+.auth-install-link span{font-size:17px}
+.auth-hero h2{clear:both;padding-top:18px;font-size:27px;line-height:1.3;color:#ffe19a;text-shadow:0 5px 18px #e7b95230}
+.auth-hero p{max-width:340px;margin:8px auto 16px;color:#d4c29e;font-size:13px;line-height:1.9}
+.authw .warn{max-width:440px;margin:0 auto 12px;border-radius:14px;background:#21180b;border:1px solid #76551f;color:#e5d2a6}
+.auth-card{max-width:440px;margin:0 auto;padding:17px;background:linear-gradient(150deg,#211a0d,#0b0906 72%);border:1px solid #8c682d;border-radius:22px;box-shadow:0 18px 45px #000c,inset 0 1px #fff1}
+.auth-card .tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:4px;background:#0c0a07;border:1px solid #4b391a;border-radius:14px}
+.auth-card .tabs button{border-radius:10px;background:transparent;color:#d3c092;border:1px solid transparent}
+.auth-card .tabs button.on{background:linear-gradient(145deg,#f4d88d,#bd8b37);color:#241909;border-color:#ffe7a0;box-shadow:0 5px 18px #d4a64b35}
+.auth-label{color:#e6d3ab;font-weight:800}
+.auth-card .fi{background:#090806;border:1px solid #5c4724;color:#fff0d0;border-radius:12px}
+.auth-card .fi:focus{border-color:#f3ce79;box-shadow:0 0 0 3px #e4bc5a22}
+.auth-submit{background:linear-gradient(110deg,#f6df9d,#bd842c 68%,#f1d17a);color:#211605;border:1px solid #ffe5a2;box-shadow:0 8px 20px #b9802d28;font-weight:900;letter-spacing:.2px}
+.auth-foot small{color:#aa9a75}.auth-foot .lnk{color:#f0ce7b}
+.top{background:linear-gradient(105deg,#090806,#211707 55%,#0a0805);border-bottom:1px solid #765723;box-shadow:0 8px 30px #0007}
+.brand .lg{background:radial-gradient(circle,#70501b,#161006);border:1px solid #d7aa50;color:#ffe3a0}
+.ban{position:relative;isolation:isolate;overflow:hidden;margin:13px 12px 11px;padding:21px 18px;min-height:172px;border:1px solid #a37a32;border-radius:20px;background:radial-gradient(ellipse at 85% 20%,#664816 0,#201606 40%,#0c0a06 78%);box-shadow:0 14px 32px #0008,inset 0 1px #fff2}
+.ban:before{content:"";position:absolute;z-index:-1;width:185px;height:185px;left:-40px;top:-68px;border:1px solid #d0a54b55;border-radius:50%;box-shadow:0 0 0 17px #d0a54b0d,0 0 0 38px #d0a54b0a}
+.ban h2{color:#ffde91;font-size:22px;font-weight:900;line-height:1.35;max-width:70%}
+.ban p{color:#d5c39a;max-width:72%;font-size:12px;line-height:1.8}
+.ban .em{font-size:78px;right:16px;bottom:7px;opacity:.78;filter:grayscale(1) sepia(1) saturate(1.8) drop-shadow(0 8px 16px #b17d2960)}
+.ban .btn{background:linear-gradient(120deg,#f8dfa0,#bd862c);color:#201504;border:1px solid #ffe7a6;font-weight:900}
+.matches-heading{border-bottom:1px solid #59451f;padding-bottom:10px}
+.games-home-section{margin:16px 12px 22px}
+.games-home-grid,.games-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.games-home-grid .gcard,.games-list .gcard{background:linear-gradient(155deg,#21190b,#0b0906);border:1px solid #775b29;border-radius:17px;overflow:hidden;box-shadow:0 8px 23px #0007,inset 0 1px #fff1;transition:transform .18s,border-color .18s}
+.games-home-grid .gcard:active,.games-list .gcard:active{transform:scale(.982);border-color:#f0ca75}
+.games-home-grid .art,.games-list .art{aspect-ratio:1.24/1;background:radial-gradient(circle at 50% 28%,#624a1d,#120e07 74%)!important;min-height:0;height:auto;color:#f6d37c}
+.games-home-grid .game-art-icon,.games-list .game-art-icon{font-size:clamp(48px,14vw,70px);filter:grayscale(1) sepia(1) saturate(2) drop-shadow(0 0 13px #e0b24d85)}
+.games-home-grid .gi,.games-list .gi{padding:11px;display:flex;flex-direction:column;align-items:stretch;min-width:0}
+.games-home-grid .gi b,.games-list .gi b{color:#ffe0a0;font-size:13px;line-height:1.5}
+.games-home-grid .gi p,.games-list .gi p{color:#c6b68f;font-size:10px;line-height:1.7;margin:5px 0 10px;min-height:34px}
+.games-home-grid .gi .btn,.games-list .gi .btn{width:100%;min-height:39px;border-radius:11px;background:linear-gradient(120deg,#f1d58b,#b77f28);color:#201605;border:1px solid #ffe3a0;font-size:11px;font-weight:900}
+.games-count{background:#211807;border:1px solid #735723;border-radius:999px;color:#f4d383;padding:5px 10px}
+.gh h1,.matches-heading b,.matches-heading small{color:#f1d28c}
+.search input{background:#100d07;border:1px solid #624a21;color:#fff0ce;border-radius:13px}
+.cats .chip{background:#1c160a;border:1px solid #5c451d;color:#d7c08a}
+.cats .chip.on{background:linear-gradient(140deg,#eacb7b,#a87524);color:#211604;border-color:#ffe5a0}
+.card,.sports-detail-card,.match-card,.matches-empty,.sportscore-panel{background:linear-gradient(155deg,#21190b,#0d0a06 72%);border:1px solid #695020;color:#f2e2be;box-shadow:0 7px 22px #0008}
+.nav{background:linear-gradient(180deg,#191307,#050504);border-top:1px solid #7b5c26;box-shadow:0 -8px 28px #000b}
+.nav button{color:#b4a27b}.nav button.on{background:linear-gradient(180deg,#39270d,#140f07);color:#ffdf89;box-shadow:inset 0 0 0 1px #936b29}
+.gl{background:radial-gradient(ellipse at 50% 0%,#3b2b12,#0d0a06 50%,#030302)!important}
+.gbody{gap:12px;padding:13px 12px calc(28px + env(safe-area-inset-bottom))}
+.gl .gc,.gl .gd{border:1px solid #775a28;background:linear-gradient(150deg,#221a0c,#0a0906);box-shadow:0 10px 25px #0008,inset 0 1px #fff1}
+.gl .bar button{background:#1c160a;border:1px solid #705326;color:#ecd6a1}
+.gl .fld{background:#100d07;border:1px solid #604a24}.gl .fld input{background:#080705;border:1px solid #826331;color:#fff0cc}
+.gl .btn{background:linear-gradient(120deg,#f1d78d,#b9822d);color:#211706;border:1px solid #ffe6a1;font-weight:900}
+.gl .btn.ok{background:linear-gradient(120deg,#d9b85e,#88611f);color:#1a1204}
+.gl .gmsg{background:#151006;border:1px solid #735623;color:#f1d68e}
+.gl .history-title,.gl .gc b,.gl .gd b{color:#f3d482}.gl canvas{max-width:100%;height:auto}
+.gl .result-chip{background:#261b09;border:1px solid #a47a2e;color:#ffe29b}
+.welcome-tour[hidden]{display:none!important}
+.welcome-tour{position:fixed;inset:0;z-index:1000;min-height:100dvh;background:radial-gradient(ellipse at 50% 16%,#45310f,#151006 44%,#050504 88%);color:#fff0d0;display:flex;flex-direction:column;padding:calc(16px + env(safe-area-inset-top)) 18px calc(16px + env(safe-area-inset-bottom));overflow:hidden}
+.welcome-tour:before{content:"";position:absolute;width:340px;height:340px;border:1px solid #dbac4a20;border-radius:50%;top:12%;left:-180px;box-shadow:0 0 0 28px #dbac4a08,0 0 0 62px #dbac4a05;pointer-events:none}
+.welcome-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.welcome-brand{display:flex;align-items:center;gap:9px;color:#f7d88f;font-weight:900}.welcome-brand-mark{width:37px;height:37px;border:1px solid #c99a43;border-radius:12px;display:grid;place-items:center;background:linear-gradient(145deg,#47300c,#110c05);font-size:23px;color:#ffdf8c}
+.welcome-skip{background:#1d160a;border:1px solid #5d451d;color:#cdb98d;border-radius:999px;padding:8px 14px;font-size:11px}
+.welcome-track{flex:1;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;min-height:0}
+.welcome-slide{width:100%;max-width:460px;margin:auto;animation:welcomeIn .34s ease both}.welcome-slide[hidden]{display:none}
+@keyframes welcomeIn{from{opacity:0;transform:translateX(-16px)}to{opacity:1;transform:translateX(0)}}
+.welcome-art{height:min(38vh,330px);min-height:235px;max-height:330px;max-width:430px;margin:4px auto 25px;position:relative;overflow:hidden;border:1px solid #87642a;border-radius:27px;background:linear-gradient(145deg,#261c0b,#0d0a05);box-shadow:0 20px 42px #0009,inset 0 1px #fff1}
+.welcome-art:after{content:"";position:absolute;inset:0;background:linear-gradient(140deg,#f6d98a10,transparent 42%,#0006);pointer-events:none}
+.welcome-art-one{display:grid;place-items:center;background:radial-gradient(circle at 50% 45%,#624718 0,#241907 44%,#0b0905 78%)}
+.welcome-orbit{position:absolute;width:245px;height:245px;border:1px solid #f3d18455;border-radius:50%;box-shadow:0 0 0 15px #eac5680a,0 0 0 31px #eac56807}.orbit-two{width:185px;height:185px;transform:rotateX(63deg) rotate(24deg)}
+.welcome-emblem{width:115px;height:115px;display:grid;place-items:center;border:1px solid #ffe4a0;border-radius:31px;background:linear-gradient(145deg,#78561f,#181005);color:#ffe6a5;font-size:70px;text-shadow:0 8px 20px #e9b94e66;box-shadow:0 0 50px #e2b45744,0 18px 36px #000a}
+.welcome-spark{position:absolute;color:#ffde91;text-shadow:0 0 16px #f1c96e;font-size:28px}.spark-one{top:22%;right:18%}.spark-two{bottom:23%;left:18%}
+.welcome-art-caption{position:absolute;bottom:17px;display:grid;text-align:center;letter-spacing:3px;color:#d6b96f}.welcome-art-caption small{font-size:8px;letter-spacing:5px;color:#907442}
+.welcome-copy{text-align:right;max-width:430px;margin:0 auto}.welcome-kicker{font-size:10px;letter-spacing:1.5px;color:#c79d4b;font-weight:900}
+.welcome-copy h1{font-size:clamp(25px,7vw,34px);line-height:1.4;margin:8px 0 7px;color:#fff2d2;font-weight:900}.welcome-copy h1 em{font-style:normal;color:#f3cd78}
+.welcome-copy p{font-size:13px;line-height:2;color:#cdbb96;margin:0;max-width:400px}
+.welcome-art-two{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:10px;padding:20px;align-items:center}
+.welcome-game-tile{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;aspect-ratio:1;border:1px solid #795c2a;border-radius:17px;background:linear-gradient(145deg,#35260d,#100c06);box-shadow:0 9px 20px #0008}
+.welcome-game-tile span{font-size:clamp(29px,8vw,43px);color:#ffde91;text-shadow:0 0 15px #e8bf6766}.welcome-game-tile small{font-size:10px;color:#d8c194;font-weight:800}
+.welcome-art-three{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:20px}
+.welcome-score-card{width:88%;padding:19px;border:1px solid #a37c36;border-radius:19px;background:linear-gradient(145deg,#2a200e,#100c06);box-shadow:0 13px 30px #0009;display:flex;flex-direction:column;gap:9px}
+.welcome-score-card span,.welcome-score-card small{font-size:10px;color:#c4ad7c}.welcome-score-card b{font-size:35px;color:#ffe29b;direction:ltr;text-align:center;text-shadow:0 0 20px #e7bb5c55}
+.welcome-score-line{height:5px;border-radius:9px;background:#403115;overflow:hidden}.welcome-score-line i{display:block;width:72%;height:100%;background:linear-gradient(90deg,#946b25,#f9dc8a);border-radius:9px}
+.welcome-mini-stat{width:40%;align-self:flex-start;padding:9px 12px;background:#1a1308;border:1px solid #725322;border-radius:12px;display:flex;justify-content:space-between;color:#c8b17f;font-size:10px}
+.welcome-mini-stat:last-child{align-self:flex-end;margin-top:-4px}.welcome-mini-stat b{color:#ffe29a}
+.welcome-bottom{position:relative;z-index:1;max-width:460px;width:100%;margin:10px auto 0}
+.welcome-dots{display:flex;justify-content:center;gap:7px;margin-bottom:16px}.welcome-dots span{width:7px;height:7px;border-radius:50%;background:#62502d;transition:width .2s,background .2s}
+.welcome-dots span.active{width:24px;border-radius:12px;background:linear-gradient(90deg,#f5dda1,#b78431)}
+.welcome-actions{display:flex;gap:9px;align-items:center}.welcome-back{width:52px;height:52px;border:1px solid #795b2a;border-radius:15px;background:#171107;color:#edcf88;font-size:21px}
+.welcome-next{height:54px;flex:1;border:1px solid #ffe5a1;border-radius:15px;background:linear-gradient(105deg,#f6dfa1,#b9832d);color:#231807;font-size:15px;font-weight:900;box-shadow:0 8px 22px #b7832e32}
+.welcome-next span{font-size:22px;margin-right:9px;vertical-align:-2px}.welcome-install{width:100%;margin-top:11px;padding:10px;border:1px solid #59431c;border-radius:12px;background:transparent;color:#e9c778;font-size:11px;font-weight:800}
+.install-hero{max-width:450px;margin:24px auto;padding:22px;border:1px solid #8b672c;border-radius:22px;background:linear-gradient(150deg,#241b0c,#0a0805);box-shadow:0 16px 36px #0009;text-align:center}
+.install-hero h1{margin:8px 0;color:#ffe2a0;font-size:24px}.install-hero p{color:#cfbc92;font-size:13px;line-height:1.9}
+.install-step{display:flex;gap:12px;align-items:flex-start;padding:13px;border:1px solid #5d471e;border-radius:14px;background:#151006;margin:9px 0;text-align:right}
+.install-step b{display:grid;place-items:center;flex:0 0 28px;height:28px;border-radius:50%;background:#e6bd62;color:#241908}
+.install-action{width:100%;min-height:48px;border:1px solid #ffe5a0;border-radius:13px;background:linear-gradient(105deg,#f5dc98,#b9822c);color:#201605;font-weight:900}
+.dice-stage,.cards-stage{min-height:190px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:19px;border:1px solid #795a26;border-radius:18px;background:radial-gradient(circle at 50% 38%,#45300e,#100c06 72%);box-shadow:inset 0 1px #fff1}
+.dice-pair{display:flex;gap:13px;direction:ltr}.die-face{width:76px;height:76px;display:grid;place-items:center;border:1px solid #e2bd6c;border-radius:17px;background:linear-gradient(145deg,#fff5d9,#d9b875);color:#261a07;font-size:38px;box-shadow:0 12px 25px #0008,inset 0 2px #fff}
+.dice-total{font-size:14px;color:#dbc895}.dice-total b{font-size:28px;color:#ffe2a0;margin-right:7px}
+.game-choice-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin:10px 0}
+.game-choice{padding:12px 5px;border:1px solid #725523;border-radius:12px;background:#181207;color:#dec796;font-size:11px;font-weight:900}
+.game-choice.on{background:linear-gradient(150deg,#f2d788,#bd8731);border-color:#ffe5a2;color:#211706;box-shadow:0 5px 15px #d6ae562a}
+.playing-card{width:106px;height:146px;display:grid;place-items:center;border:1px solid #ecd596;border-radius:15px;background:linear-gradient(145deg,#fffdf4,#e6d8b8);box-shadow:0 15px 27px #0009;font-size:64px;font-weight:900;direction:ltr;color:#17120a;transform:rotate(-3deg)}
+.playing-card.red{color:#b32929}.playing-card.black{color:#171717}
+.playing-card-back{background:repeating-linear-gradient(45deg,#4b2019,#4b2019 6px,#8e5a2d 6px,#8e5a2d 8px);color:#f8dfa0;border:4px double #e6c778}
+.dice-stage.rolling .die-face{animation:diceShake .12s linear infinite alternate}
+@keyframes diceShake{from{transform:rotate(-8deg) translateY(-3px)}to{transform:rotate(8deg) translateY(3px)}}
+@media(max-height:720px){.welcome-art{height:31vh;min-height:205px}.welcome-copy h1{font-size:25px}.welcome-copy p{font-size:12px}.welcome-bottom{margin-top:5px}.welcome-dots{margin-bottom:10px}}
+@media(max-width:380px){.welcome-tour{padding-left:14px;padding-right:14px}.welcome-art-two{gap:7px;padding:13px}.welcome-game-tile{border-radius:13px}.welcome-game-tile small{font-size:9px}.welcome-copy h1{font-size:25px}.auth-hero h2{font-size:24px}.games-home-grid,.games-list{gap:8px}}
+
 </style>
 </head>
 <body><div class="app">
 <div id="fatal" hidden></div>
-
+<section id="welcomeTour" class="welcome-tour" hidden aria-label="مقدمة تطبيق ركن الغرب">
+  <div class="welcome-top"><div class="welcome-brand"><span class="welcome-brand-mark">♛</span><span>ركن الغرب</span></div><button id="welcomeSkip" class="welcome-skip" type="button">تخطي</button></div>
+  <div class="welcome-track">
+    <article class="welcome-slide" data-welcome-slide="0">
+      <div class="welcome-art welcome-art-one"><div class="welcome-orbit orbit-one"></div><div class="welcome-orbit orbit-two"></div><div class="welcome-emblem">♛</div><span class="welcome-spark spark-one">✦</span><span class="welcome-spark spark-two">✧</span><div class="welcome-art-caption"><b>RUKN ALGHARB</b><small>GAME LOUNGE</small></div></div>
+      <div class="welcome-copy"><span class="welcome-kicker">01 / مرحبًا بك</span><h1>أهلًا بك في <em>ركن الغرب</em></h1><p>مكان واحد يجمع ألعاب التحدي والاختيار السريع في تجربة عربية مصممة للموبايل.</p></div>
+    </article>
+    <article class="welcome-slide" data-welcome-slide="1" hidden>
+      <div class="welcome-art welcome-art-two">
+        <div class="welcome-game-tile"><span>✈</span><small>الطيارة</small></div><div class="welcome-game-tile"><span>♧</span><small>التفاح</small></div><div class="welcome-game-tile"><span>◉</span><small>العجلة</small></div><div class="welcome-game-tile"><span>✣</span><small>بلينكو</small></div><div class="welcome-game-tile"><span>⚄</span><small>النرد</small></div><div class="welcome-game-tile"><span>♠</span><small>الأوراق</small></div>
+      </div>
+      <div class="welcome-copy"><span class="welcome-kicker">02 / اكتشف الألعاب</span><h1>اختار لعبتك… <em>وابدأ جولتك</em></h1><p>من الطيارة والكراش إلى التفاح والعجلة وبلينكو والنرد والأوراق؛ لكل لعبة أسلوبها وإيقاعها.</p></div>
+    </article>
+    <article class="welcome-slide" data-welcome-slide="2" hidden>
+      <div class="welcome-art welcome-art-three"><div class="welcome-score-card"><span>ملخص الجولة</span><b>× 2.40</b><div class="welcome-score-line"><i></i></div><small>نتيجتك محفوظة في سجل النشاط</small></div><div class="welcome-mini-stat"><span>الجولات</span><b>12</b></div><div class="welcome-mini-stat"><span>الألعاب</span><b>08</b></div></div>
+      <div class="welcome-copy"><span class="welcome-kicker">03 / حسابك وتجربتك</span><h1>كل جولة لها <em>حكاية</em></h1><p>تابع سجل اللعب والنتائج، وارجع لألعابك بسهولة من أي شاشة. التجربة برصيد افتراضي فقط، ولا توجد أموال أو سحوبات حقيقية.</p></div>
+    </article>
+  </div>
+  <div class="welcome-bottom"><div id="welcomeDots" class="welcome-dots"><span class="active"></span><span></span><span></span></div><div class="welcome-actions"><button id="welcomeBack" class="welcome-back" type="button" hidden aria-label="الصفحة السابقة">→</button><button id="welcomeNext" class="welcome-next" type="button">التالي <span>←</span></button></div><button class="welcome-install" type="button" data-install-app>＋ ثبّت التطبيق على جهازك</button></div>
+</section>
 <div id="v_auth" class="authw" hidden>
   <div class="auth-hero">
+    <button class="auth-install-link" type="button" data-install-app><span>↓</span> تثبيت التطبيق</button>
     <div class="alogo"><div class="lg big">👑</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد افتراضي فقط</small></div>
     <h2>أهلاً بك في ركن الغرب</h2><p>ادخل إلى حسابك أو أنشئ حسابًا جديدًا بخطوات بسيطة.</p>
   </div>
@@ -813,16 +942,18 @@ function capOf(g){
 }
 
 
-const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#7a0c2e","#ff5a3d","#2a0710"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",plinko:"🎯"};
+const BASE={slot:96,apple:96,rocket:96,crash:97,wheel:95,plinko:96,dice:96,cards:95};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#b56d13","#ffcf65","#241405"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#78531c","#f5d27a","#1a1208"],cards:["#742c26","#e5b85c","#160907"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"✈",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"⚄",cards:"♠"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
+{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
+{id:"dice",name:"Lucky Dice",desc:"اختار مجموع النرد: أقل من 7 أو يساوي 7 أو أكبر من 7",engine:"dice",cat:"النرد",tag:"النرد",order:7},
+{id:"cards",name:"Red or Black",desc:"اختار لون الورقة قبل كشفها: أحمر أم أسود",engine:"cards",cat:"الأوراق",tag:"أوراق",order:8}];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -2135,6 +2266,58 @@ async function crSettle(mode){
     }
   }
 }
+/* ======== Lucky Dice ======== */
+ENG.dice={open(g,b){
+  let choice="low";
+  b.innerHTML='<div class="dice-stage" id="diceStage"><div class="dice-pair"><div class="die-face" id="dieOne">⚄</div><div class="die-face" id="dieTwo">⚄</div></div><div class="dice-total">مجموع النرد <b id="diceSum">—</b></div></div>'+
+    '<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="game-choice-row" id="diceChoices">'+
+    '<button type="button" class="game-choice on" data-dice-choice="low">أقل من 7</button><button type="button" class="game-choice" data-dice-choice="seven">يساوي 7</button><button type="button" class="game-choice" data-dice-choice="high">أكبر من 7</button></div>'+
+    '<div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div>'+
+    '<div class="fld"><label>قيمة الجولة الافتراضية</label><input id="bet" type="number" min="1" step="1" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+
+    '<button class="btn full" id="diceRoll">ارمِ النرد</button></div>'+rulesBox("اختر مجموع حجرَي النرد، ثم ارمِهما. النتيجة تُحسب من الخادم وتظهر في سجل الألعاب.")+histBox;
+  bindBet(b);
+  b.querySelectorAll("[data-dice-choice]").forEach(btn=>btn.onclick=()=>{choice=btn.dataset.diceChoice;b.querySelectorAll("[data-dice-choice]").forEach(x=>x.classList.toggle("on",x===btn));});
+  safeClick($("diceRoll"),async()=>{
+    if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+    lastAction=Date.now();busy=true;hold=true;const stage=$("diceStage");stage.classList.add("rolling");$("diceRoll").disabled=true;gmsg("النرد بيتحرك...");
+    try{
+      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      stage.classList.remove("rolling");const faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
+      $("dieOne").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[0])||1))-1];
+      $("dieTwo").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[1])||1))-1];
+      $("diceSum").textContent=String(o.sum??"—");U.balance=Number(data.balance);hold=false;busy=false;render();
+      result(Number(data.payout),bet,(o.won?"اختيار صحيح":"لم تصب هذه الجولة")+" • ×"+Number(o.multiplier||0).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
+    }catch(e){stage.classList.remove("rolling");hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+  });
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("diceRoll").disabled=busy;};
+}};
+
+/* ======== Red or Black Cards ======== */
+ENG.cards={open(g,b){
+  let choice="red";
+  b.innerHTML='<div class="cards-stage" id="cardsStage"><div class="playing-card playing-card-back" id="playingCard">♠</div><div class="dice-total" id="cardOutcome">اختار اللون قبل كشف الورقة</div></div>'+
+    '<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="game-choice-row" style="grid-template-columns:1fr 1fr" id="cardChoices">'+
+    '<button type="button" class="game-choice on" data-card-choice="red">أحمر ♥ ♦</button><button type="button" class="game-choice" data-card-choice="black">أسود ♣ ♠</button></div>'+
+    '<div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div>'+
+    '<div class="fld"><label>قيمة الجولة الافتراضية</label><input id="bet" type="number" min="1" step="1" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+
+    '<button class="btn full" id="drawCard">اكشف الورقة</button></div>'+rulesBox("اختر اللون الأحمر أو الأسود قبل كشف ورقة واحدة. النتيجة تعتمد من الخادم.")+histBox;
+  bindBet(b);
+  b.querySelectorAll("[data-card-choice]").forEach(btn=>btn.onclick=()=>{choice=btn.dataset.cardChoice;b.querySelectorAll("[data-card-choice]").forEach(x=>x.classList.toggle("on",x===btn));});
+  safeClick($("drawCard"),async()=>{
+    if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+    lastAction=Date.now();busy=true;hold=true;$("drawCard").disabled=true;$("playingCard").className="playing-card playing-card-back";$("cardOutcome").textContent="جاري كشف الورقة...";
+    try{
+      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const rank=Number(o.rank)||1,symbol=String(o.suit||"♠"),rankLabel=({1:"A",11:"J",12:"Q",13:"K"})[rank]||String(rank);
+      $("playingCard").className="playing-card "+(o.red?"red":"black");$("playingCard").textContent=rankLabel+symbol;
+      $("cardOutcome").textContent=o.won?"اختيار صحيح • ×"+Number(o.multiplier||0).toFixed(2):"اختيار غير مطابق • "+(o.red?"أحمر":"أسود");
+      U.balance=Number(data.balance);hold=false;busy=false;render();
+      result(Number(data.payout),bet,o.won?"لون صحيح":"اللون لم يطابق");refreshMe(false).then(()=>render()).catch(()=>{});
+    }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+  });
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("drawCard").disabled=busy;};
+}};
+
 /* ======== Spin and Win ======== */
 const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
 const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
@@ -2328,7 +2511,33 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
   $("activityPick").setAttribute("aria-expanded","false");
   renderAct();
 });
-setAuth("login");showAuth();loadPublicConfig();
+let welcomeIndex=0,installPromptEvent=null;
+function renderWelcome(){
+  document.querySelectorAll("[data-welcome-slide]").forEach((slide,i)=>slide.hidden=i!==welcomeIndex);
+  const dots=$("welcomeDots");if(dots)dots.querySelectorAll("span").forEach((dot,i)=>dot.classList.toggle("active",i===welcomeIndex));
+  $("welcomeBack").hidden=welcomeIndex===0;
+  $("welcomeNext").innerHTML=welcomeIndex===2?'ابدأ التجربة <span>←</span>':'التالي <span>←</span>';
+}
+function openWelcome(){
+  let seen=false;try{seen=localStorage.getItem("rukn_welcome_seen_v2")==="1";}catch(e){}
+  if(seen)return;
+  welcomeIndex=0;renderWelcome();$("welcomeTour").hidden=false;
+}
+function closeWelcome(){
+  $("welcomeTour").hidden=true;
+  try{localStorage.setItem("rukn_welcome_seen_v2","1");}catch(e){}
+}
+$("welcomeNext").onclick=()=>{if(welcomeIndex<2){welcomeIndex++;renderWelcome();}else closeWelcome();};
+$("welcomeBack").onclick=()=>{if(welcomeIndex>0){welcomeIndex--;renderWelcome();}};
+$("welcomeSkip").onclick=closeWelcome;
+window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPromptEvent=event;});
+window.addEventListener("appinstalled",()=>{installPromptEvent=null;toast("تم تثبيت تطبيق ركن الغرب على جهازك.");});
+async function installRuknApp(){
+  if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;return;}
+  location.href="/install.html";
+}
+document.querySelectorAll("[data-install-app]").forEach(button=>button.addEventListener("click",installRuknApp));
+setAuth("login");showAuth();loadPublicConfig();openWelcome();
 (async()=>{
   try{const data=await apiCall("me",{},false);if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
   catch(e){showAuth();}
