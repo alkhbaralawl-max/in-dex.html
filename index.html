@@ -801,7 +801,9 @@ function matchIsFinished(match){
   const status=String(match.status||"").toLowerCase();
   if(["settled","finished","completed","ended","ft","full_time","aet","pens"].includes(status))return true;
   const result=sportsResultMarket(match)?.[1];
-  return String(result?.status||"").toLowerCase()==="settled";
+  if(String(result?.status||"").toLowerCase()==="settled")return true;
+  const markets=Object.values(match.markets||{}).filter(m=>m&&typeof m==="object");
+  return markets.length>0&&markets.every(m=>["settled","cancelled","void"].includes(String(m.status||"").toLowerCase()));
 }
 function renderMatches(){
   const box=$("matchesList"),empty=$("matchesEmpty");if(!box||!empty)return;
