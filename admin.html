@@ -79,8 +79,8 @@ label{display:block;font-size:13px;margin:8px 0 3px}.cl{display:flex;align-items
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
-const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
-const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api-preview";
+const APP_API=SUPABASE_URL+"/functions/v1/app-api-preview";
 const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app"]);
 const $=id=>document.getElementById(id);
 let csrfToken="";
@@ -109,17 +109,10 @@ const btn=(par,txt,cls,fn)=>{const b=el("button",cls,txt);b.onclick=fn;par.appen
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function twoTap(b,label,fn){let armed=false,t;b.onclick=()=>{if(!armed){armed=true;b.textContent="⚠️ اضغط تاني للتأكيد";t=setTimeout(()=>{armed=false;b.textContent=label;},4000);return;}clearTimeout(t);armed=false;b.textContent=label;Promise.resolve(fn()).catch(e=>alert(e.message||"تعذر تنفيذ العملية"));};}
 const BASE={slot:96,apple:96,rocket:96,crash:96,wheel:95,plinko:96,embed:96};
-const ENGL={slot:"🎰 سلوت",apple:"🍎 تفاح",rocket:"🚀 كراش صاروخ",crash:"📈 كراش منحنى",wheel:"🎡 عجلة",plinko:"🎯 بلينكو",dice:"🎲 نرد",cards:"🂡 أحمر أم أسود"};
-const GMX={slot:20,apple:8,rocket:20,crash:20,wheel:8,plinko:20,dice:20,cards:20};
+const ENGL={crash:"✈️ الطيارة"};
+const GMX={crash:20};
 const DEFG=[
-{id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
-{id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
-{id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
-{id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
-{id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
-{id:"dice",name:"النرد",desc:"توقع مجموع حجرَي النرد واربح أو اخسر من رصيدك الوهمي.",engine:"dice",cat:"نرد",tag:"نرد",order:7},
-{id:"cards",name:"أحمر أم أسود",desc:"اختار لون الورقة قبل كشفها، والرهان والمكسب من الرصيد الوهمي.",engine:"cards",cat:"كروت",tag:"كروت",order:8}
+{id:"crash",name:"الطيارة",desc:"لعبة الطيارة بمضاعف متزايد وسحب قبل الانفجار.",engine:"crash",cat:"الطيارة",tag:"Aviator",order:1,rtp:97}
 ]
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -263,70 +256,48 @@ async function createAcc(){
   m("جاري إنشاء الحساب...");try{const out=await apiCall("admin_create_account",{username:n,password:p,initialBalance:b});$("nn").value=$("np").value=$("nb").value="";m("✅ تم إنشاء الحساب. الرقم: "+out.legacyUserId);await refreshAll();}catch(e){m("❌ "+displayError(e));}
 }
 function txRender(){const box=$("txlist");box.innerHTML="";[...TX].slice(0,300).forEach(x=>box.appendChild(el("div","line",fdate(x.t)+" — "+x.type+" "+f(x.amt)+" — "+x.name+" ("+x.id+") — الرصيد بعدها: "+f(x.after))));if(!TX.length)box.textContent="لا توجد عمليات بعد.";}
-function mergedGames(){const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));const o=C.games||{};for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});return Object.values(m).filter(g=>g.name&&ENGL[g.engine]).sort((a,b)=>(a.order||99)-(b.order||99));}
+function mergedGames(){const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));const o=C.games||{};for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});return Object.values(m).filter(g=>g.id==="crash"&&g.engine==="crash"&&g.name).sort((a,b)=>(a.order||99)-(b.order||99));}
 const isDef=id=>DEFG.some(g=>g.id===id);
 function engSelect(v){const s=el("select");for(const k in ENGL){const o=el("option","",ENGL[k]);o.value=k;if(k===v)o.selected=true;s.appendChild(o);}return s;}
 function gamesForm(){
   const box=$("gf");box.innerHTML="";
-  const add=el("div","card");
-  add.appendChild(el("div","sec","➕ إضافة لعبة مراهنات"));
-  add.appendChild(el("div","hint gray","الألعاب هنا تعمل برصيد افتراضي فقط. عند كل جولة يُخصم الرهان، ويُضاف العائد إلى المحفظة حسب نتيجة اللعبة."));
-  const an=el("input");an.type="text";an.placeholder="اسم اللعبة";
-  const ae=engSelect("dice"),ac=el("input"),ad=el("input");
-  ac.placeholder="القسم";ad.placeholder="وصف مختصر";
-  [an,ae,ac,ad].forEach(x=>add.appendChild(x));
-  const am=el("div","hint","");
-  btn(add,"➕ أضف","",async()=>{
-    if(!an.value.trim())return am.textContent="❌ اكتب اسم اللعبة";
-    const id="g"+Date.now().toString(36),games={...(C.games||{}),[id]:{
-      name:an.value.trim(),engine:ae.value,cat:ac.value.trim()||"ألعاب مراهنات",
-      tag:ac.value.trim()||"مراهنات",desc:ad.value.trim(),
-      order:Math.max(0,...mergedGames().map(g=>Number(g.order)||0))+1,
-      on:true,rtp:null,maxMultiplier:null
+  const g=mergedGames()[0]||DEFG[0];
+  const c=el("div","card"),gc=el("div","gcard");
+  c.appendChild(el("div","sec","✈️ إعدادات لعبة الطيارة"));
+  c.appendChild(el("div","hint gray","المتاح حاليًا لعبة واحدة فقط. كل الجولات برصيد وهمي، ويُسجَّل الرهان والنتيجة على الخادم. لا تضف ألعابًا أخرى في هذه المرحلة."));
+  const L=(t,x)=>{gc.appendChild(el("label","",t));gc.appendChild(x);return x;};
+  const nm=el("input");nm.value=g.name||"الطيارة";
+  const ds=el("input");ds.value=g.desc||"";
+  const cat=el("input");cat.value=g.cat||"الطيارة";
+  const tg=el("input");tg.value=g.tag||"Aviator";
+  const im=el("input");im.value=g.img||"";im.placeholder="https://...";
+  const od=el("input");od.inputMode="numeric";od.value=g.order||1;
+  const rt=el("input");rt.inputMode="decimal";rt.value=g.rtp??97;rt.placeholder="97";
+  const cap=el("input");cap.type="number";cap.min="1";cap.max="100";cap.step="0.1";cap.value=g.maxMultiplier??"";cap.placeholder="فاضي = ×20";
+  const on=el("input");on.type="checkbox";on.checked=g.on!==false;on.style.cssText="width:auto;margin-left:8px";
+  L("اسم اللعبة",nm);L("الوصف",ds);L("القسم",cat);L("الوسم على البطاقة",tg);
+  L("صورة الغلاف (رابط https، فاضي = رسم الطيارة)",im);L("الترتيب",od);
+  L("نسبة العائد المعلنة % (الافتراضي 97)",rt);L("أقصى مضاعف افتراضي × (1 إلى 100)",cap);
+  const lb=el("label");lb.append(on,"ظاهرة في الموقع");gc.appendChild(lb);
+  const msg=el("div","hint","");
+  btn(gc,"💾 احفظ إعدادات الطيارة","y",async()=>{
+    const rv=pf(rt.value),cv=pf(cap.value);
+    if(!(rv>=1&&rv<=99.9))return msg.textContent="❌ نسبة العائد من 1 إلى 99.9";
+    if(cap.value.trim()!==""&&!(cv>=1&&cv<=100))return msg.textContent="❌ سقف المضاعف من ×1 إلى ×100";
+    const games={...(C.games||{}),crash:{
+      name:nm.value.trim()||"الطيارة",desc:ds.value.trim(),cat:cat.value.trim()||"الطيارة",
+      tag:tg.value.trim()||"Aviator",img:im.value.trim(),order:Math.floor(pf(od.value))||1,
+      rtp:rv,maxMultiplier:cap.value.trim()===""?null:cv,engine:"crash",on:on.checked
     }};
-    try{await saveConfig("games",games);am.textContent="✅ اتضافت";an.value=ac.value=ad.value="";gamesForm();}
-    catch(e){am.textContent="❌ "+displayError(e);}
-  }).style.width="100%";
-  add.appendChild(am);box.appendChild(add);
-  mergedGames().forEach(g=>{
-    const c=el("div","card"),gc=el("div","gcard");
-    c.appendChild(el("div","sec",(isDef(g.id)?"🎮 ":"🆕 ")+g.name));
-    const L=(t,x)=>{gc.appendChild(el("label","",t));gc.appendChild(x);return x;};
-    const nm=el("input");nm.value=g.name||"";
-    const ds=el("input");ds.value=g.desc||"";
-    const cat=el("input");cat.value=g.cat||"";
-    const tg=el("input");tg.value=g.tag||"";
-    const im=el("input");im.value=g.img||"";im.placeholder="https://...";
-    const od=el("input");od.inputMode="numeric";od.value=g.order||"";
-    const rt=el("input");rt.inputMode="decimal";rt.value=g.rtp||"";rt.placeholder="فاضي = نسبة العائد الافتراضية";
-    const cap=el("input");cap.type="number";cap.min="1";cap.max="100";cap.step="0.1";cap.value=g.maxMultiplier??"";cap.placeholder="فاضي = ×"+(GMX[g.engine]||20);
-    const en=engSelect(g.engine);
-    const on=el("input");on.type="checkbox";on.checked=g.on!==false;on.style.cssText="width:auto;margin-left:8px";
-    const rtLabel=el("label","","نسبة العائد للاعب %"),capLabel=el("label","","سقف المضاعف الافتراضي × (1 إلى 100)");
-    L("اسم اللعبة",nm);L("الوصف",ds);L("القسم",cat);L("الوسم على البطاقة",tg);
-    L("صورة الغلاف (رابط https، فاضي = الافتراضي)",im);L("الترتيب (رقم أصغر = أول)",od);
-    gc.append(rtLabel,rt,capLabel,cap);L("نوع اللعبة",en);
-    const lb=el("label");lb.append(on,"ظاهرة في الموقع");gc.appendChild(lb);
-    const msg=el("div","hint","");
-    btn(gc,"💾 احفظ","",async()=>{
-      const rv=pf(rt.value),cv=pf(cap.value);
-      if(rt.value.trim()!==""&&!(rv>=1&&rv<=99.9))return msg.textContent="❌ نسبة العائد من 1 إلى 99.9";
-      if(cap.value.trim()!==""&&!(cv>=1&&cv<=100))return msg.textContent="❌ سقف المضاعف من ×1 إلى ×100";
-      const games={...(C.games||{}),[g.id]:{
-        name:nm.value.trim()||g.name,desc:ds.value.trim(),cat:cat.value.trim(),
-        tag:tg.value.trim(),img:im.value.trim(),order:Math.floor(pf(od.value))||99,
-        rtp:rt.value.trim()===""?null:rv,maxMultiplier:cap.value.trim()===""?null:cv,
-        engine:en.value,on:on.checked
-      }};
-      try{await saveConfig("games",games);msg.textContent="✅ اتحفظت وبتظهر للاعبين بعد تحديث الإعدادات";}
-      catch(e){msg.textContent="❌ "+displayError(e);}
-    });
-    const dl=btn(gc,isDef(g.id)?"↩️ رجّع الافتراضي":"🗑 احذف اللعبة","r",()=>{});
-    twoTap(dl,isDef(g.id)?"↩️ رجّع الافتراضي":"🗑 احذف اللعبة",async()=>{
-      const games={...(C.games||{})};delete games[g.id];await saveConfig("games",games);gamesForm();
-    });
-    gc.appendChild(msg);c.appendChild(gc);box.appendChild(c);
+    try{await saveConfig("games",games);msg.textContent="✅ اتحفظت إعدادات الطيارة";}
+    catch(e){msg.textContent="❌ "+displayError(e);}
   });
+  const reset=btn(gc,"↩️ رجّع بيانات الطيارة الافتراضية","r",async()=>{
+    const games={...(C.games||{})};delete games.crash;
+    try{await saveConfig("games",games);gamesForm();}
+    catch(e){msg.textContent="❌ "+displayError(e);}
+  });
+  gc.appendChild(msg);c.appendChild(gc);box.appendChild(c);
 }
 /* بناء محرر المباراة: عمود مستقل للفريق الأول وعمود للفريق الثاني */
 function teamEditor(title,team){
