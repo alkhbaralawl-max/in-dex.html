@@ -145,7 +145,7 @@ const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
 const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SUPABASE_URL+"/functions/v1/app-api";
-const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app"]);
+const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app","https://localhost"]);
 const $=id=>document.getElementById(id);
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
