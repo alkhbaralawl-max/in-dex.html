@@ -792,7 +792,7 @@ function sportsSideOption(market,side){
 function sportsOptionLabel(match,side,opt){
   if(side==="home")return arabicTeamName(match.team1?.name||String(opt?.label||C.texts.team1Fallback||"الفريق الأول"));
   if(side==="away")return arabicTeamName(match.team2?.name||String(opt?.label||C.texts.team2Fallback||"الفريق الثاني"));
-  return String(opt?.label||C.texts.drawLabel||"التعادل").replace(/\{team1\}/g,match.team1?.name||C.texts.team1Fallback||"الفريق الأول").replace(/\{team2\}/g,match.team2?.name||C.texts.team2Fallback||"الفريق الثاني");
+  return String(opt?.label||C.texts.drawLabel||"التعادل").replace(/\{team1\}/g,arabicTeamName(match.team1?.name||C.texts.team1Fallback||"الفريق الأول")).replace(/\{team2\}/g,arabicTeamName(match.team2?.name||C.texts.team2Fallback||"الفريق الثاني"));
 }
 function sportsMatchLocked(match,market){
   return (match.status||"open")!=="open"||matchKickoffPassed(match)||(market?.status||"open")!=="open";
@@ -912,7 +912,7 @@ function renderSportsMatchDetail(){
   if(!match){box.appendChild(el("div","empty",C.texts.matchUnavailable||"المباراة غير متاحة."));return;}
   $("matchDetailTitle").textContent=arabicTeamName(match.title||C.texts.matchDetailTitle||"تفاصيل المباراة");
   const card=el("section","sports-detail-card"),meta=el("div","sports-detail-meta");
-  meta.appendChild(el("span","",match.title||C.texts.matchDetailTitle||"مباراة"));
+  meta.appendChild(el("span","",arabicTeamName(match.title||C.texts.matchDetailTitle||"مباراة")));
   const status=match.status==="settled"?(C.texts.matchFinishedStatus||"انتهت"):match.minute?String(match.minute):matchKickoffPassed(match)?(C.texts.matchStartedStatus||"بدأت"):(C.texts.matchWaitingStatus||"لم تبدأ");
   meta.appendChild(el("b","",status));card.appendChild(meta);
   const teams=el("div","sports-detail-teams");teams.appendChild(teamLogo(match.team1||{}));
