@@ -96,7 +96,7 @@ private fun PlayerApp(api: NativeApi) {
         if (signedIn && current != null && selectedGame?.id == "rocket") {
             while (true) {
                 try {
-                    val tick = api.app("crash_tick", JSONObject().put("roundId", current.optString("id")), false)
+                    val tick = api.app("crash_tick", JSONObject().put("roundId", current.optString("id")), true)
                     if (tick.has("crashed")) {
                         active = null
                         result = JSONObject()
