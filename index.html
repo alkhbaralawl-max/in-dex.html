@@ -1002,7 +1002,7 @@ function addSportsPickToChain(){
     team1:String(p.match.team1?.name||"الفريق الأول"),team2:String(p.match.team2?.name||"الفريق الثاني"),
     matchTitle:String(p.match.title||"مباراة"),marketTitle:sportsMarketTitle(String(p.marketId),p.market),
     optionLabel:sportsMarketOptionLabel(String(p.marketId),String(p.optionId),p.option,p.match),
-    odds:Number(p.option.odds)||0
+    odds:r2((Number(p.option.odds)||0)*matchProfitFactor(p.match))
   });
   sportsChainStake=0;closeSportsModal();renderChainHub();show("home");
   toast("أُضيف الاختيار إلى السلسلة. أضف مباراة أخرى ثم ضع السلسلة.");
@@ -1040,7 +1040,7 @@ function renderChainHub(){
   box.appendChild(title);
   const draft=el("div","chain-draft-card");
   draft.appendChild(el("div","chain-card-title","إنشاء سلسلة جديدة"));
-  draft.appendChild(el("div","chain-help","اضغط مطولًا على اختيار المباراة، ثم اختر «أضف للسلسلة». اختر مباراتين مختلفتين أو أكثر."));
+  draft.appendChild(el("div","chain-help","افتح مباراة، واختر نتيجة من أحد الأسواق، ثم اضغط «أضف للسلسلة». كرر ذلك مع مباراتين مختلفتين أو أكثر، ويمكنك تغيير ترتيب الحلقات قبل التأكيد."));
   if(!sportsChainDraft.length){draft.appendChild(el("div","chain-empty","لم تضف اختيارات للسلسلة بعد."));}
   else{
     const list=el("div","chain-picks");
