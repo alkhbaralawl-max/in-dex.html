@@ -60,7 +60,7 @@ button,input,textarea,select{font-family:inherit}
 .row:last-child{border:0}.up{color:var(--ok);font-weight:bold}.dn{color:var(--er);font-weight:bold}
 .mrow{display:flex;justify-content:space-between;align-items:center;width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 14px;margin-bottom:8px;font-size:15px;font-weight:bold;color:var(--tx);text-align:right}
 .prof{text-align:center}.av{width:70px;height:70px;border-radius:50%;background:var(--b);color:#fff;display:flex;align-items:center;justify-content:center;font-size:32px;margin:6px auto}
-.idb{display:inline-block;background:#E8F1FB;color:var(--b2);border-radius:12px;padding:6px 14px;font-weight:bold;letter-spacing:2px;margin:6px 0}
+.idb{display:inline-block;background:#E8F1FB;color:var(--b2);border-radius:12px;padding:6px 14px;font-weight:bold;letter-spacing:.2px;font-size:13px;margin:6px 0;max-width:100%;overflow-wrap:anywhere}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .sb{background:#F3F6FA;border-radius:12px;padding:10px 4px;font-size:12px;color:var(--tx2)}.sb b{display:block;font-size:17px;color:var(--tx)}
 .note{background:#FFF6D6;color:#7a5a00;border-radius:12px;padding:9px;font-size:12px;text-align:center;margin:0 12px 10px;line-height:1.7}
@@ -333,6 +333,25 @@ canvas{display:block;width:100%}
 .sportscore-footer a{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;background:#0a1e3d;color:#fff;border-radius:5px;text-decoration:none;font:600 12px system-ui,-apple-system,sans-serif}
 .sportscore-note{font-size:11px;color:var(--tx2);line-height:1.8;text-align:center;margin:8px 4px 0}
 .odds-factor-note{margin:6px 0 10px;text-align:center;font-size:11px;color:#60758c;background:#f2f6fa;border-radius:9px;padding:7px}
+
+.activity-head{display:flex;align-items:center;gap:10px}
+.activity-switch{position:relative;margin-right:auto}
+.activity-pick{width:42px;height:42px;border:1px solid var(--line);border-radius:12px;background:#fff;color:var(--tx);font-size:22px;font-weight:bold}
+.activity-menu{position:absolute;top:48px;left:0;z-index:60;min-width:190px;padding:6px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px #0b1e3a22}
+.activity-menu button{display:block;width:100%;padding:11px 12px;border:0;border-radius:10px;background:#fff;color:var(--tx);text-align:right;font-weight:bold}
+.activity-menu button:hover{background:#edf4fc}
+.activity-stats{margin:0 12px 10px}
+.activity-entry{padding:12px 0;border-bottom:1px solid var(--line);line-height:1.8}
+.activity-entry:last-child{border-bottom:0}
+.activity-entry-title{font-weight:bold;color:var(--tx)}
+.activity-entry-meta{color:var(--tx2);font-size:12px}
+.activity-entry-state{font-size:13px;font-weight:bold}
+.activity-entry-state.up{color:var(--ok)}
+.activity-entry-state.dn{color:var(--er)}
+.match-group-title{margin:12px 2px 8px;font-weight:bold;color:var(--tx);font-size:15px}
+.match-group-sub{font-size:11px;color:var(--tx2);font-weight:normal;margin-right:6px}
+#withdrawMessage{white-space:pre-line;line-height:1.8}
+.idb span{font-size:13px;letter-spacing:.3px;direction:ltr;unicode-bidi:isolate;overflow-wrap:anywhere}
 </style>
 </head>
 <body><div class="app">
@@ -385,7 +404,19 @@ canvas{display:block;width:100%}
   <div class="empty" id="gamesEmpty" hidden data-t="noGames"></div>
 </main>
 
-<main id="v_act" hidden><div class="gh"><h1 data-t="actTitle"></h1></div><div class="card" id="hist2"></div></main>
+<main id="v_act" hidden>
+  <div class="gh activity-head"><h1 data-t="actTitle"></h1>
+    <div class="activity-switch">
+      <button type="button" id="activityPick" class="activity-pick" aria-expanded="false">⌄</button>
+      <div id="activityMenu" class="activity-menu" hidden>
+        <button type="button" data-activity="sports">المراهنات الرياضية</button>
+        <button type="button" data-activity="games">مراهنات الألعاب</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid3 activity-stats" id="activityStats"></div>
+  <div class="card" id="hist2"></div>
+</main>
 <main id="v_more" hidden><div class="gh"><h1 data-t="moreTitle"></h1></div><div style="margin:0 12px" id="morelist"></div><div class="empty" id="moreempty" hidden data-t="noPages"></div></main>
 <main id="v_page" hidden>
   <div class="gh"><button class="back" id="pgback">→</button><h1 id="pgT"></h1></div>
@@ -400,7 +431,7 @@ canvas{display:block;width:100%}
 </main>
 
 <main id="v_pay" hidden>
-  <div class="gh"><button class="back" id="payback">→</button><h1 data-t="payTitle"></h1></div>
+  <div class="gh"><button class="back" id="payback">→</button><h1 data-t="payTitle"></h1><button class="btn g" id="withdrawOpen" type="button">سحب</button></div>
   <div class="card">
     <div id="adminmsg" class="amsgbox" hidden></div>
     <div id="paylist"></div>
@@ -420,6 +451,20 @@ canvas{display:block;width:100%}
       <div id="paystatus" class="resbox" hidden></div>
       <button class="btn g full" id="payagain" style="margin-top:8px" data-t="backMethods"></button>
     </div>
+  </div>
+</main>
+
+<main id="v_withdraw" hidden>
+  <div class="gh"><button class="back" id="withdrawBack">→</button><h1>سحب الرصيد الوهمي</h1></div>
+  <div class="card">
+    <div class="note">هذه تجربة توعوية برصيد وهمي فقط. لا يتم إرسال أموال حقيقية أو طلب رقم هاتف حقيقي.</div>
+    <label class="plb" for="withdrawPhone">رقم هاتف وهمي</label>
+    <input class="fi" id="withdrawPhone" type="text" inputmode="numeric" maxlength="20" placeholder="اكتب رقمًا وهميًا من 6 إلى 20 رقمًا">
+    <label class="plb" for="withdrawAmount">مبلغ السحب الوهمي</label>
+    <input class="fi" id="withdrawAmount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="اكتب المبلغ">
+    <div class="row"><span>الرصيد الوهمي المتاح</span><b id="withdrawBalance">0</b></div>
+    <button class="btn full" id="withdrawSubmit" type="button">تم</button>
+    <div class="msg" id="withdrawMessage" aria-live="polite"></div>
   </div>
 </main>
 
@@ -602,13 +647,14 @@ function overlay(win,amt,text){
 $("ov").onclick=()=>{clearTimeout(ovT);$("ov").hidden=true;};
 
 function show(v){
-  view=v;["home","match","games","act","more","page","pay","me","sup"].forEach(x=>{const node=$("v_"+x);if(node)node.hidden=x!==v;});
-  const nv=v==="page"?"more":v==="pay"?"":v==="match"?"home":v;
+  view=v;["home","match","games","act","more","page","pay","withdraw","me","sup"].forEach(x=>{const node=$("v_"+x);if(node)node.hidden=x!==v;});
+  const nv=v==="page"?"more":v==="pay"||v==="withdraw"?"":v==="match"?"home":v;
   document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
   window.scrollTo(0,0);
   if(v==="sup")openChat();
   if(v==="games")renderGames();
   if(v==="match")renderSportsMatchDetail();
+  if(v==="withdraw")updateWithdrawBalance();
 }
 function gcard(g){
   const th=THEME[g.engine]||THEME.crash,d=el("div","gcard"),art=el("div","art");
@@ -626,17 +672,59 @@ function matchesList(){
     .filter(m=>m.title||m.team1&&m.team2)
     .sort((a,b)=>(a.order||999)-(b.order||999));
 }
+const TEAM_AR={
+"AD San Carlos":"أ دي سان كارلوس","Pérez Zeledón":"بيريز زيليدون","Alajuelense":"ألاخولينسي","Sporting San José":"سبورتينغ سان خوسيه",
+"Náutico":"ناوتيكو","CRB":"سي آر بي","Instituto (Córdoba)":"إنستيتوتو كوردوبا","Newell's Old Boys":"نيولز أولد بويز",
+"Macarthur":"ماكارثر","Brisbane Roar":"بريزبن رور","Adelaide United":"أديلايد يونايتد","Melbourne Victory":"ملبورن فيكتوري",
+"Beijing Guoan":"بكين غوان","Chongqing Tonglianglong":"تشونغتشينغ تونغليانغ لونغ","Shanghai Port":"شنغهاي بورت","Liaoning Tieren":"لياونينغ تيرين",
+"Shandong Taishan":"شاندونغ تايشان","Chengdu Rongcheng":"تشنغدو رونغتشنغ","Shanghai Shenhua":"شنغهاي شينهوا","Qingdao West Coast":"تشينغداو ويست كوست",
+"Zhejiang":"تشجيانغ","Henan":"خنان","Qingdao Hainiu":"تشينغداو هاينيو","Shenzhen Peng City":"شنتشن بينغ سيتي",
+"Dalian Yingbo":"داليان ينغبو","Tianjin Jinmen Tiger":"تيانجين جينمن تايغر","Yunnan Yukun":"يونان يويكون","Wuhan Three Towns":"ووهان ثري تاونز",
+"Club Brugge":"كلوب بروج","Anderlecht":"أندرلخت","Gent":"جينت","Kortrijk":"كورتريك","WSG Tirol":"دبليو إس جي تيرول","Austria Wien":"أوستريا فيينا",
+"Hartberg":"هارتبرغ","Rheindorf Altach":"رايندورف ألتاش","Osijek":"أوسييك","Hajduk Split":"هايدوك سبليت",
+"Audax Italiano":"أوداكس إيتاليانو","Coquimbo Unido":"كوكيمبو أونيدو","Universidad Católica":"جامعة كاتوليكا","Deportes Limache":"ديبورتيس ليماشي",
+"Sturm Graz":"شتورم غراتس","Red Bull Salzburg":"ريد بول سالزبورغ","Cartaginés":"كارتاخينيس","Escorpiones Belén":"إسكوربيونيس بيلين",
+"Union Saint-Gilloise":"يونيون سان جيلواز","Racing Genk":"راسينغ جينك","Ñublense":"نيوبلينسي","Colo Colo":"كولو كولو",
+"Universidad de Chile":"جامعة تشيلي","Cobresal":"كوبريسال","Sint-Truiden":"سينت ترويدن","Zulte Waregem":"زولته فاريغيم",
+"Independiente Santa Fe":"إنديبندينتي سانتا في","Deportivo Pasto":"ديبورتيفو باستو","Athletic":"أثليتيك","Atlético Goianiense":"أتلتيكو غويانيينسي",
+"Nacional Potosí":"ناسيونال بوتوسي","Real Potosí":"ريال بوتوسي","Águilas Doradas":"أغيلاس دوراداس","Independiente Medellín":"إنديبندينتي ميديلين",
+"Cúcuta Deportivo":"كوكوتا ديبورتيفو","Jaguares de Córdoba":"جاكواريس دي كوردوبا","Internacional de Bogotá":"إنترناسيونال بوغوتا",
+"Llaneros FC":"يانيروس إف سي","Boyacá Chicó FC":"بوياكا تشيكو","Unión La Calera":"أونيون لا كاليرا","Huachipato":"هواشيباتو",
+"Deportivo Pereira":"ديبورتيفو بيريرا","Junior":"جونيور","Millonarios":"مليوناريوس","Alianza":"أليانزا",
+"Atlético Bucaramanga":"أتلتيكو بوكارامانغا","Fortaleza CEIF":"فورتاليزا","América de Cali":"أمريكا دي كالي",
+"Atlético Nacional":"أتلتيكو ناسيونال","Once Caldas":"أونس كالداس","Deportivo Cali":"ديبورتيفو كالي","Deportes Tolima":"ديبورتيس توليما",
+"Bolívar":"بوليفار","The Strongest":"ذا سترونغست","Saprissa":"سابريسا","Puntarenas FC":"بونتاريناس إف سي",
+"Goiás":"جوياس","Ponte Preta":"بونتي بريتا","Ceará":"سيارا","América Mineiro":"أمريكا مينيرو",
+"Central Córdoba (Santiago del Estero)":"سنترال كوردوبا","Lanús":"لانوس","Universidad de Concepción":"جامعة كونسبسيون","O'Higgins":"أوهيغينز",
+"Costa Rican Primera División":"الدوري الكوستاريكي الممتاز","Brazilian Serie B":"دوري الدرجة الثانية البرازيلي",
+"Argentine Liga Profesional":"الدوري الأرجنتيني الممتاز","Australian A-League Men":"الدوري الأسترالي",
+"Chinese Super League":"الدوري الصيني الممتاز","Belgian Pro League":"الدوري البلجيكي الممتاز",
+"Austrian Bundesliga":"الدوري النمساوي","Croatia Prva HNL":"الدوري الكرواتي الممتاز",
+"Chilean Primera División":"الدوري التشيلي الممتاز","Colombian Primera A":"الدوري الكولومبي الممتاز",
+"Bolivian División Profesional":"الدوري البوليفي الممتاز"
+};
+function arabicTeamName(value){
+  const raw=String(value||"").trim();
+  if(!raw)return "فريق";
+  if(TEAM_AR[raw])return TEAM_AR[raw];
+  if(/[\\u0600-\\u06FF]/.test(raw))return raw;
+  const special=[[/\\bUnited\\b/gi," يونايتد"],[/\\bCity\\b/gi," سيتي"],[/\\bFC\\b/gi," إف سي"],[/\\bClub\\b/gi," كلوب"],[/\\bAthletic\\b/gi," أتلتيك"],[/\\bReal\\b/gi," ريال"],[/\\bDeportivo\\b/gi," ديبورتيفو"],[/\\band\\b/gi," و "],[/&/g," و "]];
+  let s=raw;special.forEach(([re,to])=>s=s.replace(re,to));
+  const letters={a:"ا",b:"ب",c:"ك",d:"د",e:"ي",f:"ف",g:"ج",h:"ه",i:"ي",j:"ج",k:"ك",l:"ل",m:"م",n:"ن",o:"و",p:"ب",q:"ك",r:"ر",s:"س",t:"ت",u:"و",v:"ف",w:"و",x:"كس",y:"ي",z:"ز"};
+  return s.replace(/[A-Za-z]+/g,word=>word.toLowerCase().split("").map(ch=>letters[ch]||ch).join("")).replace(/\\s+/g," ").trim();
+}
+
 function teamLogo(team){
   const wrap=el("div","match-team");
   const logoUrl=isUrl(team.logo)?team.logo:(Number(team.id)>0?APP_API+"?team_logo="+encodeURIComponent(String(team.id)):"");
   if(logoUrl){
-    const im=document.createElement("img");im.className="team-logo";im.src=logoUrl;im.alt=team.name||"شعار الفريق";im.loading="lazy";
-    im.onerror=()=>{const fb=el("div","team-logo-fallback",String(team.name||"؟").trim().slice(0,1));im.replaceWith(fb);};
+    const im=document.createElement("img");im.className="team-logo";im.src=logoUrl;im.alt=arabicTeamName(team.name)||"شعار الفريق";im.loading="lazy";
+    im.onerror=()=>{const fb=el("div","team-logo-fallback",arabicTeamName(team.name).slice(0,1));im.replaceWith(fb);};
     wrap.appendChild(im);
   }else{
-    wrap.appendChild(el("div","team-logo-fallback",String(team.name||"؟").trim().slice(0,1)));
+    wrap.appendChild(el("div","team-logo-fallback",arabicTeamName(team.name).slice(0,1)));
   }
-  wrap.appendChild(el("b","",team.name||"فريق"));return wrap;
+  wrap.appendChild(el("b","",arabicTeamName(team.name)));return wrap;
 }
 function matchKickoffPassed(match){
   const kickoff=Number(match&&match.kickoffAt)||0;
@@ -662,28 +750,37 @@ function sportsSideOption(market,side){
   return entries.find(([id])=>aliases[side].includes(String(id).toLowerCase()))||null;
 }
 function sportsOptionLabel(match,side,opt){
-  if(side==="home")return match.team1?.name||String(opt?.label||C.texts.team1Fallback||"الفريق الأول");
-  if(side==="away")return match.team2?.name||String(opt?.label||C.texts.team2Fallback||"الفريق الثاني");
+  if(side==="home")return arabicTeamName(match.team1?.name||String(opt?.label||C.texts.team1Fallback||"الفريق الأول"));
+  if(side==="away")return arabicTeamName(match.team2?.name||String(opt?.label||C.texts.team2Fallback||"الفريق الثاني"));
   return String(opt?.label||C.texts.drawLabel||"التعادل").replace(/\{team1\}/g,match.team1?.name||C.texts.team1Fallback||"الفريق الأول").replace(/\{team2\}/g,match.team2?.name||C.texts.team2Fallback||"الفريق الثاني");
 }
 function sportsMatchLocked(match,market){
   return (match.status||"open")!=="open"||matchKickoffPassed(match)||(market?.status||"open")!=="open";
 }
+function matchIsFinished(match){
+  const status=String(match.status||"").toLowerCase();
+  if(["settled","finished","completed","ended","ft","full_time","aet","pens"].includes(status))return true;
+  const result=sportsResultMarket(match)?.[1];
+  return String(result?.status||"").toLowerCase()==="settled";
+}
 function renderMatches(){
   const box=$("matchesList"),empty=$("matchesEmpty");if(!box||!empty)return;
   box.innerHTML="";
-  const items=matchesList().filter(m=>m.visible!==false);
-  $("matchesCount").textContent=items.length+" "+(C.texts.matchesCountSuffix||"مباراة");empty.hidden=items.length>0;
-  items.forEach(match=>{
+  const items=matchesList().filter(m=>m.visible!==false&&!matchIsFinished(m));
+  const canBet=items.filter(m=>(m.status||"open")==="open"&&!matchKickoffPassed(m)&&
+    (sportsResultMarket(m)?.[1]?.status||"open")==="open");
+  const locked=items.filter(m=>!canBet.includes(m));
+  const makeCard=match=>{
     const entry=sportsResultMarket(match),market=entry?.[1];
     const card=el("article","match-card sports-match-card");card.tabIndex=0;card.setAttribute("role","button");
     card.onclick=()=>openSportsMatch(match.id);
     card.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openSportsMatch(match.id);}};
     const meta=el("div","match-meta");
-    meta.appendChild(el("span","",(match.title||"مباراة اليوم")+(match.date?" • "+match.date:"")));
-    const status=(match.status==="settled"||market?.status==="settled")?(C.texts.matchFinishedStatus||"انتهت"):matchKickoffPassed(match)?(C.texts.matchStartedStatus||"بدأت المباراة"):(match.status||"open")==="closed"?(C.texts.closedMarketHint||"مغلقة"):(C.texts.matchOpenStatus||"التوقعات مفتوحة");
+    meta.appendChild(el("span","",arabicTeamName(match.title||"مباراة اليوم")+(match.date?" • "+match.date:"")));
+    const open=canBet.includes(match);
+    const status=open?(C.texts.matchOpenStatus||"متاحة للتوقعات"):(C.texts.matchStartedStatus||"بدأت المباراة — التوقعات مغلقة");
     const state=el("span","match-live",status);
-    if(match.status!=="open"||matchKickoffPassed(match)){state.style.background="#fff4e5";state.style.color="#9a641d";}
+    if(!open){state.style.background="#fff4e5";state.style.color="#9a641d";}
     meta.appendChild(state);card.appendChild(meta);
     const teams=el("div","match-teams");teams.appendChild(teamLogo(match.team1||{}));teams.appendChild(el("div","match-vs","VS"));teams.appendChild(teamLogo(match.team2||{}));card.appendChild(teams);
     const quick=el("div","match-market");quick.appendChild(el("div","match-quick-label",C.texts.marketResultTitle||"نتيجة المباراة"));
@@ -691,17 +788,29 @@ function renderMatches(){
     if(market){
       ["home","draw","away"].forEach(side=>{
         const pair=sportsSideOption(market,side),cell=el("div","match-outcome");
-        if(pair){const opt=pair[1];const label=sportsOptionLabel(match,side,opt);
+        if(pair){const opt=pair[1],label=sportsOptionLabel(match,side,opt);
           cell.appendChild(el("b","",side==="draw"?(C.texts.drawLabel||"التعادل"):(C.texts.homeWinPrefix||"فوز ")+label));
           cell.appendChild(el("small","","×"+r2(Number(opt.odds||1)*matchProfitFactor(match)).toFixed(2)));
         }else cell.appendChild(el("b","","—"));
         outcomes.appendChild(cell);
       });
     }else outcomes.appendChild(el("div","match-result",C.texts.noMatchMarkets||"اختيارات المباراة غير متاحة"));
-    quick.appendChild(outcomes);card.appendChild(quick);box.appendChild(card);
-  });
+    quick.appendChild(outcomes);card.appendChild(quick);return card;
+  };
+  const addSection=(title,subtitle,list)=>{
+    if(!list.length)return;
+    box.appendChild(el("div","match-group-title",title+" "));
+    if(subtitle)box.lastChild.appendChild(el("span","match-group-sub",subtitle));
+    list.forEach(m=>box.appendChild(makeCard(m)));
+  };
+  canBet.sort((a,b)=>(Number(a.kickoffAt)||0)-(Number(b.kickoffAt)||0));
+  locked.sort((a,b)=>(Number(b.kickoffAt)||0)-(Number(a.kickoffAt)||0));
+  addSection("مباريات قادمة","متاحة للمراهنة",canBet);
+  addSection("مباريات مباشرة أو مغلقة","لا يمكن المراهنة الآن",locked);
+  $("matchesCount").textContent=items.length+" "+(C.texts.matchesCountSuffix||"مباراة");
+  empty.hidden=items.length>0;
 }
-let sportsScrollY=0;
+let sportsScrollY=0;let sportsScrollY=0;
 function openSportsMatch(matchId){sportsScrollY=window.scrollY||window.pageYOffset||0;sportsDetailMatchId=String(matchId||"");show("match");}
 function sportsMarketEntries(match){
   const markets=match.markets||{};
@@ -883,21 +992,52 @@ function renderGames(){
   const list=$("gamesList");list.innerHTML="";F.forEach(g=>list.appendChild(gcard(g)));
   $("gamesEmpty").hidden=F.length>0;$("gamesCount").textContent=F.length+" لعبة";
 }
+let activityType="sports";
 function renderAct(){
-  const box=$("hist2");box.innerHTML="";
-  const h=histArr().slice(-30).reverse();
-  const sports=Object.values(U.sportsBets||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0)).slice(0,30);
-  if(!h.length&&!sports.length){box.innerHTML='<div class="empty" style="margin:10px">لا توجد جولات أو توقعات بعد</div>';return;}
-  h.forEach(x=>{const n=r2(x.win-x.bet),g=gById(x.g),d=el("div","row");
-    d.appendChild(el("span","",(g?(EMO[g.engine]||"🎮 ")+g.name:"🎮 لعبة")+" • "+f(x.bet)));
-    d.appendChild(el("span",n>0?"up":n<0?"dn":"",n>0?"+"+f(n):n<0?"-"+f(-n):"="));box.appendChild(d);});
+  const box=$("hist2"),stats=$("activityStats");box.innerHTML="";stats.innerHTML="";
+  const games=histArr().slice(-100).reverse();
+  const sports=Object.values(U.sportsBets||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+  const list=activityType==="sports"?sports:games;
+  const wins=activityType==="sports"?sports.filter(x=>x.status==="won").length:games.filter(x=>Number(x.win)>Number(x.bet)).length;
+  const losses=activityType==="sports"?sports.filter(x=>x.status==="lost").length:games.filter(x=>Number(x.win)<Number(x.bet)).length;
+  const pending=activityType==="sports"?sports.filter(x=>x.status==="pending").length:0;
+  [[activityType==="sports"?"رهانات رياضية":"رهانات ألعاب",list.length],
+   ["مرات الفوز",wins],["مرات الخسارة",losses]].forEach(([label,value])=>{
+    const item=el("div","sb");item.appendChild(el("b","",String(value)));item.appendChild(el("span","",label));stats.appendChild(item);
+  });
+  $("activityPick").textContent=activityType==="sports"?"⌄":"⌄";
+  $("activityPick").setAttribute("aria-label",activityType==="sports"?"اختيار مراهنات الألعاب أو الرياضية":"اختيار مراهنات الألعاب أو الرياضية");
+  if(!list.length){
+    box.appendChild(el("div","empty","لا توجد "+(activityType==="sports"?"مراهنات رياضية":"مراهنات ألعاب")+" مسجلة حتى الآن."));
+    return;
+  }
+  if(activityType==="games"){
+    games.forEach(x=>{
+      const net=r2(Number(x.win)-Number(x.bet)),game=gById(x.g);
+      const item=el("div","activity-entry");
+      item.appendChild(el("div","activity-entry-title",(game?(EMO[game.engine]||"🎮 ")+game.name:"🎮 لعبة")));
+      item.appendChild(el("div","activity-entry-meta","قيمة الرهان: "+f(x.bet)+" • العائد: "+f(x.win)));
+      item.appendChild(el("div","activity-entry-state "+(net>0?"up":net<0?"dn":""),net>0?"كسبت "+f(net):net<0?"خسرت "+f(-net):"تعادل"));
+      item.appendChild(el("div","activity-entry-meta",x.t?new Date(x.t).toLocaleString("ar-EG"):""));
+      box.appendChild(item);
+    });
+    return;
+  }
   sports.forEach(b=>{
-    const d=el("div","row"),state=b.status==="pending"?(C.texts.betPendingStatus||"قيد الانتظار"):b.status==="won"?(C.texts.betWonStatus||"✓ كسبت")+" +"+f((b.payout||0)-b.stake):b.status==="lost"?(C.texts.betLostStatus||"✕ خسرت")+" "+f(b.stake):(C.texts.betVoidStatus||"ملغي");
-    const s=el("span","",(b.matchTitle||"مباراة")+" — "+(b.marketTitle?b.marketTitle+" — ":"")+(b.optionLabel||"—")+" • "+f(b.stake));
-    const status=el("span",b.status==="won"?"up":b.status==="lost"?"dn":"",state);
-    d.appendChild(s);d.appendChild(status);box.appendChild(d);
+    const won=b.status==="won",lost=b.status==="lost",pendingStatus=b.status==="pending";
+    const status=won?"كسبت "+f(Math.max(0,Number(b.payout||0)-Number(b.stake||0))):
+      lost?"خسرت "+f(b.stake||0):pendingStatus?"قيد المتابعة":(C.texts.betVoidStatus||"ملغي");
+    const teams=b.team1&&b.team2?arabicTeamName(b.team1)+" ضد "+arabicTeamName(b.team2):arabicTeamName(b.matchTitle||"مباراة");
+    const item=el("div","activity-entry");
+    item.appendChild(el("div","activity-entry-title","⚽ "+teams));
+    item.appendChild(el("div","activity-entry-meta",(b.marketTitle?b.marketTitle+" • ":"")+"اختيارك: "+arabicTeamName(b.optionLabel||"—")));
+    item.appendChild(el("div","activity-entry-meta","قيمة الرهان: "+f(b.stake)+" • معامل الرهان: ×"+Number(b.odds||0).toFixed(2)));
+    item.appendChild(el("div","activity-entry-state "+(won?"up":lost?"dn":""),status));
+    item.appendChild(el("div","activity-entry-meta",b.createdAt?new Date(b.createdAt).toLocaleString("ar-EG"):""));
+    box.appendChild(item);
   });
 }
+function renderMore(){
 function renderMore(){
   const box=$("morelist");box.innerHTML="";const L=pagesList();
   L.forEach(p=>{const b=el("button","mrow");b.innerHTML="<span>"+esc(p.emo||"📄")+" "+esc(p.title)+"</span><span>‹</span>";b.onclick=()=>openPage(p);box.appendChild(b);});
@@ -1038,6 +1178,31 @@ $("psend").onclick=async()=>{
     await loadMyCreditRequests();
   }catch(e){bad(e.message||C.texts.errNet);}
   finally{$("psend").disabled=false;}
+};
+$("withdrawOpen").onclick=()=>{updateWithdrawBalance();show("withdraw");};
+$("withdrawBack").onclick=()=>show("pay");
+function updateWithdrawBalance(){
+  const node=$("withdrawBalance");if(node)node.textContent=f(Number(U?.balance||0));
+}
+$("withdrawSubmit").onclick=async()=>{
+  const phone=nd($("withdrawPhone").value).trim();
+  const amount=parseFloat(nd($("withdrawAmount").value));
+  const msg=$("withdrawMessage"),button=$("withdrawSubmit");
+  const bad=t=>{msg.textContent=t;msg.style.color="var(--er)";};
+  if(!/^\\d{6,20}$/.test(phone))return bad("اكتب رقم هاتف وهميًا من 6 إلى 20 رقمًا.");
+  if(!(Number.isFinite(amount)&&amount>0))return bad("اكتب مبلغًا صحيحًا أكبر من صفر.");
+  if(amount>Number(U?.balance||0))return bad("المبلغ أكبر من الرصيد الوهمي المتاح.");
+  button.disabled=true;msg.textContent="جارٍ تنفيذ السحب الوهمي...";msg.style.color="";
+  try{
+    const out=await apiCall("virtual_withdrawal",{amount:r2(amount),phoneNumber:phone,idempotencyKey:crypto.randomUUID()});
+    U.balance=Number(out.balance);
+    await refreshMe(false);
+    render();updateWithdrawBalance();
+    msg.style.color="var(--ok)";
+    msg.textContent="✅ تم تنفيذ السحب الوهمي بنجاح. تم خصم "+f(amount)+" من رصيدك الوهمي.\\nالرصيد المتبقي: "+f(U.balance);
+    $("withdrawPhone").value="";$("withdrawAmount").value="";
+  }catch(e){bad(e.message||"تعذر تنفيذ السحب الوهمي.");}
+  finally{button.disabled=false;}
 };
 $("payagain").onclick=renderPay;
 $("usd").onclick=()=>{renderPay();show("pay");};
@@ -1686,6 +1851,17 @@ $("matchBack").onclick=()=>{show("home");requestAnimationFrame(()=>requestAnimat
 $("gamesQ").oninput=renderGames;
 $("banbtn").onclick=()=>show("games");
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+$("activityPick").onclick=()=>{
+  const menu=$("activityMenu");
+  menu.hidden=!menu.hidden;
+  $("activityPick").setAttribute("aria-expanded",String(!menu.hidden));
+};
+document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
+  activityType=b.dataset.activity==="games"?"games":"sports";
+  $("activityMenu").hidden=true;
+  $("activityPick").setAttribute("aria-expanded","false");
+  renderAct();
+});
 setAuth("login");applyCfg();loadPublicConfig();
 (async()=>{
   try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
