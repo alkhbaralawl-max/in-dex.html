@@ -1,0 +1,64 @@
+name: Build Native Rukn Algharb Android Apps
+
+on:
+  push:
+    branches:
+      - native-android-apps
+    paths:
+      - "native-android/**"
+      - ".github/workflows/build-native-android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rukn-native-android-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-native-apps:
+    name: Build native Player and Admin APKs
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-35 build-tools;35.0.0"
+
+      - name: Build both native debug APKs
+        run: gradle -p native-android --no-daemon --stacktrace :player:assembleDebug :admin:assembleDebug
+
+      - name: Collect and verify separate APKs
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          cp native-android/player/build/outputs/apk/debug/player-debug.apk dist/Rukn-AlGharb-Players.apk
+          cp native-android/admin/build/outputs/apk/debug/admin-debug.apk dist/Rukn-AlGharb-Admin.apk
+          test -s dist/Rukn-AlGharb-Players.apk
+          test -s dist/Rukn-AlGharb-Admin.apk
+          file dist/Rukn-AlGharb-Players.apk dist/Rukn-AlGharb-Admin.apk
+
+      - name: Upload both APK files
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rukn-AlGharb-Native-Android-APKs
+          path: dist/*.apk
+          if-no-files-found: error
+          retention-days: 14
