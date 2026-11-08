@@ -570,6 +570,35 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 }
 @media(min-width:561px){body{padding:0 12px;background:#050504}.app{border-left:1px solid #584019;border-right:1px solid #584019}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Gold icon system and in-game mobile arena */
+.game-art-icon{display:block;font-size:clamp(42px,12vw,64px);line-height:1;filter:grayscale(1) sepia(1) saturate(2.1) hue-rotate(4deg) drop-shadow(0 0 12px #dcae4c99);text-shadow:0 2px 0 #8d6116}
+.games-list .art,.games-home-grid .art{display:grid;place-items:center;position:relative;overflow:hidden;background-size:cover;background-position:center}
+.games-list .art:after,.games-home-grid .art:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(145deg,#e9bd4d20,transparent 45%,#0008);border-bottom:1px solid #c19236}
+.games-list .tag,.games-home-grid .tag{z-index:1;background:#120e07e8;border:1px solid #ba8a2d;color:#f5d477;border-radius:20px;padding:4px 8px;font-size:9px}
+.nav button span:first-child{filter:grayscale(1) sepia(1) saturate(1.8) hue-rotate(3deg)}
+/* Shared in-game mobile arena */
+.gl{position:fixed;inset:0;z-index:500;overflow-y:auto;overscroll-behavior:contain;background:radial-gradient(ellipse at 50% 0%,#33230c,#090806 48%,#030302)!important;padding-bottom:calc(18px + env(safe-area-inset-bottom))}
+.gtop{position:sticky;top:0;z-index:15;display:flex;align-items:center;gap:9px;padding:10px 12px calc(10px + env(safe-area-inset-top));min-height:65px;background:#0a0805f5;border-bottom:1px solid #8c6727;box-shadow:0 6px 18px #000b}
+.gtop .gt{flex:1;text-align:center;font-size:15px;color:#f7d779;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gtop .gb{border-radius:20px;padding:8px 10px;background:#221a0a;border:1px solid #9d7428;color:#ffdc7c;font-size:11px;white-space:nowrap}
+.gtop .gx{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#34240d,#100c06);color:#f6d476;border:1px solid #9f782e;font-size:19px}
+.gbody{width:100%;max-width:560px;margin:0 auto;padding:12px 12px calc(30px + env(safe-area-inset-bottom));display:grid;gap:11px}
+.gl .gc,.gl .gd{border:1px solid #785a22;border-radius:17px;padding:13px;background:linear-gradient(155deg,#21190b,#0c0a06);box-shadow:0 8px 22px #0009,inset 0 1px #fff0}
+.gl .reels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;background:radial-gradient(circle,#38280e,#0b0906);border:1px solid #9d762b;border-radius:16px;padding:12px}
+.gl .reel{min-height:90px;display:grid;place-items:center;border:1px solid #8a6728;border-radius:13px;background:linear-gradient(145deg,#261d0c,#080705);color:#f9d774;font-size:48px;filter:grayscale(.7) sepia(.8) saturate(1.4) drop-shadow(0 0 10px #d6a54466)}
+.gl .fld{border:1px solid #5e481d;background:#151108;border-radius:13px;padding:12px;margin:0}
+.gl .fld input{height:48px;border-radius:11px;background:#080705;color:#fff0c8;border:1px solid #826128}
+.gl .bar{display:flex;gap:7px;flex-wrap:wrap}
+.gl .bar button{flex:1;min-height:42px;border-radius:11px;background:#21190b;color:#f5dfae;border:1px solid #795a21}
+.gl .bar button.on{background:linear-gradient(180deg,#f3d477,#b17b1d);color:#211605;border-color:#f8dc82}
+.gl .gc .btn,.gl .gd .btn{width:100%;min-height:47px}
+.gl .gd .row2{border-bottom:1px solid #493719;padding:8px 0;color:#e8d6aa}
+.gl .sm2,.gl .fld label{color:#e1c88f}
+.gl .gmsg{padding:9px 11px;border-radius:11px;background:#1a1409;border:1px solid #715523;color:#f5d68c}
+.gl .result-chip{border-radius:13px;padding:12px;background:linear-gradient(145deg,#2b200d,#110d06);border:1px solid #a47a2c;color:#f8d979;font-weight:900}
+.gl .gc .reel,.gl .gd .row2 b{filter:grayscale(.65) sepia(.85) saturate(1.5)}
+
 </style>
 </head>
 <body><div class="app">
@@ -894,7 +923,7 @@ function gcard(g){
   const th=THEME[g.engine]||THEME.crash,d=el("div","gcard"),art=el("div","art");
   d.classList.add("game-row");
   if(isUrl(g.img)){art.style.backgroundImage='url("'+String(g.img).replace(/["()\s]/g,"")+'")';art.style.backgroundSize="cover";art.style.backgroundPosition="center";}
-  else{art.style.background="linear-gradient(145deg,"+th[0]+","+th[1]+")";art.textContent=EMO[g.engine]||"🎮";}
+  else{art.style.background="radial-gradient(circle at 50% 35%,"+th[1]+",#110d06 72%)";const icon=el("span","game-art-icon",EMO[g.engine]||"🎮");icon.setAttribute("aria-hidden","true");art.appendChild(icon);}
   art.appendChild(el("span","tag",g.tag||g.cat||"لعبة"));
   const gi=el("div","gi");gi.appendChild(el("b","",g.name));gi.appendChild(el("p","",g.desc||""));
   const bb=el("button","btn","ابدأ اللعبة");gi.appendChild(bb);
@@ -1162,7 +1191,7 @@ function renderSportsMatchDetail(){
 }
 let sportsFeedTimer=0,sportsFeedBusy=false;
 async function runSportsFeedSync(){
-  if(!U||sportsFeedBusy)return;
+  if(!U||!sportsFeatureEnabled()||sportsFeedBusy)return;
   sportsFeedBusy=true;
   try{
     await apiCall("sports_feed_sync",{});
@@ -1172,6 +1201,8 @@ async function runSportsFeedSync(){
 }
 function initSportScoreFeed(){
   if(sportsFeedTimer)clearInterval(sportsFeedTimer);
+  sportsFeedTimer=0;
+  if(!sportsFeatureEnabled())return;
   runSportsFeedSync();
   sportsFeedTimer=setInterval(()=>{
     if(U&&document.visibilityState!=="hidden")runSportsFeedSync();
@@ -2230,10 +2261,13 @@ function mapAccount(data){
 }
 async function refreshMe(shouldRender=true){
   if(!name)return null;
+  const wasSportsEnabled=sportsFeatureEnabled();
   const data=await apiCall("me",{},false);
+  if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;
   csrfToken=data.csrfToken||csrfToken;
   U=mapAccount(data);
   if(shouldRender&&!hold&&!plAnimating)render();
+  if(wasSportsEnabled!==sportsFeatureEnabled())initSportScoreFeed();
   if(U.cr&&cur&&cur.g.id===U.cr.k)crLoop();
   return U;
 }
