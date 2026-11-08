@@ -199,8 +199,8 @@ private fun AdminApp(api: NativeApi) {
                                         Row(verticalAlignment = Alignment.CenterVertically) {
                                             Column(Modifier.weight(1f)) {
                                                 Text(acc.optString("username"), color = Soft, fontWeight = FontWeight.Bold)
-                                                Text("رقم الحساب: \${acc.optString("legacyUserId", "—")}", color = Muted)
-                                                Text("الرصيد: \${money(c.optDouble("balance"))}", color = Gold)
+                                                Text("رقم الحساب: ${acc.optString("legacyUserId", "—")}", color = Muted)
+                                                Text("الرصيد: ${money(c.optDouble("balance"))}", color = Gold)
                                             }
                                             Text(if (acc.optString("status") == "active") "نشط" else "مغلق", color = if (acc.optString("status") == "active") Color(0xFF77DCA6) else Color(0xFFFF9090))
                                         }
@@ -211,7 +211,7 @@ private fun AdminApp(api: NativeApi) {
                                 val c = acc.optJSONObject("customer") ?: JSONObject()
                                 TextButton(onClick = { selectedAccount = null }) { Text("← رجوع للحسابات", color = Gold) }
                                 Text(acc.optString("username"), style = MaterialTheme.typography.headlineSmall, color = Gold, fontWeight = FontWeight.Bold)
-                                InfoCard("بيانات الحساب", "رقم الحساب: \${acc.optString("legacyUserId", "—")}\\nالحالة: \${acc.optString("status")}\\nالجولات: \${c.optInt("rounds")} • كسب: \${c.optInt("wins")} • خسارة: \${c.optInt("losses")}")
+                                InfoCard("بيانات الحساب", "رقم الحساب: ${acc.optString("legacyUserId", "—")}\\nالحالة: ${acc.optString("status")}\\nالجولات: ${c.optInt("rounds")} • كسب: ${c.optInt("wins")} • خسارة: ${c.optInt("losses")}")
                                 InfoCard("الرصيد الحالي", money(c.optDouble("balance")))
                                 OutlinedTextField(delta, { delta = it }, Modifier.fillMaxWidth(), label = { Text("قيمة تعديل الرصيد (+ أو -)") }, singleLine = true)
                                 OutlinedTextField(reason, { reason = it }, Modifier.fillMaxWidth(), label = { Text("سبب التعديل") }, minLines = 2)
@@ -256,8 +256,8 @@ private fun AdminApp(api: NativeApi) {
                             (0 until credits.length()).forEach { i ->
                                 val req = credits.optJSONObject(i) ?: JSONObject()
                                 DarkCard(Modifier.fillMaxWidth().padding(vertical = 5.dp)) {
-                                    Text("\${req.optString("username")} • \${money(req.optDouble("requested_amount"))}", color = Soft, fontWeight = FontWeight.Bold)
-                                    Text("الحالة: \${req.optString("status")} • الطريقة: \${req.optString("method")}", color = Muted)
+                                    Text("${req.optString("username")} • ${money(req.optDouble("requested_amount"))}", color = Soft, fontWeight = FontWeight.Bold)
+                                    Text("الحالة: ${req.optString("status")} • الطريقة: ${req.optString("method")}", color = Muted)
                                     Text(req.optString("note"), color = Soft)
                                     if (req.optString("status") == "pending") {
                                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -307,9 +307,9 @@ private fun AdminApp(api: NativeApi) {
                                 val row = ledger.optJSONObject(i) ?: JSONObject()
                                 val amount = row.optDouble("amount_delta")
                                 DarkCard(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                                    Text("\${row.optString("username")} • \${row.optString("event_type")}", color = Soft, fontWeight = FontWeight.Bold)
-                                    Text("التغير: \${if (amount >= 0) "+" else ""}\${money(amount)}", color = if (amount >= 0) Color(0xFF77DCA6) else Color(0xFFFF9090))
-                                    Text("قبل: \${money(row.optDouble("balance_before"))} • بعد: \${money(row.optDouble("balance_after"))}", color = Muted)
+                                    Text("${row.optString("username")} • ${row.optString("event_type")}", color = Soft, fontWeight = FontWeight.Bold)
+                                    Text("التغير: ${if (amount >= 0) "+" else ""}${money(amount)}", color = if (amount >= 0) Color(0xFF77DCA6) else Color(0xFFFF9090))
+                                    Text("قبل: ${money(row.optDouble("balance_before"))} • بعد: ${money(row.optDouble("balance_after"))}", color = Muted)
                                     Text(row.optString("created_at"), color = Muted, style = MaterialTheme.typography.bodySmall)
                                 }
                             }
@@ -324,8 +324,8 @@ private fun AdminApp(api: NativeApi) {
                                 val game = games.optJSONObject(key) ?: JSONObject()
                                 DarkCard(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                                     Text(game.optString("name", key), color = Soft, fontWeight = FontWeight.Bold)
-                                    Text("المعرّف: $key • المحرك: \${game.optString("engine")}", color = Muted)
-                                    Text("العائد المعلن: \${game.optDouble("rtp", 0.0)}% • \${if (game.optBoolean("on", true)) "مفعّلة" else "متوقفة"}", color = Gold)
+                                    Text("المعرّف: $key • المحرك: ${game.optString("engine")}", color = Muted)
+                                    Text("العائد المعلن: ${game.optDouble("rtp", 0.0)}% • ${if (game.optBoolean("on", true)) "مفعّلة" else "متوقفة"}", color = Gold)
                                 }
                             }
                             InfoCard("حماية نسب الجوائز", "لم يتم تغيير أي نسبة عائد أو إعداد للمكسب والخسارة.")
