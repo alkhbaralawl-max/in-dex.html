@@ -1383,6 +1383,7 @@ function applySportsAvailability(){
   const activityPick=$("activityPick"),activityMenu=$("activityMenu");
   if(!enabled){
     activityType="games";
+    sportsChainDraft=[];sportsChainStake=0;sportsPick=null;
     if(activityPick)activityPick.hidden=true;
     if(activityMenu)activityMenu.hidden=true;
     if($("chainActivity"))$("chainActivity").hidden=true;
