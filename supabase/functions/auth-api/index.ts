@@ -1,7 +1,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2.119.0";
 
 const ORIGIN = "https://alkhbaralawl-max.github.io";
-const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-preview.vercel.app", "https://rukn-algharb-control-private.vercel.app"]);
+const ALLOWED_ORIGINS = new Set([ORIGIN, "https://rukn-algharb-control-private.vercel.app", "https://rukn-algharb-main.vercel.app", "https://rukn-algharb-admin.vercel.app", "https://localhost"]);
 const COOKIE = "__Host-rw_session";
 const SESSION_SECONDS = 14 * 24 * 60 * 60;
 const PBKDF2_ROUNDS = 600_000;
@@ -105,7 +105,7 @@ Deno.serve(async (req: Request) => {
     if(action==="register") {
       const username=usernameOf(body.username), password=String(body.password ?? "");
       if(!validUsername(username)) return reply({error:"invalid_username"},400);
-      if(password.length<10 || password.length>128 || password.toLowerCase()===username) return reply({error:"password_policy"},400);
+      if(password.length<6 || password.length>128 || password.toLowerCase()===username) return reply({error:"password_policy"},400);
       const ip=(req.headers.get("x-forwarded-for") ?? "unknown").split(",")[0].trim(), ipHash=await secretHash(ip);
       const {data:attemptId,error:claimError}=await db.rpc("claim_auth_attempt",{p_username:username,p_ip_hash:ipHash});
       if(claimError) throw new Error("registration_rate_limit_failed");
@@ -141,6 +141,40 @@ Deno.serve(async (req: Request) => {
       await db.from("app_users").update({last_login_at:new Date().toISOString()}).eq("id",user.id);
       const s=await newSession(db,user.id,req); await audit(db,user.id,"auth.login");
       return reply({...await safeAccount(db,user.id),csrfToken:s.csrf,expiresAt:s.expires},200,{"set-cookie":cookie(s.token,SESSION_SECONDS)});
+    }
+    if(action==="google_exchange") {
+      const accessToken=String(body.accessToken||"");
+      if(accessToken.length<40||accessToken.length>12000) return reply({error:"invalid_google_token"},400);
+      const {data:verified,error:verifyError}=await db.auth.getUser(accessToken);
+      const googleUser=verified?.user;
+      if(verifyError||!googleUser) return reply({error:"invalid_google_token"},401);
+      const providers=Array.isArray(googleUser.app_metadata?.providers)?googleUser.app_metadata.providers:[];
+      if(googleUser.app_metadata?.provider!=="google"&&!providers.includes("google")) {
+        return reply({error:"google_provider_required"},403);
+      }
+      if(!googleUser.email||!googleUser.email_confirmed_at) return reply({error:"google_email_unverified"},403);
+      const displayName=String(googleUser.user_metadata?.full_name||googleUser.user_metadata?.name||"").slice(0,40);
+      const avatarUrl=String(googleUser.user_metadata?.picture||"").slice(0,2048);
+      const randomPasswordHash=await passwordHash(randomToken(48));
+      const {data:userId,error:identityError}=await db.rpc("get_or_create_google_player",{
+        p_google_user_id:String(googleUser.id),
+        p_email:String(googleUser.email).toLowerCase(),
+        p_display_name:displayName,
+        p_avatar_url:avatarUrl,
+        p_password_hash:randomPasswordHash
+      });
+      if(identityError) {
+        if(String(identityError.message||"").includes("registration_closed")) return reply({error:"registration_closed"},403);
+        console.error("google identity",identityError.message||"unknown");
+        return reply({error:"google_account_link_failed"},400);
+      }
+      const {data:account,error:accountError}=await db.from("app_users")
+        .select("username,status").eq("id",userId).single();
+      if(accountError||!account||account.status!=="active") return reply({error:"account_unavailable"},403);
+      await db.from("app_users").update({last_login_at:new Date().toISOString()}).eq("id",userId);
+      const s=await newSession(db,String(userId),req);
+      await audit(db,String(userId),"auth.google_login");
+      return reply({...await safeAccount(db,String(userId)),csrfToken:s.csrf,expiresAt:s.expires},200,{"set-cookie":cookie(s.token,SESSION_SECONDS)});
     }
     const token=getCookie(req); if(!token) return reply({error:"unauthorized"},401,{"set-cookie":cookie("",0)});
     const {data:session}=await db.from("app_sessions").select("id,user_id,csrf_token,expires_at,app_users(status)")
