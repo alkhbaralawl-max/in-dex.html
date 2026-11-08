@@ -388,6 +388,103 @@ canvas{display:block;width:100%}
 .chain-saved-item summary,.chain-history-entry summary{font-weight:bold;font-size:13px;cursor:pointer}
 .chain-saved-item .chain-pick{margin-top:7px}.chain-history-entry .activity-entry{padding:8px 0}
 .sports-modal-actions{display:flex;gap:8px;margin-top:8px}.sports-modal-actions button{flex:1}
+
+/* ===== Design 3: dark navy sports dashboard ===== */
+:root{--b:#087fff;--bd:#06142e;--b2:#123d7a;--bg:#06142d;--card:#0d2348;--tx:#f0f6ff;--tx2:#a8bddc;--ok:#20cf73;--er:#ff566b;--yl:#f5cb55;--line:#274771}
+html,body{background:radial-gradient(ellipse at 50% 0%,#12396d 0%,#071a38 42%,#040e21 100%);color:var(--tx)}
+.app{background:linear-gradient(180deg,#081a38e8,#06142df0);box-shadow:0 0 42px #0005}
+.top{background:linear-gradient(105deg,#06142f,#123c79 58%,#081a38);border-bottom:1px solid #1d64b8;box-shadow:0 5px 20px #0003}
+.brand b{color:#fff}.brand small{color:#c3dcff}
+.lg{background:linear-gradient(145deg,#087fff,#08428c);border-color:#70baff66;color:#fff}
+.usd{background:linear-gradient(145deg,#0e9aff,#0754a5)}
+.bal{background:#04142f;border:1px solid #2c66aa;color:#ffda6b}
+.ribbon{background:#10294d;color:#d9e9ff;border-color:#244b7c}
+.btn{background:linear-gradient(135deg,#0b92ff,#0755c9);box-shadow:0 5px 14px #001b4a66}
+.btn.y{background:linear-gradient(135deg,#f6d56d,#d69e32);color:#241c0a}
+.btn.ok{background:linear-gradient(135deg,#25d477,#078744)}
+.btn.g{background:#17345f;color:#e7f2ff;border:1px solid #315b91}
+.ban{background:linear-gradient(120deg,#087fff,#08224d);border:1px solid #3189e8;box-shadow:0 8px 22px #001b4666}
+.warn{background:#3d2039;border-color:#86455d;color:#ffdfe6}
+.search input,.fi,.chatin input{background:#f7faff;color:#152b48;border-color:#345883}
+.chip{background:#10284d;color:#dceaff;border-color:#31537e}
+.chip.on{background:#087fff;color:#fff;border-color:#53b4ff}
+.card,.gcard,.matches-empty,.sportscore-panel{background:linear-gradient(145deg,#102b55,#091b39);border-color:#294d7d;color:#eff6ff;box-shadow:0 7px 22px #0003}
+.sec,.matches-heading b,.home-types-head b,.sportscore-heading b{color:#eff6ff}
+.sec small,.matches-heading small,.home-types-head small,.games-heading small,.sportscore-heading small{color:#a9c1df}
+.matches-count,.games-count{background:#10294d;color:#dceaff;border-color:#315580}
+.match-card,.sports-detail-card{background:linear-gradient(145deg,#102d5c,#081a39);border-color:#2b5a92;color:#f0f6ff;box-shadow:0 7px 22px #0004}
+.match-meta,.sports-detail-meta{color:#b1c8e7}
+.match-live{background:#0a633f;color:#b5ffda}
+.match-teams>.match-team{background:#0b2148;border-color:#254a7a}
+.team-logo{background:#fff;border-color:#e8f0fa}
+.team-logo-fallback{background:#16345d;color:#ddecff;border-color:#315882}
+.match-vs{color:#65bfff}
+.match-market,.sports-detail-market{border-color:#284b78}
+.match-market-title,.sports-detail-section-title{color:#d8e9ff}
+.match-outcome,.match-quick-outcomes .match-outcome{background:#132f5b;border-color:#315786;color:#f2f7ff}
+.match-outcome small{color:#76caff}
+.match-result{background:#10294d;color:#dcecff;border:1px solid #315580}
+.matches-empty{color:#c5d8f2}
+.activity-menu{background:#0b2044;border-color:#2c4f80}
+.activity-menu button{background:#0b2044;color:#f1f6ff}
+.activity-menu button:hover{background:#173761}
+.activity-pick,.back{background:#10294d;color:#eaf4ff;border-color:#315580}
+.nav{background:#061630;border-color:#1c477c;box-shadow:0 -7px 24px #0005}
+.nav button{color:#9bb4d5}.nav button.on{color:#55b8ff;background:linear-gradient(180deg,#0c3c7a66,#087fff22)}
+.mrow{background:#10284d;color:#ecf5ff;border-color:#2b4f7e}
+.sb{background:#102b52;color:#aac3e3;border:1px solid #254875}
+.sb b{color:#f5f8ff}
+.note{background:#44361c;color:#ffe7a6;border:1px solid #80622c}
+.idb{background:#123766;color:#91caff}
+.empty,.edu{color:#a9bfdc}
+.bub.them{background:#10294d;color:#edf5ff;border-color:#315580}
+.resbox.ap{background:#0f4835;color:#b9ffda;border-color:#1d8f5d}
+.resbox.rj{background:#51232f;color:#ffd9df;border-color:#a34a5a}
+.authw{background:radial-gradient(ellipse at 50% 0%,#123e77 0%,#071a37 58%,#041126 100%)}
+.auth-hero h2{color:#f1f6ff}.auth-hero p,.alogo small{color:#b5cae6}
+.auth-card{background:linear-gradient(145deg,#102b55,#081a38);border-color:#315787}
+.auth-label{color:#e1edfc}
+.auth-card .tabs{background:#071b39}
+.auth-card .tabs button{color:#c9dcf6}
+.auth-card .fi{background:#f7faff;color:#172d49}
+.prof .av{background:linear-gradient(145deg,#0c8cff,#064a99)}
+.sports-modal{align-items:flex-start;padding:0;background:#03102ddd}
+.sports-modal-card{background:linear-gradient(145deg,#102c57,#071a37);color:#f1f6ff;border:1px solid #31619a;border-top:0;border-radius:0 0 22px 22px;padding:calc(22px + env(safe-area-inset-top)) 18px 20px;box-shadow:0 20px 55px #0008;animation:sports-sheet-down .22s ease-out}
+.sports-modal-card h3{color:#fff}
+.sports-modal-close{background:#1b3c68;color:#eaf4ff}
+.sports-modal-pick,.sports-modal-return{background:#0d2549;border-color:#2d5587;color:#dcecff}
+.sports-modal-card input{background:#f8fbff;color:#122844}
+@keyframes sports-sheet-down{from{transform:translateY(-35px);opacity:.6}to{transform:translateY(0);opacity:1}}
+.chain-hub{margin:12px}
+.chain-draft-card{background:linear-gradient(145deg,#102d5c,#071a38);border:1px solid #2d5d96;box-shadow:0 9px 24px #0004;color:#f1f6ff}
+.chain-card-title{color:#f1f6ff}
+.chain-hub-title b{color:#f5f9ff}
+.chain-hub-title small,.chain-help,.chain-empty,.chain-balance-note{color:#b2c8e5}
+.chain-pick{background:#0c2349;border-color:#2c5487}
+.chain-pick-info b{color:#f2f7ff}
+.chain-pick-info small{color:#b5cae5}
+.chain-pick-info strong{color:#75c6ff}
+.chain-order-btn,.chain-remove-btn{background:#15345e;color:#e8f3ff;border-color:#315987}
+.chain-remove-btn{color:#ff8c9b}
+.chain-stake-input{background:#f8fbff;color:#172d49;border-color:#3a6da5}
+.chain-estimate{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.chain-estimate-item{background:linear-gradient(145deg,#0c3e70,#0b2a52);border:1px solid #3479b9;border-radius:13px;padding:11px;text-align:center}
+.chain-estimate-item small{display:block;font-size:11px;color:#c4dcf8}
+.chain-estimate-item b{display:block;margin-top:4px;font-size:21px;color:#49e48d;direction:ltr}
+.chain-formula-note{font-size:11px;line-height:1.8;color:#b7cdea;background:#0a2142;border:1px solid #244a79;border-radius:10px;padding:9px;margin-top:8px}
+.chain-pick-teams{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px}
+.chain-pick-team{display:flex;align-items:center;gap:5px;min-width:0}
+.chain-pick-team img,.chain-team-fallback{width:27px;height:27px;object-fit:contain;border-radius:50%;background:#fff;padding:3px;border:1px solid #cbdcf1}
+.chain-team-fallback{display:inline-flex;align-items:center;justify-content:center;background:#1b3f6e;color:#fff}
+.chain-pick-team b{font-size:12px;color:#f5f9ff}
+.chain-vs{color:#77c9ff;font-weight:900}
+.chain-main-actions button{min-width:0}
+.chain-history-entry{border-color:#294d7a}
+.chain-history-entry summary{color:#eaf4ff}
+.chain-history-entry .activity-entry-title{color:#f0f6ff}
+.activity-entry-meta{color:#abc3e0}
+.activity-entry{border-color:#274974}
+@media(prefers-reduced-motion:reduce){.sports-modal-card{animation:none!important}}
 </style>
 </head>
 <body><div class="app">
@@ -395,7 +492,7 @@ canvas{display:block;width:100%}
 
 <div id="v_auth" class="authw" hidden>
   <div class="auth-hero">
-    <div class="alogo"><div class="lg big">R</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد افتراضي فقط</small></div>
+    <div class="alogo"><div class="lg big">👑</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد افتراضي فقط</small></div>
     <h2>أهلاً بك في ركن الغرب</h2><p>ادخل إلى حسابك أو أنشئ حسابًا جديدًا بخطوات بسيطة.</p>
   </div>
   <div class="warn auth-notice" data-t="notice"></div>
@@ -413,7 +510,7 @@ canvas{display:block;width:100%}
 <div id="shell" hidden>
 <header class="top">
   <div class="hr"><button class="usd" id="usd">$</button>
-    <div class="brand"><div class="lg">R</div><div><b data-t="title"></b><small data-t="subtitle"></small></div></div></div>
+    <div class="brand"><div class="lg">👑</div><div><b data-t="title"></b><small data-t="subtitle"></small></div></div></div>
   <button class="bal" id="hbal"></button>
 </header>
 <div class="ribbon" data-t="ribbon"></div>
@@ -427,8 +524,7 @@ canvas{display:block;width:100%}
     <div id="matchesList" class="matches-list"></div>
     <div id="matchesEmpty" class="matches-empty" data-t="matchesEmpty">لا توجد مباريات مضافة حاليًا.</div>
   </section>
-  <section id="chainHub" class="chain-hub"></section>
-  <div class="edu" data-t="eduNote"></div>
+    <div class="edu" data-t="eduNote"></div>
 </main>
 
 <main id="v_match" hidden>
@@ -454,6 +550,7 @@ canvas{display:block;width:100%}
       </div>
     </div>
   </div>
+  <section id="chainActivity" class="chain-hub" hidden></section>
   <div class="grid3 activity-stats" id="activityStats"></div>
   <div class="card" id="hist2"></div>
 </main>
@@ -516,20 +613,6 @@ canvas{display:block;width:100%}
       <div class="sb"><b id="m4">0</b><span data-t="lblWager"></span></div><div class="sb"><b id="m5">0</b><span data-t="lblReturn"></span></div><div class="sb"><b id="m6">0</b><span data-t="lblNet"></span></div></div>
     <div style="margin-top:12px;color:var(--tx2)" data-t="lblBal"></div><div style="font-size:26px;font-weight:bold;color:var(--b)" id="mbal"></div>
     <div class="note" style="margin-top:10px" id="mrtp"></div></div>
-  <div class="card">
-    <div class="sec">معلوماتي الشخصية</div>
-    <label class="plb" for="profileDisplayName">اسم العرض</label>
-    <input class="fi" id="profileDisplayName" type="text" maxlength="40" placeholder="اكتب الاسم الذي يظهر للآخرين">
-    <label class="plb" for="profileBio">نبذة شخصية</label>
-    <textarea class="fi" id="profileBio" rows="3" maxlength="160" placeholder="اكتب نبذة قصيرة عنك"></textarea>
-    <label class="plb">صورة الحساب</label>
-    <label class="upbox" for="profileAvatarFile">اختر صورة من جهازك</label>
-    <input id="profileAvatarFile" type="file" accept="image/png,image/jpeg,image/webp" hidden>
-    <img id="profileAvatarPreview" hidden style="width:86px;height:86px;object-fit:cover;border-radius:50%;margin:0 auto 10px">
-    <button class="btn full" id="profileSave" type="button">حفظ المعلومات والصورة</button>
-    <div class="msg" id="profileMessage" aria-live="polite"></div>
-    <div class="activity-entry-meta">رقم الحساب ثابت ولا يمكن تغييره.</div>
-  </div>
   <div style="margin:0 12px 12px"><button class="btn er full" id="mout" data-t="btnOut"></button></div>
 </main>
 
@@ -557,7 +640,7 @@ canvas{display:block;width:100%}
     <div class="sports-modal-return"><span data-t="expectedProfitLabel">المكسب المتوقع</span><b id="sportsPotential">0</b></div>
     <div id="sportsModalMsg" class="sports-modal-msg"></div>
     <div class="sports-modal-actions">
-      <button type="button" class="btn g" id="sportsChainAddBtn">أضف للسلسلة</button>
+      <button type="button" class="btn g" id="sportsChainAddBtn">إضافة الاختيار للسلسلة</button>
       <button type="button" class="btn full" id="sportsPlaceBtn" data-t="confirmSelectionBtn">مراهنة منفردة</button>
     </div>
   </div>
@@ -709,6 +792,7 @@ function show(v){
   if(v==="sup")openChat();
   if(v==="games")renderGames();
   if(v==="match")renderSportsMatchDetail();
+  if(v==="act"){renderAct();renderChainHub();}
   if(v==="withdraw")updateWithdrawBalance();
 }
 function gcard(g){
@@ -1014,15 +1098,17 @@ function addSportsPickToChain(){
   if(sportsChainDraft.some(x=>String(x.matchId)===String(p.matchId))){
     $("sportsModalMsg").textContent="اختر مباراة مختلفة لكل حلقة في السلسلة.";return;
   }
+  if(!sportsChainDraft.length)sportsChainStake=Number(C.settings.defBet)||100;
   sportsChainDraft.push({
     matchId:String(p.matchId),marketId:String(p.marketId),optionId:String(p.optionId),
     team1:String(p.match.team1?.name||"الفريق الأول"),team2:String(p.match.team2?.name||"الفريق الثاني"),
+    team1Logo:String(p.match.team1?.logo||""),team2Logo:String(p.match.team2?.logo||""),
     matchTitle:String(p.match.title||"مباراة"),marketTitle:sportsMarketTitle(String(p.marketId),p.market),
     optionLabel:sportsMarketOptionLabel(String(p.marketId),String(p.optionId),p.option,p.match),
     odds:r2((Number(p.option.odds)||0)*matchProfitFactor(p.match))
   });
-  sportsChainStake=0;closeSportsModal();renderChainHub();show("home");
-  toast("أُضيف الاختيار إلى السلسلة. أضف مباراة أخرى ثم ضع السلسلة.");
+  closeSportsModal();activityType="sports";show("act");renderChainHub();renderAct();
+  toast("أُضيف الاختيار للسلسلة. يمكنك اختيار مباراة أخرى أو تعديل السلسلة من النشاط.");
 }
 function reorderChainPick(index,delta){
   const next=index+delta;if(next<0||next>=sportsChainDraft.length)return;
@@ -1049,64 +1135,64 @@ async function placeSportsChain(){
   }catch(e){bad(e.message||"تعذر تسجيل السلسلة.");}
   finally{button.disabled=false;}
 }
+function chainOddsTotal(){return sportsChainDraft.reduce((sum,p)=>sum+Math.max(0,Number(p.odds)||0),0);}
+function updateChainEstimate(){
+  const odds=chainOddsTotal(),stake=Number(nd($("chainStake")?.value||sportsChainStake))||0;
+  if($("chainTotalOdds"))$("chainTotalOdds").textContent="×"+odds.toFixed(2);
+  if($("chainPotentialReturn"))$("chainPotentialReturn").textContent=f(r2(stake*odds));
+}
 function renderChainHub(){
-  const box=$("chainHub");if(!box||!U)return;box.innerHTML="";
+  const box=$("chainActivity");if(!box)return;
+  if(!U||activityType!=="sports"||!sportsChainDraft.length){box.hidden=true;box.innerHTML="";return;}
+  box.hidden=false;box.innerHTML="";
   const title=el("div","chain-hub-title");
-  title.appendChild(el("b","","⛓️ سلاسل المراهنات"));
-  title.appendChild(el("small","","اختيارات منفردة مترابطة بالترتيب الذي تحدده"));
+  title.appendChild(el("b","","⛓️ قسيمة السلسلة"));
+  title.appendChild(el("small","","اختياراتك المختارة — راجع الفرق والمعامل قبل التأكيد"));
   box.appendChild(title);
   const draft=el("div","chain-draft-card");
-  draft.appendChild(el("div","chain-card-title","إنشاء سلسلة جديدة"));
-  draft.appendChild(el("div","chain-help","افتح مباراة، واختر نتيجة من أحد الأسواق، ثم اضغط «أضف للسلسلة». كرر ذلك مع مباراتين مختلفتين أو أكثر، ويمكنك تغيير ترتيب الحلقات قبل التأكيد."));
-  if(!sportsChainDraft.length){draft.appendChild(el("div","chain-empty","لم تضف اختيارات للسلسلة بعد."));}
-  else{
-    const list=el("div","chain-picks");
-    sportsChainDraft.forEach((pick,i)=>{
-      const row=el("div","chain-pick"),info=el("div","chain-pick-info");
-      info.appendChild(el("b","",(i+1)+". "+arabicTeamName(pick.team1)+" × "+arabicTeamName(pick.team2)));
-      info.appendChild(el("small","",arabicTeamName(pick.matchTitle)+" • "+pick.marketTitle+" • "+arabicTeamName(pick.optionLabel)));
-      info.appendChild(el("strong","","×"+Number(pick.odds||0).toFixed(2)));
-      row.appendChild(info);
-      const actions=el("div","chain-pick-actions");
-      const up=el("button","chain-order-btn","↑");up.type="button";up.disabled=i===0;up.onclick=()=>reorderChainPick(i,-1);
-      const down=el("button","chain-order-btn","↓");down.type="button";down.disabled=i===sportsChainDraft.length-1;down.onclick=()=>reorderChainPick(i,1);
-      const del=el("button","chain-remove-btn","حذف");del.type="button";del.onclick=()=>removeChainPick(i);
-      actions.appendChild(up);actions.appendChild(down);actions.appendChild(del);row.appendChild(actions);list.appendChild(row);
-    });
-    draft.appendChild(list);
-    const label=el("label","chain-stake-label","قيمة الرهان الأساسي لكل حلقة");
-    const stake=el("input","chain-stake-input");stake.id="chainStake";stake.type="number";stake.min="0.01";stake.step="0.01";stake.inputMode="decimal";stake.value=String(sportsChainStake||C.settings.defBet||100);
-    stake.oninput=()=>sportsChainStake=Number(stake.value)||0;
-    draft.appendChild(label);draft.appendChild(stake);
-    draft.appendChild(el("div","chain-balance-note","رصيدك الوهمي المتاح: "+f(U.balance||0)));
-    const msg=el("div","chain-message");msg.id="chainMessage";draft.appendChild(msg);
-    const actions=el("div","chain-main-actions");
-    const place=el("button","btn full","تأكيد السلسلة");place.id="chainPlace";place.type="button";place.onclick=placeSportsChain;actions.appendChild(place);
-    const clear=el("button","btn g","مسح الاختيارات");clear.type="button";clear.onclick=()=>{sportsChainDraft=[];sportsChainStake=0;renderChainHub();};actions.appendChild(clear);
-    draft.appendChild(actions);
-  }
-  box.appendChild(draft);
-  const saved=el("div","chain-saved-card");saved.appendChild(el("div","chain-card-title","السلاسل المسجلة"));
-  const chains=U.sportsChains||[];
-  if(!chains.length)saved.appendChild(el("div","chain-empty","لا توجد سلاسل مسجلة حتى الآن."));
-  chains.forEach((chain,index)=>{
-    const details=document.createElement("details");details.className="chain-saved-item";
-    const summary=document.createElement("summary");
-    const label=chain.status==="active"?"قيد التنفيذ":chain.status==="completed"?"اكتملت":"انتهت";
-    summary.textContent="سلسلة "+(chains.length-index)+" • "+label+" • "+chain.processedLegs+"/"+chain.totalLegs+" حلقات";
-    details.appendChild(summary);
-    details.appendChild(el("div","chain-balance-note","الرهان الأساسي: "+f(chain.initialStake)+" • رصيد السلسلة: "+f(chain.currentBalance)));
-    chain.legs.forEach(leg=>{
-      const snap=leg.snapshot||{},row=el("div","chain-pick"),info=el("div","chain-pick-info");
-      info.appendChild(el("b","",(leg.order||0)+". "+arabicTeamName(snap.team1)+" × "+arabicTeamName(snap.team2)));
-      info.appendChild(el("small","",arabicTeamName(snap.title||"مباراة")+" • "+arabicTeamName(snap.market_title||leg.marketId)+" • "+arabicTeamName(snap.option_label||leg.optionId)));
-      const result=leg.result==="won"?"كسبت":leg.result==="lost"?"خسرت":leg.result==="void"?"مُلغاة":leg.result==="skipped"?"لم تُنفّذ":"قيد الانتظار";
-      info.appendChild(el("small","",result+(leg.processedAt?" • قيمة الحلقة: "+f(leg.stake):"")));
-      row.appendChild(info);details.appendChild(row);
-    });
-    saved.appendChild(details);
+  draft.appendChild(el("div","chain-card-title","الاختيارات داخل السلسلة"));
+  const list=el("div","chain-picks");
+  sportsChainDraft.forEach((pick,i)=>{
+    const row=el("div","chain-pick"),info=el("div","chain-pick-info"),teams=el("div","chain-pick-teams");
+    const team=(logo,name)=>{
+      const item=el("div","chain-pick-team");
+      if(isUrl(logo)){const img=document.createElement("img");img.src=logo;img.alt=arabicTeamName(name);img.loading="lazy";item.appendChild(img);}
+      else item.appendChild(el("span","chain-team-fallback",String(name||"؟").slice(0,1)));
+      item.appendChild(el("b","",arabicTeamName(name)));return item;
+    };
+    teams.appendChild(team(pick.team1Logo,pick.team1));
+    teams.appendChild(el("span","chain-vs","×"));
+    teams.appendChild(team(pick.team2Logo,pick.team2));
+    info.appendChild(teams);
+    info.appendChild(el("small","",arabicTeamName(pick.matchTitle)+" • "+pick.marketTitle+" • "+arabicTeamName(pick.optionLabel)));
+    info.appendChild(el("strong","","معامل الاختيار ×"+Number(pick.odds||0).toFixed(2)));
+    row.appendChild(info);
+    const actions=el("div","chain-pick-actions");
+    const up=el("button","chain-order-btn","↑");up.type="button";up.title="تقديم الاختيار";up.disabled=i===0;up.onclick=()=>reorderChainPick(i,-1);
+    const down=el("button","chain-order-btn","↓");down.type="button";down.title="تأخير الاختيار";down.disabled=i===sportsChainDraft.length-1;down.onclick=()=>reorderChainPick(i,1);
+    const del=el("button","chain-remove-btn","حذف");del.type="button";del.onclick=()=>removeChainPick(i);
+    actions.appendChild(up);actions.appendChild(down);actions.appendChild(del);row.appendChild(actions);list.appendChild(row);
   });
-  box.appendChild(saved);
+  draft.appendChild(list);
+  const estimate=el("div","chain-estimate"),oddsBox=el("div","chain-estimate-item"),returnBox=el("div","chain-estimate-item");
+  oddsBox.appendChild(el("small","","المعامل الإجمالي (مجموع الاختيارات)"));
+  const ov=el("b","","×0.00");ov.id="chainTotalOdds";oddsBox.appendChild(ov);
+  returnBox.appendChild(el("small","","العائد المتوقع"));
+  const rv=el("b","","0");rv.id="chainPotentialReturn";returnBox.appendChild(rv);
+  estimate.appendChild(oddsBox);estimate.appendChild(returnBox);draft.appendChild(estimate);
+  const label=el("label","chain-stake-label","مبلغ السلسلة");
+  const stake=el("input","chain-stake-input");stake.id="chainStake";stake.type="number";stake.min="0.01";stake.step="0.01";stake.inputMode="decimal";
+  stake.value=String(sportsChainStake||C.settings.defBet||100);
+  stake.oninput=()=>{sportsChainStake=Number(stake.value)||0;updateChainEstimate();};
+  draft.appendChild(label);draft.appendChild(stake);
+  draft.appendChild(el("div","chain-balance-note","الرصيد الافتراضي المتاح: "+f(U.balance||0)));
+  draft.appendChild(el("div","chain-formula-note","مثال: 5 اختيارات × معامل 2.00 لكل اختيار = 10.00x. رهان 1,000 = عائد متوقع 10,000 إذا نجحت كل الاختيارات."));
+  const msg=el("div","chain-message");msg.id="chainMessage";draft.appendChild(msg);
+  const actions=el("div","chain-main-actions");
+  const place=el("button","btn full","تأكيد السلسلة");place.id="chainPlace";place.type="button";place.onclick=placeSportsChain;actions.appendChild(place);
+  const clear=el("button","btn g","حذف السلسلة بالكامل");clear.type="button";
+  clear.onclick=()=>{sportsChainDraft=[];sportsChainStake=0;renderChainHub();renderAct();};
+  actions.appendChild(clear);draft.appendChild(actions);box.appendChild(draft);updateChainEstimate();
 }
 function updateSportsPotential(){
   const amount=Number(nd($("sportsStake").value)),odds=sportsPick?Number(sportsPick.option.odds):0;
@@ -1156,6 +1242,7 @@ function renderAct(){
   const games=histArr().slice(-100).reverse();
   const sports=Object.values(U.sportsBets||{}).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
   const chains=U.sportsChains||[];
+  const chainBox=$("chainActivity");if(chainBox)chainBox.hidden=activityType!=="sports"||!sportsChainDraft.length;
   const count=activityType==="sports"?sports.length+chains.length:games.length;
   const wins=activityType==="sports"?
     sports.filter(x=>x.status==="won").length+chains.reduce((n,c)=>n+c.legs.filter(l=>l.result==="won").length,0):
@@ -1193,9 +1280,13 @@ function renderAct(){
   chains.forEach(chain=>{
     const details=document.createElement("details");details.className="chain-history-entry";
     const summary=document.createElement("summary");
-    summary.textContent="⛓️ سلسلة • "+(chain.status==="active"?"قيد التنفيذ":chain.status==="completed"?"اكتملت":"انتهت")+" • "+chain.processedLegs+"/"+chain.totalLegs+" حلقات";
+    const combinedOdds=chain.legs.reduce((sum,leg)=>sum+Number(leg.odds||0),0);
+    const chainState=chain.status==="active"?"تنتظر النتائج":chain.status==="completed"?"مكتملة":chain.status==="lost"?"خسرت السلسلة":"انتهت";
+    summary.textContent="⛓️ سلسلة ×"+combinedOdds.toFixed(2)+" • "+chainState+" • "+chain.totalLegs+" اختيارات";
     details.appendChild(summary);
-    details.appendChild(el("div","activity-entry-meta","الرهان الأساسي: "+f(chain.initialStake)+" • رصيد السلسلة: "+f(chain.currentBalance)));
+    details.appendChild(el("div","activity-entry-meta","مبلغ السلسلة: "+f(chain.initialStake)+" • المعامل الإجمالي: ×"+combinedOdds.toFixed(2)));
+    if(chain.status==="completed")details.appendChild(el("div","activity-entry-state up","العائد الفعلي: "+f(chain.currentBalance)));
+    else if(chain.status==="lost")details.appendChild(el("div","activity-entry-state dn","لم تتحقق جميع الاختيارات؛ خُصم مبلغ السلسلة."));
     chain.legs.forEach(leg=>{
       const snap=leg.snapshot||{},row=el("div","activity-entry");
       row.appendChild(el("div","activity-entry-title",(leg.order||0)+". "+arabicTeamName(snap.team1)+" × "+arabicTeamName(snap.team2)));
@@ -1229,9 +1320,6 @@ function renderMe(){
   $("m4").textContent=f(w);$("m5").textContent=f(r);$("m6").textContent=f(Math.max(0,w-r));
   $("mrtp").textContent=tpl(C.texts.rtpNote,{rtp:(w?(r/w*100).toFixed(1):"—")+"%"});
   const sc=scU(),n=$("mscn");n.hidden=sc>=1;n.textContent=tpl(C.texts.scaleNote,{pct:Math.round((1-sc)*100)});
-  const dn=$("profileDisplayName"),bio=$("profileBio");
-  if(dn&&document.activeElement!==dn)dn.value=U.displayName||"";
-  if(bio&&document.activeElement!==bio)bio.value=String(U.profile?.bio||"");
   const av=$("profileAvatar");
   if(av){
     av.innerHTML="";
@@ -2037,37 +2125,6 @@ $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
 
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
-let profileAvatarData="";
-$("profileAvatarFile").onchange=async()=>{
-  const file=$("profileAvatarFile").files?.[0];
-  if(!file){profileAvatarData="";return;}
-  if(!["image/png","image/jpeg","image/webp"].includes(file.type)){ $("profileMessage").textContent="اختار صورة JPG أو PNG أو WEBP.";return; }
-  if(file.size>5*1024*1024){$("profileMessage").textContent="حجم الصورة أكبر من 5 ميجابايت.";return;}
-  try{
-    const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=reject;reader.readAsDataURL(file);});
-    const img=await new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=reject;image.src=data;});
-    const scale=Math.min(1,640/Math.max(img.width,img.height)),canvas=document.createElement("canvas");
-    canvas.width=Math.max(1,Math.round(img.width*scale));canvas.height=Math.max(1,Math.round(img.height*scale));
-    canvas.getContext("2d").drawImage(img,0,0,canvas.width,canvas.height);
-    profileAvatarData=canvas.toDataURL("image/jpeg",.78);
-    $("profileAvatarPreview").src=profileAvatarData;$("profileAvatarPreview").hidden=false;
-    $("profileMessage").textContent="تم تجهيز الصورة. اضغط حفظ.";
-    $("profileMessage").style.color="var(--ok)";
-  }catch(e){profileAvatarData="";$("profileMessage").textContent="تعذر تجهيز الصورة.";}
-};
-$("profileSave").onclick=async()=>{
-  const msg=$("profileMessage"),button=$("profileSave");
-  const displayName=$("profileDisplayName").value.trim(),bio=$("profileBio").value.trim();
-  if(displayName&&displayName.length<2){msg.textContent="اسم العرض يجب أن يكون حرفين على الأقل.";msg.style.color="var(--er)";return;}
-  button.disabled=true;msg.textContent="جارٍ حفظ المعلومات...";msg.style.color="";
-  try{
-    await apiCall("profile_update",{displayName,bio,avatarData:profileAvatarData});
-    profileAvatarData="";$("profileAvatarFile").value="";$("profileAvatarPreview").hidden=true;
-    await refreshMe(false);renderMe();
-    msg.textContent="✅ تم حفظ المعلومات الشخصية.";msg.style.color="var(--ok)";
-  }catch(e){msg.textContent=e.message||"تعذر حفظ المعلومات.";msg.style.color="var(--er)";}
-  finally{button.disabled=false;}
-};
 $("mout").onclick=()=>logout();
 $("pgback").onclick=()=>show("more");
 $("matchBack").onclick=()=>{show("home");requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo(0,sportsScrollY)));};
