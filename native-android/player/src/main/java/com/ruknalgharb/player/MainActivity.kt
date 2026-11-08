@@ -197,8 +197,11 @@ private fun PlayerApp(api: NativeApi) {
         val round = active ?: return
         val game = selectedGame ?: return
         val action = if (game.id == "apple") "apple_cash" else "crash_cash"
+        val clickAt = System.currentTimeMillis()
         launchTask {
-            val data = api.app(action, JSONObject().put("roundId", round.optString("id")), true)
+            val request = JSONObject().put("roundId", round.optString("id"))
+            if (game.id == "rocket") request.put("cashClickAt", clickAt)
+            val data = api.app(action, request, true)
             active = null
             result = JSONObject()
                 .put("stake", data.optDouble("stake", round.optDouble("stake")))
