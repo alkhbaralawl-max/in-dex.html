@@ -600,12 +600,13 @@ function overlay(win,amt,text){
 $("ov").onclick=()=>{clearTimeout(ovT);$("ov").hidden=true;};
 
 function show(v){
-  view=v;["home","games","act","more","page","pay","me","sup"].forEach(x=>$("v_"+x).hidden=x!==v);
-  const nv=v==="page"?"more":v==="pay"?"":v;
+  view=v;["home","match","games","act","more","page","pay","me","sup"].forEach(x=>{const node=$("v_"+x);if(node)node.hidden=x!==v;});
+  const nv=v==="page"?"more":v==="pay"?"":v==="match"?"home":v;
   document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===nv));
   window.scrollTo(0,0);
   if(v==="sup")openChat();
   if(v==="games")renderGames();
+  if(v==="match")renderSportsMatchDetail();
 }
 function gcard(g){
   const th=THEME[g.engine]||THEME.crash,d=el("div","gcard"),art=el("div","art");
@@ -787,7 +788,7 @@ async function placeSportsBet(){
   $("sportsPlaceBtn").disabled=true;$("sportsModalMsg").textContent="جارٍ التحقق وتسجيل التوقع على الخادم...";
   try{
     const data=await apiCall("sports_bet",{matchId:String(choice.matchId),marketId:String(choice.marketId),optionId:String(choice.optionId),stake:stakeValue,idempotencyKey:crypto.randomUUID()});
-    U.balance=Number(data.balance);closeSportsModal();await refreshMe(false);render();toast("تم تسجيل التوقع الافتراضي بنجاح.");
+    U.balance=Number(data.balance);closeSportsModal();await refreshMe(false);render();toast("تم تسجيل التوقع بنجاح.");
   }catch(e){$("sportsModalMsg").textContent=e.message||"تعذر تسجيل التوقع.";}
   finally{$("sportsPlaceBtn").disabled=false;}
 }
@@ -826,7 +827,7 @@ function renderAct(){
     d.appendChild(el("span","",(g?(EMO[g.engine]||"🎮 ")+g.name:"🎮 لعبة")+" • "+f(x.bet)));
     d.appendChild(el("span",n>0?"up":n<0?"dn":"",n>0?"+"+f(n):n<0?"-"+f(-n):"="));box.appendChild(d);});
   sports.forEach(b=>{
-    const d=el("div","row"),state=b.status==="pending"?"قيد الانتظار":b.status==="won"?"كسبت +"+f((b.payout||0)-b.stake):"خسرت "+f(b.stake);
+    const d=el("div","row"),state=b.status==="pending"?"قيد الانتظار":b.status==="won"?"✓ كسبت +"+f((b.payout||0)-b.stake):b.status==="lost"?"✕ خسرت "+f(b.stake):"ملغي";
     const s=el("span","",b.matchTitle+" — "+b.optionLabel+" • "+f(b.stake));
     const status=el("span",b.status==="won"?"up":b.status==="lost"?"dn":"",state);
     d.appendChild(s);d.appendChild(status);box.appendChild(d);
@@ -869,6 +870,7 @@ function render(){
   applyCfg();
   $("hbal").textContent="💰 "+f(U.balance);
   renderHome();renderMatches();renderGames();renderAct();renderMore();renderMe();updAdminMsg();renderPayBanner();
+  if(view==="match")renderSportsMatchDetail();
   if(cur)cur.upd();
 }
 function showAuth(t){
@@ -1616,6 +1618,7 @@ $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
 $("mout").onclick=()=>logout();
 $("pgback").onclick=()=>show("more");
+$("matchBack").onclick=()=>show("home");
 $("gamesQ").oninput=renderGames;
 $("banbtn").onclick=()=>show("games");
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
