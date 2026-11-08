@@ -1135,7 +1135,7 @@ function drawCr(skin,t,m,st,limit=CAP){
   x.fillStyle=st==="crash"?"#ff7b8b":"#f4fbff";x.shadowColor=st==="crash"?"#ff354d":"#35dbff";x.shadowBlur=18;
   x.fillText("×"+current.toFixed(2),W/2,H*.47);x.shadowBlur=0;
   x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ff9aa4":st==="pending"?"#ffd48a":"#a8cce4";
-  const label=st==="crash"?"انتهت الجولة":st==="pending"?"الطيارة وصلت للنهاية • جارٍ تأكيد النتيجة من الخادم":st==="run"?"اسحب قبل انفجار الطيارة":"جاهز للإقلاع";
+  const label=st==="crash"?"انتهت الجولة":st==="pending"?"الطيارة وصلت للنهاية • جارٍ تأكيد النتيجة من الخادم":st==="cash"?"تم السحب • الجولة مستمرة":st==="run"?"اسحب قبل انفجار الطيارة":"جاهز للإقلاع";
   x.fillText(label,W/2,H*.47+34);
 }
 function crStop(){
@@ -1149,7 +1149,7 @@ async function crResolve(data,c){
   try{await refreshMe(false);}catch(e){console.warn("crash balance refresh",e);}
   crStop();busy=false;hold=false;crLock=false;
   if(data.cashedOut||data.autoSettled){
-    crFinal={k:c.k,cp,m:cp,status:"cash"};render();
+    crFinal={k:c.k,cp,m:cp,status:"cash",t0:Number(data.startedAt)||Number(c.t0)};render();
     result(Number(data.payout||0),Number(data.stake||c.bet),data.autoSettled?"تم السحب التلقائي":"تم السحب عند ×"+Number(data.multiplier||0).toFixed(2));
   }else{
     crFinal={k:c.k,cp,m:cp,status:"crash"};render();
@@ -1249,7 +1249,25 @@ const crashEng={open(g,b){
     histArr().filter(x=>x.g===g.id).slice(-10).reverse().forEach(x=>{const cp=el("span","cp "+(x.i<2?"lo":"hi"),"×"+(+x.i).toFixed(2));S.appendChild(cp);});
     $("hist").innerHTML=histHTML(g);
     if(mine){crLoop();}
-    else{crStop();const fk=crFinal&&crFinal.k===g.id;drawCr(g.engine,fk?Math.log(crFinal.cp)/K:0,fk?crFinal.cp:1,fk?"crash":"idle",capOf(g));}
+    else{
+      crStop();
+      const final=crFinal&&crFinal.k===g.id?crFinal:null;
+      if(final&&final.status==="cash"){
+        const startedAt=Number(final.t0)||Date.now();
+        const crashElapsed=Math.log(Math.max(1,Number(final.cp)||1))/K;
+        const frame=()=>{
+          const elapsed=Math.max(0,(Date.now()-startedAt)/1000);
+          const shownElapsed=Math.min(elapsed,crashElapsed);
+          const multiplier=Math.min(Math.exp(K*shownElapsed),Number(final.cp)||1);
+          const crashed=elapsed>=crashElapsed;
+          drawCr(g.engine,shownElapsed,multiplier,crashed?"crash":"cash",capOf(g));
+          if(!crashed)raf=requestAnimationFrame(frame);else raf=0;
+        };
+        frame();
+      }else if(final){
+        drawCr(g.engine,Math.log(Math.max(1,final.cp))/K,final.cp,"crash",capOf(g));
+      }else drawCr(g.engine,0,1,"idle",capOf(g));
+    }
   };
 }};
 ENG.crash=crashEng;ENG.rocket=crashEng;
