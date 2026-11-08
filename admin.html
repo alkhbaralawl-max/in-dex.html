@@ -354,6 +354,26 @@ function marketEditor(data,t1,t2,onRemove){
   }else{
     addOption({id:"o1",label:"",odds:2});addOption({id:"o2",label:"",odds:2});
   }
+  const templates=el("div","chips");
+  const setTemplate=(marketTitle,items)=>{
+    title.value=marketTitle;rows.innerHTML="";usedIds.clear();next=1;
+    items.forEach(([id,label,odds])=>addOption({id,label,odds}));
+    refreshResult();
+  };
+  btn(templates,"نتيجة المباراة","b",()=>setTemplate("نتيجة المباراة",[
+    ["home","فوز {team1}",2],["draw","تعادل",3],["away","فوز {team2}",2]
+  ]));
+  btn(templates,"النتيجة الصحيحة","b",()=>setTemplate("النتيجة الصحيحة",[
+    ["0-0","0 - 0",4.5],["1-0","1 - 0",3.8],["0-1","0 - 1",4.0],["1-1","1 - 1",3.6],
+    ["2-0","2 - 0",4.5],["0-2","0 - 2",4.8],["2-1","2 - 1",4.2],["1-2","1 - 2",4.3],
+    ["2-2","2 - 2",4.8],["3-0","3 - 0",5.0],["0-3","0 - 3",5.0],["3-1","3 - 1",4.8],
+    ["1-3","1 - 3",4.8],["3-2","3 - 2",5.0],["2-3","2 - 3",5.0],["3-3","3 - 3",5.0],
+    ["other","نتيجة أخرى",4.5]
+  ]));
+  btn(templates,"أكثر / أقل 1.5","b",()=>setTemplate("أكثر / أقل من 1.5 هدف",[
+    ["over","أكثر من 1.5",1.8],["under","أقل من 1.5",2.0]
+  ]));
+  c.appendChild(templates);
   btn(c,"＋ أضف اختيارًا للسوق","b",()=>addOption({label:"",odds:2})).style.width="100%";
   const status=el("select");[["open","مفتوح للتوقعات"],["closed","مغلق مؤقتًا"],["settled","اعتماد النتيجة وتسوية التوقعات"]].forEach(([v,t])=>{const o=el("option","",t);o.value=v;if((data.status||"open")===v)o.selected=true;status.appendChild(o);});
   c.appendChild(el("label","","حالة السوق"));c.appendChild(status);
