@@ -1,0 +1,87 @@
+name: Build Rukn Algharb Android APK
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "index.html"
+      - "icons/app-icon.svg"
+      - "android-wrapper/**"
+      - ".github/workflows/build-android-apk.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rukn-android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-android:
+    name: Build installable Android APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: "platform-tools platforms;android-36 build-tools;36.0.0"
+
+      - name: Install Capacitor dependencies
+        working-directory: android-wrapper
+        run: npm install --no-audit --no-fund
+
+      - name: Create native Android project
+        working-directory: android-wrapper
+        run: npx cap add android
+
+      - name: Generate branded Android icons
+        working-directory: android-wrapper
+        run: >-
+          npx capacitor-assets generate --android
+          --assetPath assets
+          --iconBackgroundColor "#080806"
+          --iconBackgroundColorDark "#080806"
+          --splashBackgroundColor "#080806"
+          --splashBackgroundColorDark "#080806"
+
+      - name: Sync Capacitor Android project
+        working-directory: android-wrapper
+        run: npx cap sync android
+
+      - name: Build debug APK
+        working-directory: android-wrapper
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew --no-daemon --stacktrace assembleDebug
+          cd ..
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/app-debug.apk dist/Rukn-AlGharb.apk
+          sha256sum dist/Rukn-AlGharb.apk > dist/SHA256SUMS.txt
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rukn-AlGharb-Android-APK
+          path: |
+            android-wrapper/dist/Rukn-AlGharb.apk
+            android-wrapper/dist/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 30
