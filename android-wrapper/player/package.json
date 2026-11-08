@@ -1,0 +1,18 @@
+{
+  "name": "rukn-algharb-player-android",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Bundled Android player app for Rukn Algharb",
+  "scripts": {
+    "android:sync": "cap sync android",
+    "android:debug": "cap sync android && cd android && ./gradlew --no-daemon assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.5.3",
+    "@capacitor/core": "8.5.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "4.0.0",
+    "@capacitor/cli": "8.5.3"
+  }
+}
