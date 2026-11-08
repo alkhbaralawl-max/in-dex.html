@@ -9,6 +9,7 @@
 :root{--b:#1677D2;--bd:#0B1E3A;--b2:#245A91;--bg:#F3F6FA;--card:#fff;--tx:#172B45;--tx2:#718096;--ok:#20A464;--er:#E5484D;--yl:#FFC83D;--line:#E1E8F0}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:15px}
+button,input,textarea,select{font-family:inherit}
 [hidden]{display:none!important}
 .app{max-width:560px;margin:0 auto;min-height:100vh}
 #shell{padding-bottom:84px}
@@ -364,9 +365,9 @@ canvas{display:block;width:100%}
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
   <section class="matches-section">
-    <div class="matches-heading"><div><b>⚽ مباريات اليوم</b><small>اختر نتيجة المباراة</small></div><span id="matchesCount" class="matches-count">0 مباراة</span></div>
+    <div class="matches-heading"><div><b>⚽ <span data-t="matchesTitle">مباريات اليوم</span></b><small data-t="matchesSubtitle">اختر نتيجة المباراة</small></div><span id="matchesCount" class="matches-count">0 مباراة</span></div>
     <div id="matchesList" class="matches-list"></div>
-    <div id="matchesEmpty" class="matches-empty">لا توجد مباريات مضافة حاليًا.</div>
+    <div id="matchesEmpty" class="matches-empty" data-t="matchesEmpty">لا توجد مباريات مضافة حاليًا.</div>
   </section>
   <div class="edu" data-t="eduNote"></div>
 </main>
@@ -450,13 +451,13 @@ canvas{display:block;width:100%}
 <div id="sportsModal" class="sports-modal" hidden>
   <div class="sports-modal-card">
     <button type="button" class="sports-modal-close" id="sportsModalClose">×</button>
-    <h3 id="sportsModalTitle">تأكيد الاختيار</h3>
+    <h3 id="sportsModalTitle" data-t="selectionTitle">تأكيد الاختيار</h3>
     <div id="sportsModalPick" class="sports-modal-pick"></div>
-    <label for="sportsStake">المبلغ</label>
+    <label for="sportsStake" data-t="sportsStakeLabel">المبلغ</label>
     <input id="sportsStake" type="number" min="1" step="0.01" inputmode="decimal" placeholder="اكتب المبلغ">
-    <div class="sports-modal-return"><span>المكسب المتوقع</span><b id="sportsPotential">0</b></div>
+    <div class="sports-modal-return"><span data-t="expectedProfitLabel">المكسب المتوقع</span><b id="sportsPotential">0</b></div>
     <div id="sportsModalMsg" class="sports-modal-msg"></div>
-    <button type="button" class="btn full" id="sportsPlaceBtn">تمام</button>
+    <button type="button" class="btn full" id="sportsPlaceBtn" data-t="confirmSelectionBtn">تمام</button>
   </div>
 </div>
 
@@ -700,18 +701,58 @@ function renderMatches(){
     quick.appendChild(outcomes);card.appendChild(quick);box.appendChild(card);
   });
 }
-function openSportsMatch(matchId){sportsDetailMatchId=String(matchId||"");show("match");}
+let sportsScrollY=0;
+function openSportsMatch(matchId){sportsScrollY=window.scrollY||window.pageYOffset||0;sportsDetailMatchId=String(matchId||"");show("match");}
+function sportsMarketEntries(match){
+  const markets=match.markets||{};
+  const result=sportsResultMarket(match);
+  const correct=markets.correct_score?["correct_score",markets.correct_score]:null;
+  const goals=markets.over_under_1_5||markets.total_goals_1_5||markets.goals_1_5||markets.over_under_15;
+  const ordered=[];
+  if(result)ordered.push(result);
+  if(correct)ordered.push(correct);
+  if(goals)ordered.push([markets.over_under_1_5?"over_under_1_5":markets.total_goals_1_5?"total_goals_1_5":markets.goals_1_5?"goals_1_5":"over_under_15",goals]);
+  return ordered;
+}
+function sportsMarketTitle(marketId,market){
+  if(market.title)return market.title;
+  if(marketId==="result"||marketId==="1x2")return C.texts.marketResultTitle||"نتيجة المباراة";
+  if(marketId==="correct_score")return C.texts.marketCorrectScoreTitle||"النتيجة الصحيحة";
+  return C.texts.marketOverUnder15Title||"أكثر / أقل من 1.5 هدف";
+}
+function sportsMarketOptionLabel(marketId,optionId,opt,match){
+  if(marketId==="result"||marketId==="1x2"){
+    if(optionId==="home"||optionId==="1"||optionId==="team1")return sportsOptionLabel(match,"home",opt);
+    if(optionId==="away"||optionId==="2"||optionId==="team2")return sportsOptionLabel(match,"away",opt);
+    if(optionId==="draw"||optionId==="x"||optionId==="tie")return C.texts.drawLabel||"التعادل";
+  }
+  if(marketId==="correct_score"&&optionId==="other")return C.texts.otherScoreLabel||"نتيجة أخرى";
+  if(["over","over_1_5","more"].includes(optionId))return C.texts.over15Label||opt.label||"أكثر من 1.5";
+  if(["under","under_1_5","less"].includes(optionId))return C.texts.under15Label||opt.label||"أقل من 1.5";
+  return String(opt.label||optionId||"—");
+}
+function sportsOptionEntries(marketId,market,match){
+  const options=market.options||{};
+  if(marketId==="result"||marketId==="1x2"){
+    return ["home","draw","away"].map(side=>{
+      const p=sportsSideOption(market,side);
+      return p?[p[0],p[1],sportsMarketOptionLabel(marketId,p[0],p[1],match)]:null;
+    }).filter(Boolean);
+  }
+  return Object.entries(options).map(([id,opt])=>[id,opt,sportsMarketOptionLabel(marketId,id,opt,match)]);
+}
 function renderSportsMatchBets(match){
   const bets=Object.values(U?.sportsBets||{}).filter(b=>String(b.matchId)===String(match.id)).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-  const wrap=el("section","sports-my-bets");wrap.appendChild(el("div","sports-detail-section-title","توقعاتك على المباراة"));
-  if(!bets.length){wrap.appendChild(el("div","empty","لم تسجل أي توقع على هذه المباراة بعد."));return wrap;}
+  const wrap=el("section","sports-my-bets");
+  wrap.appendChild(el("div","sports-detail-section-title",C.texts.userBetsTitle||"توقعاتك على المباراة"));
+  if(!bets.length){wrap.appendChild(el("div","empty",C.texts.noUserBets||"لم تسجل أي توقع على هذه المباراة بعد."));return wrap;}
   bets.forEach(b=>{
     const item=el("div","sports-my-bet"),main=el("div","sports-my-bet-main");
-    main.appendChild(el("b","",String(b.optionLabel||"الاختيار")+" • "+f(b.stake)));
+    main.appendChild(el("b","",(b.marketTitle?b.marketTitle+" — ":"")+String(b.optionLabel||"الاختيار")+" • "+f(b.stake)));
     const expected=r2(Number(b.stake)*Number(b.odds||0));
-    main.appendChild(el("div","",b.status==="pending"?"المكسب المتوقع: "+f(expected):b.status==="won"?"المكسب: "+f(Number(b.payout||0)-Number(b.stake)):b.status==="lost"?"انتهت المباراة":"تم إلغاء التوقع"));
+    main.appendChild(el("div","",b.status==="pending"?(C.texts.expectedProfitLabel||"المكسب المتوقع")+": "+f(expected):b.status==="won"?(C.texts.wonProfitLabel||"المكسب")+": "+f(Number(b.payout||0)-Number(b.stake)):b.status==="lost"?(C.texts.matchEndedText||"انتهت المباراة"):(C.texts.betVoidedText||"تم إلغاء التوقع")));
     const status=b.status||"pending";
-    const state=el("span","sports-my-bet-state "+(status==="won"?"won":status==="lost"?"lost":"pending"),status==="won"?"✓ كسبت":status==="lost"?"✕ خسرت":status==="pending"?"قيد المتابعة":"ملغي");
+    const state=el("span","sports-my-bet-state "+(status==="won"?"won":status==="lost"?"lost":"pending"),status==="won"?(C.texts.betWonStatus||"✓ كسبت"):status==="lost"?(C.texts.betLostStatus||"✕ خسرت"):status==="pending"?(C.texts.betPendingStatus||"قيد المتابعة"):(C.texts.betVoidStatus||"ملغي"));
     item.appendChild(main);item.appendChild(state);wrap.appendChild(item);
   });
   return wrap;
@@ -719,37 +760,57 @@ function renderSportsMatchBets(match){
 function renderSportsMatchDetail(){
   const box=$("matchDetail");if(!box)return;box.innerHTML="";
   const match=matchesList().find(m=>String(m.id)===sportsDetailMatchId);
-  if(!match){box.appendChild(el("div","empty","المباراة غير متاحة."));return;}
-  $("matchDetailTitle").textContent=match.title||"تفاصيل المباراة";
+  if(!match){box.appendChild(el("div","empty",C.texts.matchUnavailable||"المباراة غير متاحة."));return;}
+  $("matchDetailTitle").textContent=match.title||C.texts.matchDetailTitle||"تفاصيل المباراة";
   const card=el("section","sports-detail-card"),meta=el("div","sports-detail-meta");
-  meta.appendChild(el("span","",match.title||"مباراة"));
-  meta.appendChild(el("b","",match.status==="settled"?"انتهت":match.minute?String(match.minute):matchKickoffPassed(match)?"بدأت":"لم تبدأ"));card.appendChild(meta);
+  meta.appendChild(el("span","",match.title||C.texts.matchDetailTitle||"مباراة"));
+  const status=match.status==="settled"?(C.texts.matchFinishedStatus||"انتهت"):match.minute?String(match.minute):matchKickoffPassed(match)?(C.texts.matchStartedStatus||"بدأت"):(C.texts.matchWaitingStatus||"لم تبدأ");
+  meta.appendChild(el("b","",status));card.appendChild(meta);
   const teams=el("div","sports-detail-teams");teams.appendChild(teamLogo(match.team1||{}));
   const score=el("div","sports-detail-score"),sc=match.score||{};
-  score.textContent=sc.home!=null&&sc.away!=null?String(sc.home)+" - "+String(sc.away):"VS";score.appendChild(el("small","",match.date||""));
-  teams.appendChild(score);teams.appendChild(teamLogo(match.team2||{}));card.appendChild(teams);
-  const entry=sportsResultMarket(match);
-  if(entry){
-    const marketId=entry[0],market=entry[1],section=el("section","sports-detail-market");
-    section.appendChild(el("div","sports-detail-section-title","نتيجة المباراة"));
-    const options=el("div","sports-detail-options"),locked=sportsMatchLocked(match,market);
-    ["home","draw","away"].forEach(side=>{
-      const pair=sportsSideOption(market,side);if(!pair)return;
-      const optionId=pair[0],opt=pair[1],label=sportsOptionLabel(match,side,opt),adjusted=r2(Number(opt.odds||1)*matchProfitFactor(match));
-      const button=el("button","match-outcome sports-longpick");button.type="button";button.disabled=locked;
-      button.appendChild(el("b","",side==="draw"?"التعادل":label));button.appendChild(el("small","","×"+adjusted.toFixed(2)));button.appendChild(el("span","pick-check","✓"));
-      let timer=0,longPicked=false;
-      const cancel=()=>{if(timer){clearTimeout(timer);timer=0;}};
-      button.addEventListener("pointerdown",e=>{if(button.disabled||e.button!==0)return;longPicked=false;cancel();timer=setTimeout(()=>{timer=0;longPicked=true;options.querySelectorAll(".sports-longpick.selected").forEach(x=>x.classList.remove("selected"));button.classList.add("selected");setTimeout(()=>openSportsModal(match,market,marketId,optionId,{...opt,label:label,odds:adjusted,baseOdds:Number(opt.odds||1),profitPercent:Number(match.profitPercent)||100}),180);},1000);});
-      ["pointerup","pointerleave","pointercancel"].forEach(ev=>button.addEventListener(ev,cancel));
-      button.addEventListener("contextmenu",e=>e.preventDefault());
-      button.addEventListener("click",e=>{e.stopPropagation();if(!longPicked)toast("اضغط مطولًا لمدة ثانية لاختيار النتيجة");longPicked=false;});
-      options.appendChild(button);
+  score.textContent=sc.home!=null&&sc.away!=null?String(sc.home)+" - "+String(sc.away):"VS";
+  score.appendChild(el("small","",match.date||""));teams.appendChild(score);
+  teams.appendChild(teamLogo(match.team2||{}));card.appendChild(teams);
+  const markets=sportsMarketEntries(match);
+  if(markets.length){
+    markets.forEach(([marketId,market])=>{
+      const section=el("section","sports-detail-market");
+      section.appendChild(el("div","sports-detail-section-title",sportsMarketTitle(marketId,market)));
+      const options=el("div","sports-detail-options"),locked=sportsMatchLocked(match,market);
+      const entries=sportsOptionEntries(marketId,market,match);
+      entries.forEach(([optionId,opt,label])=>{
+        const adjusted=r2(Number(opt.odds||1)*matchProfitFactor(match));
+        const button=el("button","match-outcome sports-longpick");button.type="button";button.disabled=locked;
+        button.appendChild(el("b","",label));button.appendChild(el("small","","×"+adjusted.toFixed(2)));
+        button.appendChild(el("span","pick-check","✓"));
+        let timer=0,longPicked=false;
+        const cancel=()=>{if(timer){clearTimeout(timer);timer=0;}};
+        button.addEventListener("pointerdown",e=>{
+          if(button.disabled||e.button!==0)return;longPicked=false;cancel();
+          timer=setTimeout(()=>{
+            timer=0;longPicked=true;
+            options.querySelectorAll(".sports-longpick.selected").forEach(x=>x.classList.remove("selected"));
+            button.classList.add("selected");
+            setTimeout(()=>openSportsModal(match,market,marketId,optionId,{...opt,label:label,odds:adjusted,baseOdds:Number(opt.odds||1),profitPercent:Number(match.profitPercent)||100}),180);
+          },1000);
+        });
+        ["pointerup","pointerleave","pointercancel"].forEach(ev=>button.addEventListener(ev,cancel));
+        button.addEventListener("contextmenu",e=>e.preventDefault());
+        button.addEventListener("click",e=>{e.stopPropagation();if(!longPicked)toast(C.texts.longPressToast||"اضغط مطولًا لمدة ثانية لاختيار النتيجة");longPicked=false;});
+        options.appendChild(button);
+      });
+      section.appendChild(options);
+      section.appendChild(el("div","sports-detail-hint",locked?(C.texts.closedMarketHint||"التوقعات مغلقة لهذه المباراة"):(C.texts.longPressHint||"اضغط مطولًا ثانية واحدة على الاختيار")));
+      if(market.status==="settled"&&market.resultOptionId){
+        const winner=market.options?.[market.resultOptionId];
+        const winnerLabel=sportsMarketOptionLabel(marketId,market.resultOptionId,winner||{},match);
+        section.appendChild(el("div","match-result",(C.texts.confirmedResultPrefix||"النتيجة المعتمدة:")+" "+winnerLabel));
+      }else if(market.status==="cancelled"){
+        section.appendChild(el("div","match-result",C.texts.marketCancelledText||"تم إلغاء هذا السوق وإرجاع الرصيد."));
+      }
+      card.appendChild(section);
     });
-    section.appendChild(options);section.appendChild(el("div","sports-detail-hint",locked?"التوقعات مغلقة لهذه المباراة":"اضغط مطولًا ثانية واحدة على الاختيار"));
-    if(market.status==="settled"&&market.resultOptionId){const winner=market.options?.[market.resultOptionId];section.appendChild(el("div","match-result","النتيجة المعتمدة: "+String(winner?.label||"—")));}
-    card.appendChild(section);
-  }else card.appendChild(el("div","matches-empty","لا توجد اختيارات نتيجة متاحة لهذه المباراة."));
+  }else card.appendChild(el("div","matches-empty",C.texts.noMatchMarkets||"لا توجد اختيارات متاحة لهذه المباراة."));
   box.appendChild(card);box.appendChild(renderSportsMatchBets(match));
 }
 let sportsFeedTimer=0,sportsFeedBusy=false;
@@ -773,7 +834,7 @@ function initSportScoreFeed(){
 function openSportsModal(match,market,marketId,optionId,option){
   if(sportsMatchLocked(match,market))return toast("بدأت المباراة أو أُغلقت التوقعات");
   sportsPick={matchId:match.id,match:match,marketId:marketId,market:market,optionId:optionId,option:option};
-  $("sportsModalTitle").textContent=(match.team1?.name||"الفريق الأول")+" × "+(match.team2?.name||"الفريق الثاني");
+  $("sportsModalTitle").textContent=(C.texts.selectionTitle||"تأكيد الاختيار")+" — "+(match.team1?.name||"الفريق الأول")+" × "+(match.team2?.name||"الفريق الثاني");
   $("sportsModalPick").textContent=(market.title||"نتيجة المباراة")+" — "+option.label+" — ×"+Number(option.odds).toFixed(2);
   $("sportsStake").value="";$("sportsModalMsg").textContent="";
   updateSportsPotential();$("sportsModal").hidden=false;
@@ -786,12 +847,12 @@ function updateSportsPotential(){
 async function placeSportsBet(){
   if(!sportsPick||!U||busy)return;
   const choice=sportsPick,stakeValue=r2(Number(nd($("sportsStake").value)));
-  if(!Number.isFinite(stakeValue)||stakeValue<=0){$("sportsModalMsg").textContent="اكتب مبلغًا صحيحًا أكبر من صفر";return;}
-  $("sportsPlaceBtn").disabled=true;$("sportsModalMsg").textContent="جارٍ التحقق وتسجيل التوقع على الخادم...";
+  if(!Number.isFinite(stakeValue)||stakeValue<=0){$("sportsModalMsg").textContent=C.texts.betAmountError||"اكتب مبلغًا صحيحًا أكبر من صفر";return;}
+  $("sportsPlaceBtn").disabled=true;$("sportsModalMsg").textContent=C.texts.betSavingMessage||"جارٍ التحقق وتسجيل التوقع على الخادم...";
   try{
     const data=await apiCall("sports_bet",{matchId:String(choice.matchId),marketId:String(choice.marketId),optionId:String(choice.optionId),stake:stakeValue,idempotencyKey:crypto.randomUUID()});
-    U.balance=Number(data.balance);closeSportsModal();await refreshMe(false);render();toast("تم تسجيل التوقع بنجاح.");
-  }catch(e){$("sportsModalMsg").textContent=e.message||"تعذر تسجيل التوقع.";}
+    U.balance=Number(data.balance);closeSportsModal();await refreshMe(false);render();toast(C.texts.betSuccessToast||"تم تسجيل التوقع بنجاح.");
+  }catch(e){$("sportsModalMsg").textContent=e.message||C.texts.betFailureMessage||"تعذر تسجيل التوقع.";}
   finally{$("sportsPlaceBtn").disabled=false;}
 }
 async function settleUserSportsBets(){
@@ -1619,7 +1680,7 @@ $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
 $("mout").onclick=()=>logout();
 $("pgback").onclick=()=>show("more");
-$("matchBack").onclick=()=>show("home");
+$("matchBack").onclick=()=>{show("home");requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo(0,sportsScrollY)));};
 $("gamesQ").oninput=renderGames;
 $("banbtn").onclick=()=>show("games");
 document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
