@@ -80,16 +80,44 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import re
+          from html.parser import HTMLParser
           from pathlib import Path
           import subprocess
 
+          class InlineScripts(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.blocks = []
+                  self.current = None
+
+              def handle_starttag(self, tag, attrs):
+                  if tag.lower() != "script":
+                      return
+                  values = dict(attrs)
+                  script_type = values.get("type", "text/javascript").split(";")[0].strip()
+                  if "src" not in values and script_type in ("", "text/javascript", "module"):
+                      self.current = []
+
+              def handle_data(self, data):
+                  if self.current is not None:
+                      self.current.append(data)
+
+              def handle_endtag(self, tag):
+                  if tag.lower() == "script" and self.current is not None:
+                      self.blocks.append("".join(self.current))
+                      self.current = None
+
           for app in ("player", "admin"):
               html = Path(f"android-wrapper/{app}/www/index.html").read_text(encoding="utf-8")
-              scripts = re.findall(r"<script(?![^>]*\bsrc=)[^>]*>(.*?)</script>", html, flags=re.I | re.S)
-              Path(f"/tmp/{app}-inline.js").write_text("\n".join(scripts), encoding="utf-8")
-              subprocess.run(["node", "--check", f"/tmp/{app}-inline.js"], check=True)
-              print(f"{app}: inline JavaScript syntax OK")
+              parser = InlineScripts()
+              parser.feed(html)
+              if not parser.blocks:
+                  raise SystemExit(f"{app}: no inline JavaScript found")
+              for index, source in enumerate(parser.blocks):
+                  check_file = Path(f"/tmp/{app}-inline-{index}.js")
+                  check_file.write_text(source, encoding="utf-8")
+                  subprocess.run(["node", "--check", str(check_file)], check=True)
+              print(f"{app}: {len(parser.blocks)} inline script(s) passed syntax check")
           PY
 
       - name: Build both standalone Android applications
