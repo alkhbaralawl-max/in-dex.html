@@ -51,6 +51,53 @@ label{display:block;font-size:13px;margin:8px 0 3px}.cl{display:flex;align-items
 .result-select{border:1px solid #35506e;border-radius:10px;padding:9px;background:#fff;color:#111;width:100%;margin:7px 0}
 .match-preview-line{font-size:12px;color:#aac0d6;margin:6px 0;text-align:center}
 @media(max-width:390px){.teams-editor{gap:6px}.team-editor{padding:6px}.team-editor input{font-size:12px;padding:8px}.logo-preview{width:62px;height:62px}.option-row{grid-template-columns:minmax(0,1fr) 75px 32px}}
+
+/* ===== Rukn Algharb — luxury black & gold admin ===== */
+:root{color-scheme:dark}
+body{background:radial-gradient(ellipse at 50% 0%,#30200b 0%,#100d07 32%,#050504 80%);color:#fff5df;padding:10px 10px 92px}
+.w{max-width:620px}
+.card{background:linear-gradient(155deg,#21190b,#0c0a06);border:1px solid #73551f;border-radius:17px;padding:13px;margin-bottom:11px;box-shadow:0 7px 20px #0008,inset 0 1px #fff08}
+input,button,textarea,select{font-size:15px;padding:10px 12px;border-radius:11px;border:1px solid #755821}
+input[type=text],input[type=password],input[type=number],textarea,select{background:#100d08;color:#fff1d0;border-color:#5e491f}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#efc65d;box-shadow:0 0 0 3px #dba94024}
+button{background:linear-gradient(180deg,#f4d47a,#bc8521);color:#1b1204;font-weight:900;border:1px solid #f2cf6c;box-shadow:inset 0 1px #fff8,0 3px 10px #0005}
+button.r{background:linear-gradient(180deg,#c64b3e,#7c211b);color:#fff;border-color:#e27a68}
+button.b{background:linear-gradient(180deg,#2c2518,#151109);color:#f3deaa;border-color:#7a5c27}
+button.y{background:linear-gradient(180deg,#f7d881,#c18b28);color:#1e1506;border-color:#ffe29a}
+button.on{background:linear-gradient(180deg,#f5d783,#bb8120);color:#201503}
+.grid2{gap:8px}
+.stat{background:linear-gradient(145deg,#271e0d,#100d07);border:1px solid #644a1e;border-radius:13px;color:#dcc898;padding:12px}
+.stat b{color:#f6d274}
+.nav{background:linear-gradient(180deg,#171209f7,#060504);border-top:1px solid #826127;box-shadow:0 -8px 25px #000b;padding-bottom:env(safe-area-inset-bottom);backdrop-filter:blur(14px)}
+.nav button{color:#b8a579}
+.nav button.on{color:#ffdc77;background:linear-gradient(180deg,#4b340f,#171005);box-shadow:inset 0 0 0 1px #ad812c}
+.found{background:#12331f;color:#a9f1c4;border:1px solid #367c50}
+.nf{background:#3e1713;color:#ffd0c8;border:1px solid #96483d}
+.idbig{color:#f4d170}
+.balbig{color:#ffdf81;background:#090805;border:1px solid #73551f}
+.net.up{background:#143521;color:#aaf0c5}.net.dn{background:#451a14;color:#ffd0c8}.net.eq{background:#30250f;color:#f1dca6}
+.line{border-color:#423319;color:#ead9b5}
+.acc{border-color:#76571f;background:linear-gradient(145deg,#18130a,#090806)}
+.ctrl{background:#171209;border:1px solid #58421b;border-radius:12px}
+.sec{color:#f4d273;font-size:16px}
+.hint{color:#f1d070}.hint.gray{color:#b9a77f}
+label{color:#e4cf9c}
+.gcard{border-color:#71531d;background:linear-gradient(150deg,#21190b,#0c0a06)}
+.bub.me{background:linear-gradient(145deg,#b78326,#f2d178);color:#201504}
+.bub.them{background:#1c160b;color:#f0dfba;border:1px solid #60491f}
+.match-editor,.team-editor,.market-editor{background:linear-gradient(145deg,#21190b,#0b0906);border-color:#70531f}
+.team-editor h4,.market-editor-head{color:#f3d078}
+.option-row input{background:#100d08;color:#ffedc2;border-color:#6c5120}
+.logo-preview{border-color:#d3a948;background:#fff}
+.result-select{background:#171209;color:#f8e7bf;border-color:#6f5424}
+#fatal{background:#401712;color:#ffd4ca;border:1px solid #a4493e}
+.sports-toggle-card{margin:10px 0 14px;padding:14px;border:1px solid #a17a31;border-radius:16px;background:linear-gradient(145deg,#2a200c,#0d0b06);box-shadow:0 8px 20px #0007}
+.sports-toggle-title{font-size:16px;font-weight:900;color:#f7d87e;margin-bottom:7px}
+.sports-toggle-state{font-size:13px;font-weight:900;border-radius:10px;padding:9px 10px;margin:8px 0}
+.sports-toggle-state.enabled{background:#153620;color:#a8edbd;border:1px solid #367b4d}
+.sports-toggle-state.disabled{background:#401b12;color:#ffc6a8;border:1px solid #9b4c28}
+.sports-toggle-note{font-size:12px;line-height:1.9;color:#d1c09a;margin:8px 0 12px}
+@media(max-width:420px){body{padding:7px 7px 90px}.card{padding:10px}.nav button{min-width:48px;font-size:9px}.stat{padding:9px 5px}.sports-toggle-card{padding:11px}}
 </style></head>
 <body><div class="w">
 <div id="fatal" hidden></div>
@@ -146,7 +193,7 @@ ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تم�
 const TL={title:"عنوان الموقع",subtitle:"وصف صغير تحت العنوان",ribbon:"الشريط الأصفر أعلى الشاشة",notice:"التحذير التوعوي (لا يقل عن 15 حرف)",banT:"عنوان البانر",banD:"وصف البانر",banBtn:"زر البانر",banImg:"صورة البانر (رابط https)",searchPh:"نص خانة البحث",featTitle:"عنوان الألعاب المميزة",allTitle:"عنوان كل الألعاب",noGames:"رسالة عدم وجود ألعاب",eduNote:"ملاحظة أسفل قائمة الألعاب",actTitle:"عنوان صفحة النشاط",moreTitle:"عنوان صفحة المزيد",noPages:"رسالة عدم وجود صفحات",supTitle:"عنوان صفحة الدعم",chatPh:"نص خانة كتابة الدردشة",meTitle:"عنوان صفحة الحساب",lblRounds:"كلمة: جولات",lblWins:"كلمة: كسب",lblLoss:"كلمة: خسر",lblWager:"كلمة: إجمالي الرهان",lblReturn:"كلمة: إجمالي العائد",lblNet:"كلمة: الخسارة الصافية",lblBal:"كلمة: الرصيد",navHome:"زر الرئيسية",navGames:"زر الألعاب",navSup:"زر الدعم",navAct:"زر النشاط",navMore:"زر المزيد",navMe:"زر حسابي",btnLogin2:"تبويب دخول",btnReg2:"تبويب حساب جديد",btnLogin:"زر دخول",btnReg:"زر إنشاء حساب",btnOut:"زر تسجيل الخروج",phUser:"نص خانة الاسم",phPass:"نص خانة كلمة السر",phPass2:"نص تأكيد كلمة السر",forgotLink:"رابط نسيت كلمة السر",forgotMsg:"رسالة نسيت كلمة السر",payTitle:"عنوان صفحة شحن الحساب",payMethods:"طرق الشحن (كل سطر طريقة)",payDestNumber:"الرقم الوهمي الظاهر تحت عنوان رقم مهم",payWarn:"رسالة اختيارية أعلى صفحة الشحن",phoneLbl:"عنوان خانة الرقم الوهمي",phonePh:"نص خانة الهاتف",phoneWarn:"تحذير الأرقام الوهمية",amtLbl:"عنوان خانة المبلغ",amtPh:"نص خانة المبلغ",shotLbl:"عنوان رفع الصورة",shotPh:"نص قبل رفع الصورة",shotPh2:"نص بعد رفع الصورة",transferBtn:"زر تحويل",payFooter:"ملاحظة أسفل صفحة الدفع",backMethods:"زر رجوع للطرق",payChoose:"عنوان اختيار الطريقة",payOk:"رسالة بعد إرسال الطلب",payApprovedTpl:"رسالة الموافقة ({amount})",payRejectedTpl:"رسالة الرفض",ackBtn:"زر تمام",msgWin:"رسالة الكسب ({amount})",msgLost:"رسالة الخسارة ({amount})",msgTie:"رسالة التعادل",noBal:"رسالة الرصيد لا يكفي",closedMsg:"رسالة الحساب المغلق",regClosed:"رسالة التسجيل المغلق",errNet:"رسالة خطأ الاتصال",errStuck:"رسالة التأخير",errBusy:"رسالة جولة شغالة",errBetVal:"رسالة رهان غلط",msgStart:"رسالة ابدأ اللعب",ruleSlot:"قواعد السلوت",ruleApple:"قواعد التفاح",ruleCrash:"قواعد الكراش",ruleWheel:"قواعد العجلة",rulePlinko:"قواعد بلينكو",riskLoseLbl:"كلمة: لو غلطت تخسر",riskWinLbl:"كلمة: لو نجحت تكسب",riskCashLbl:"كلمة: لو سحبت الآن",riskSurvLbl:"كلمة: فرصة النجاة",riskOneWrong:"تحذير الغلطة الواحدة",scaleNote:"رسالة تخفيض فرصة الفوز",rtpNote:"رسالة العائد الفعلي",btnDrop:"زر إسقاط الكرة",btnSpinSlot:"زر لف السلوت",btnSpinWheel:"زر لف العجلة",btnStart:"زر ابدأ اللعبة",btnCash:"زر اسحب"};
 const BIG=["notice","banD","payMethods","payWarn","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko","eduNote"];
 const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"},CL={b:"الأزرق الأساسي",bd:"الأزرق الداكن",b2:"الأزرق الثانوي",bg:"خلفية الصفحات",ok:"الأخضر (نجاح)",er:"الأحمر (خسارة/تحذير)",yl:"الأصفر"};
-const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000};
+const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000,sportsEnabled:true};
 const EF=[["id","الرقم (9 أرقام)"],["balance","الرصيد"],["rounds","عدد الجولات"],["wins","مرات الكسب"],["losses","مرات الخسارة"],["wagered","إجمالي الرهانات"],["returned","إجمالي العائد"],["regBonus","رصيد التسجيل"]];
 
 let C={texts:{},colors:{},settings:{},games:{},pages:{},matches:{}},ALL={},TX=[],PL=[],curId="",editOpen=false,amtVal="",AM="",page="p1",built=false,started=false,FILT="all";
@@ -490,7 +537,29 @@ function textsForm(){
   const rb=btn(box,"رجّع كل النصوص الأصلية","r",()=>{});rb.style.width="100%";twoTap(rb,"رجّع كل النصوص الأصلية",async()=>{await saveConfig("texts",{});merge({...C,texts:{}});textsForm();});
 }
 function settingsForm(){
-  const box=$("f6");box.innerHTML="";const S=C.settings;box.appendChild(el("div","sec","⚙️ الإعدادات"));box.appendChild(el("div","hint gray","نسبة العائد لكل لعبة من تبويب الألعاب. كل الأرصدة افتراضية ولا توجد معاملات مالية حقيقية."));
+  const box=$("f6");box.innerHTML="";const S=C.settings;box.appendChild(el("div","sec","⚙️ الإعدادات"));
+  box.appendChild(el("div","hint gray","إعدادات الموقع والألعاب. كل الأرصدة افتراضية ولا توجد معاملات مالية حقيقية."));
+  const sportsEnabled=S.sportsEnabled!==false;
+  const sportsCard=el("div","sports-toggle-card"),sportsTitle=el("div","sports-toggle-title","⚽ قسم المباريات");
+  sportsCard.appendChild(sportsTitle);
+  const sportsState=el("div","sports-toggle-state "+(sportsEnabled?"enabled":"disabled"),sportsEnabled?"● المباريات مفعّلة وتظهر للاعبين":"● المباريات متوقفة ومخفية عن اللاعبين");
+  sportsCard.appendChild(sportsState);
+  sportsCard.appendChild(el("div","sports-toggle-note","عند الإيقاف تختفي المباريات والقسائم والسلاسل والسجلات الرياضية من حسابات اللاعبين، وتظهر الألعاب في الرئيسية فقط. لا يتم حذف أي بيانات؛ ويمكن إعادة القسم بزر واحد."));
+  const sportsButton=btn(sportsCard,sportsEnabled?"⛔ إيقاف قسم المباريات":"✅ إعادة قسم المباريات",sportsEnabled?"r":"y",async()=>{
+    const next=!sportsEnabled;
+    const question=next
+      ?"سيتم إخفاء المباريات والرهانات والسلاسل والسجلات الرياضية من جميع حسابات اللاعبين، وستظهر الألعاب في الرئيسية فقط. لن يتم حذف البيانات. هل تريد المتابعة؟"
+      :"سيتم إعادة ظهور المباريات وسجلات الرهانات والسلاسل المحفوظة للاعبين. هل تريد المتابعة؟";
+    if(!confirm(question))return;
+    sportsButton.disabled=true;
+    try{
+      const result=await apiCall("admin_set_sports_enabled",{enabled:next});
+      C.settings={...C.settings,sportsEnabled:result.sportsEnabled===true};
+      settingsForm();
+      alert(next?"تم إيقاف قسم المباريات وإخفاؤه عن اللاعبين. السجلات محفوظة ويمكن استعادتها.":"تمت إعادة قسم المباريات والسجلات المحفوظة.");
+    }catch(e){sportsButton.disabled=false;alert(displayError(e));}
+  });
+  sportsButton.style.width="100%";sportsCard.appendChild(sportsButton);box.appendChild(sportsCard);
   const num=(lab,val)=>{box.appendChild(el("label","",lab));const i=el("input");i.type="text";i.inputMode="decimal";i.value=val;box.appendChild(i);return i;};
   const chk=(lab,val)=>{const l=el("label"),c=el("input");c.type="checkbox";c.checked=!!val;c.style.cssText="width:auto;margin-left:8px";l.append(c,lab);box.appendChild(l);return c;};
   const a=num("الرصيد الافتراضي للحسابات الجديدة (مرة واحدة)",S.initial),z=chk("الحسابات الجديدة تبدأ برصيد صفر",S.newZero),b=num("أقل رهان",S.minBet),mx=num("أقصى رهان (0 = بلا حد)",S.maxBet),c=num("الرهان الافتراضي",S.defBet),cb=chk("السماح بتسجيل حسابات جديدة",S.registration);
