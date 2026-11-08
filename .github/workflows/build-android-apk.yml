@@ -20,7 +20,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: rukn-android-apps-${{ github.ref }}
+  group: rukn-android-apps-${{ github.sha }}
   cancel-in-progress: false
 
 jobs:
