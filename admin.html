@@ -93,7 +93,7 @@ async function sendApi(url,action,payload={},csrf=true){
   try{res=await fetch(url,{method:"POST",credentials:"include",headers,body:JSON.stringify({action,...payload})});data=await res.json();}
   catch(e){throw new ApiError("تعذر الاتصال بالسيرفر. راجع الإنترنت وحاول مرة أخرى.",0);}
   if(!res.ok){
-    const messages={unauthorized:"انتهت جلسة الدخول أو بيانات المشرف غير صحيحة.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",admin_required:"هذا الحساب لا يملك صلاحية المشرف.",invalid_credentials:"كلمة المرور غير صحيحة أو حساب المشرف لم يتم تهيئته بعد.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة المرور يجب أن تكون 10 أحرف على الأقل.",request_already_reviewed:"تمت مراجعة هذا الطلب من قبل."};
+    const messages={unauthorized:"انتهت جلسة الدخول أو بيانات المشرف غير صحيحة.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",admin_required:"هذا الحساب لا يملك صلاحية المشرف.",invalid_credentials:"كلمة المرور غير صحيحة أو حساب المشرف لم يتم تهيئته بعد.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة المرور يجب أن تكون 10 أحرف على الأقل.",request_already_reviewed:"تمت مراجعة هذا الطلب من قبل.",preview_admin_read_only:"في نسخة المعاينة، تعديل الحسابات والأرصدة والتسويات العامة متوقف لحماية الموقع الرئيسي. المتاح الآن إعدادات لعبة الطيارة فقط.",preview_settings_locked:"إعدادات الموقع العامة مقفولة في نسخة المعاينة؛ تغييرها قد يؤثر على النسخة الرئيسية."};
     throw new ApiError(messages[data?.error]||data?.error||"حدث خطأ في السيرفر.",res.status);
   }
   return data;
