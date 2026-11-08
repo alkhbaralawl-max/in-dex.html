@@ -743,8 +743,9 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
-const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
-const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+const SAME_ORIGIN_API=location.origin==="https://rukn-algharb-main.vercel.app"||location.origin==="https://rukn-algharb-main-alkhbaralawl-4273.vercel.app";
+const AUTH_API=SAME_ORIGIN_API?"/api/auth":SUPABASE_URL+"/functions/v1/auth-api";
+const APP_API=SAME_ORIGIN_API?"/api/app":SUPABASE_URL+"/functions/v1/app-api";
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
 async function sendApi(url,action,payload={},useCsrf=true){
