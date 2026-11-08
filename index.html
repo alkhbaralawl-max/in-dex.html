@@ -759,7 +759,7 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 <div class="ribbon" data-t="ribbon"></div>
 
 <main id="v_home">
-  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">⚽</div></div>
+  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">♛</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
   <section class="matches-section" id="sportsHomeSection">
@@ -948,7 +948,7 @@ const EMO={slot:"🎰",apple:"🍎",rocket:"✈",crash:"📈",wheel:"🎡",plink
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
-{id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
+{id:"rocket",name:"لعبة الطيارة",desc:"تابع صعود الطيارة واسحب قبل انتهاء الجولة",engine:"rocket",cat:"الطيارة",tag:"الطيارة",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
 {id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
@@ -2110,7 +2110,7 @@ function crLoop(){
   if(U&&U.cr&&!crPollTimer){
     const tick=async()=>{
       const c=U&&U.cr;if(!c){crPollTimer=0;return;}
-      let delay=170;
+      let delay=320;
       try{
         const sentAt=Date.now(),status=await apiCall("crash_status",{roundId:c.roundId},false),receivedAt=Date.now();
         if(!U?.cr||U.cr.roundId!==c.roundId){crPollTimer=0;return;}
@@ -2127,7 +2127,7 @@ function crLoop(){
           showCrashNotice(c,status.crashPoint);
           if(cur&&cur.g.id===c.k&&!$("gl").hidden)drawCr(cur.g.engine,Number(status.elapsed)||0,multiplier,"crash",capOf(cur.g));
           if(c.cashPending){
-            delay=130;
+            delay=220;
           }else{
             const remaining=Number.isFinite(Number(status.settleAfter))?Math.max(0,Number(status.settleAfter)-Number(status.serverNow||Date.now())):5500;
             if(remaining<=0&&!c.settlePromise){
@@ -2136,10 +2136,10 @@ function crLoop(){
                 catch(e){console.warn("crash settlement pending",e);}
               })();
               await c.settlePromise;c.settlePromise=null;delay=110;
-            }else delay=Math.min(180,Math.max(100,remaining));
+            }else delay=Math.min(260,Math.max(140,remaining));
           }
         }else if(c.cashPending){
-          delay=130;
+          delay=220;
         }else if(status.autoDue){
           if(!c.settlePromise){
             c.settlePromise=(async()=>{
@@ -2147,10 +2147,10 @@ function crLoop(){
               catch(e){console.warn("auto crash settlement pending",e);}
             })();
           }
-          await c.settlePromise;c.settlePromise=null;delay=120;
+          await c.settlePromise;c.settlePromise=null;delay=220;
         }else{
           c.crashDetectedAt=0;
-          delay=160;
+          delay=340;
         }
         c.syncErrors=0;
       }catch(e){
