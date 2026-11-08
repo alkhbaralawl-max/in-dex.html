@@ -68,6 +68,24 @@ button,input,textarea,select{font-family:inherit}
 .alogo{text-align:center;margin-bottom:12px}.alogo h1{margin:4px 0;font-size:24px}.alogo small{color:var(--tx2)}
 .tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1;border:1px solid var(--line);background:#F3F6FA;border-radius:12px;padding:12px;font-weight:bold;color:var(--tx)}.tabs button.on{background:var(--b);color:#fff;border-color:var(--b)}
 .fi{width:100%;height:48px;border-radius:12px;border:1px solid var(--line);padding:0 12px;font-size:16px;margin-bottom:10px;background:#fff;color:var(--tx)}
+.authw{min-height:100vh;padding:clamp(28px,7vh,64px) 16px 34px;background:radial-gradient(ellipse at 50% 0%,#dceaff 0%,#f5f8fc 58%,#eef3f9 100%)}
+.auth-hero{text-align:center;margin:0 auto 18px;max-width:420px}.auth-hero .alogo{margin-bottom:18px}
+.auth-hero .lg.big{width:62px;height:62px;margin:0 auto 10px;border-radius:20px;background:linear-gradient(145deg,#1557a2,#3286df);box-shadow:0 9px 22px #1557a233;color:#fff;font-size:29px;display:flex;align-items:center;justify-content:center}
+.auth-hero h2{font-size:22px;margin:8px 0 5px;color:var(--tx)}.auth-hero p{font-size:13px;line-height:1.8;color:var(--tx2);margin:0}
+.auth-notice{max-width:420px;margin:0 auto 12px!important;border-radius:14px}
+.auth-card{max-width:420px;margin:0 auto;padding:18px;border-radius:22px;background:#fff;border:1px solid #dce5f0;box-shadow:0 16px 42px #18385d14}
+.auth-card .tabs{padding:4px;background:#f1f5fa;border-radius:14px;margin-bottom:16px}.auth-card .tabs button{border:0;background:transparent;padding:11px}.auth-card .tabs button.on{background:#195ba8;color:#fff;box-shadow:0 3px 10px #195ba833}
+.google-auth-btn{width:100%;height:50px;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #cbd5e1;border-radius:13px;background:#fff;color:#263445;font-size:14px;font-weight:700;box-shadow:0 2px 5px #10243b0a;transition:background .15s,transform .15s}
+.google-auth-btn:hover{background:#f8fbff}.google-auth-btn:active{transform:scale(.99)}.google-auth-btn:disabled{opacity:.6;cursor:wait}
+.google-g{width:23px;height:23px;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;font:800 18px Arial,sans-serif;color:#4285f4;background:conic-gradient(from -45deg,#4285f4 0 25%,#34a853 25% 50%,#fbbc05 50% 75%,#ea4335 75% 100%);-webkit-background-clip:text;background-clip:text}
+.auth-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#8794a5;font-size:11px}.auth-divider:before,.auth-divider:after{content:"";height:1px;flex:1;background:#e6ebf2}
+.auth-label{display:block;margin:9px 2px 5px;color:#34465d;font-weight:700;font-size:12px}
+.auth-card .fi{height:49px;border-radius:12px;border:1px solid #d7e0eb;background:#fbfcfe;margin-bottom:6px;transition:border-color .15s,box-shadow .15s}
+.auth-card .fi:focus{outline:none;border-color:#3885d6;box-shadow:0 0 0 3px #3885d61c;background:#fff}
+.auth-submit{height:49px;margin-top:8px;border-radius:13px;font-weight:800}
+.auth-foot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:8px}.auth-foot small{color:#8a96a5;font-size:10px}.auth-foot .lnk{margin-top:0}
+.auth-privacy{text-align:center;max-width:400px;margin:13px auto 0;color:#7c899a;font-size:10px;line-height:1.7}
+
 textarea.fi{height:auto;padding:10px;min-height:80px}
 .err{color:var(--er);font-weight:bold;margin-top:8px;font-size:14px;min-height:20px}
 .lnk{background:none;border:0;color:var(--b);font-size:13px;margin-top:8px;padding:6px}
@@ -382,17 +400,23 @@ canvas{display:block;width:100%}
 <div id="fatal" hidden></div>
 
 <div id="v_auth" class="authw" hidden>
-  <div class="alogo"><div class="lg big">R</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد وهمي</small></div>
-  <div class="warn" style="margin:0 0 12px" data-t="notice"></div>
-  <div class="card" style="margin:0">
-    <div class="tabs"><button id="t_login" class="on" data-t="btnLogin2"></button><button id="t_reg" data-t="btnReg2"></button></div>
-    <input class="fi" id="u" data-ph="phUser" autocomplete="username">
-    <input class="fi" id="p" type="password" data-ph="phPass" autocomplete="current-password">
-    <input class="fi" id="p2" type="password" data-ph="phPass2" autocomplete="new-password" hidden>
-    <button class="btn full" id="agb"></button>
-    <div class="err" id="aerr"></div>
-    <div style="text-align:center"><button class="lnk" id="forgot" data-t="forgotLink"></button></div>
+  <div class="auth-hero">
+    <div class="alogo"><div class="lg big">R</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد افتراضي فقط</small></div>
+    <h2>أهلاً بك في ركن الغرب</h2><p>ادخل إلى حسابك أو أنشئ حسابًا جديدًا بخطوات بسيطة.</p>
   </div>
+  <div class="warn auth-notice" data-t="notice"></div>
+  <div class="card auth-card">
+    <div class="tabs"><button id="t_login" class="on" data-t="btnLogin2"></button><button id="t_reg" data-t="btnReg2"></button></div>
+    <button class="google-auth-btn" id="googleAuth" type="button"><span class="google-g" aria-hidden="true">G</span><span id="googleAuthText">الدخول باستخدام Google</span></button>
+    <div class="auth-divider"><span>أو باستخدام حساب الموقع</span></div>
+    <label class="auth-label" for="u">اسم المستخدم</label><input class="fi" id="u" data-ph="phUser" autocomplete="username">
+    <label class="auth-label" for="p">كلمة المرور</label><input class="fi" id="p" type="password" data-ph="phPass" autocomplete="current-password">
+    <div id="confirmPasswordWrap" hidden><label class="auth-label" for="p2">تأكيد كلمة المرور</label><input class="fi" id="p2" type="password" data-ph="phPass2" autocomplete="new-password"></div>
+    <button class="btn full auth-submit" id="agb"></button>
+    <div class="err" id="aerr" aria-live="polite"></div>
+    <div class="auth-foot"><button class="lnk" id="forgot" data-t="forgotLink"></button><small>رقم الحساب يُنشأ تلقائيًا ويظل ثابتًا.</small></div>
+  </div>
+  <div class="auth-privacy">باستخدام Google، سيتم التحقق من بريدك بواسطة Google قبل إنشاء جلسة الموقع.</div>
 </div>
 
 <div id="shell" hidden>
@@ -565,7 +589,7 @@ async function sendApi(url,action,payload={},useCsrf=true){
     data=await response.json();
   }catch(e){throw new ApiError("تعذر الاتصال بالخادم. تحقق من الإنترنت وحاول مرة أخرى.",0);}
   if(!response.ok){
-    const messages={unauthorized:"انتهت جلسة الدخول. سجّل الدخول مرة أخرى.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",invalid_credentials:"اسم المستخدم أو كلمة السر غير صحيح.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل.",registration_closed:"التسجيل مغلق حاليًا.",too_many_attempts:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",insufficient_virtual_balance:"الرصيد الافتراضي غير كافٍ.",active_game_exists:"أنهِ الجولة الحالية أولًا.",match_closed:"بدأت المباراة أو أُغلق السوق.",admin_required:"هذه العملية متاحة للإدارة فقط."};
+    const messages={unauthorized:"انتهت جلسة الدخول. سجّل الدخول مرة أخرى.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",invalid_credentials:"اسم المستخدم أو كلمة السر غير صحيح.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل.",registration_closed:"التسجيل مغلق حاليًا.",too_many_attempts:"محاولات كثيرة. انتظر قليلًا ثم حاول مرة أخرى.",google_provider_required:"تعذر التحقق من حساب Google.",google_email_unverified:"يجب استخدام حساب Google ببريد مؤكد.",google_account_link_failed:"تعذر إنشاء أو ربط حساب Google.",insufficient_virtual_balance:"الرصيد الافتراضي غير كافٍ.",active_game_exists:"أنهِ الجولة الحالية أولًا.",match_closed:"بدأت المباراة أو أُغلق السوق.",admin_required:"هذه العملية متاحة للإدارة فقط."};
     throw new ApiError(messages[data?.error]||data?.error||"حدث خطأ في الخادم.",response.status);
   }
   return data;
@@ -1999,9 +2023,11 @@ async function logout(t){
   localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");show("home");showAuth(t);
 }
 function setAuth(m){
-  authMode=m;$("p2").hidden=m!=="reg";
+  authMode=m;$("confirmPasswordWrap").hidden=m!=="reg";$("p2").hidden=m!=="reg";
   $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
-  $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;$("aerr").textContent="";
+  $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;
+  $("googleAuthText").textContent=m==="reg"?"إنشاء حساب باستخدام Google":"الدخول باستخدام Google";
+  $("forgot").hidden=m==="reg";$("aerr").textContent="";$("aerr").style.color="";
 }
 async function auth(){
   const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
@@ -2017,8 +2043,32 @@ async function auth(){
   }catch(e){err(e.message||C.texts.errNet);}
   finally{$("agb").disabled=false;}
 }
+async function startGoogleAuth(){
+  const button=$("googleAuth"),message=$("aerr");
+  button.disabled=true;message.textContent="جارٍ فتح صفحة Google الآمنة...";message.style.color="var(--tx)";
+  try{
+    const params=new URLSearchParams({provider:"google",redirect_to:"https://rukn-algharb-main.vercel.app/"});
+    const response=await fetch(SUPABASE_URL+"/auth/v1/authorize?"+params.toString(),{method:"GET",headers:{apikey:SUPABASE_PUBLISHABLE_KEY,accept:"application/json"}});
+    const data=await response.json().catch(()=>({}));
+    if(!response.ok||!data.url)throw new Error(data.msg||data.message||"لم يتم تفعيل Google OAuth في إعدادات المشروع بعد.");
+    window.location.assign(data.url);
+  }catch(e){message.textContent=e.message||"تعذر بدء تسجيل Google.";message.style.color="var(--er)";button.disabled=false;}
+}
+async function handleGoogleCallback(){
+  const values=new URLSearchParams(location.hash.startsWith("#")?location.hash.slice(1):location.hash);
+  const accessToken=values.get("access_token"),callbackError=values.get("error_description")||values.get("error");
+  if(!accessToken&&!callbackError)return false;
+  history.replaceState({},document.title,location.pathname+location.search);
+  if(callbackError){showAuth("تعذر تسجيل الدخول عبر Google: "+callbackError.slice(0,220));return true;}
+  try{
+    const data=await authCall("google_exchange",{accessToken});
+    csrfToken=data.csrfToken||"";localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+    name=data.user?.username||"";attach(name);
+  }catch(e){showAuth(e.message||"تعذر التحقق من حساب Google.");}
+  return true;
+}
 $("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
-$("agb").onclick=auth;
+$("agb").onclick=auth;$("googleAuth").onclick=startGoogleAuth;
 $("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
 $("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
 let profileAvatarData="";
@@ -2071,6 +2121,7 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
 });
 setAuth("login");applyCfg();loadPublicConfig();
 (async()=>{
+  if(await handleGoogleCallback())return;
   try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
   catch(e){showAuth();}
 })();
