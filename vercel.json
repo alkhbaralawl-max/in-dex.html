@@ -80,6 +80,5 @@
         }
       ]
     }
-  ],
-  "buildCommand": "npm run build:ota"
+  ]
 }
