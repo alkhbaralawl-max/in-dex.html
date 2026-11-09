@@ -1,4 +1,4 @@
-import { createHash, createPrivateKey, sign } from "node:crypto";
+import { createHash, createPrivateKey, createPublicKey, sign } from "node:crypto";
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -122,6 +122,19 @@ async function createSignedBundle(directory, app) {
   if (!rawKey) throw new Error("Missing Vercel environment variable " + app.keyEnv);
   const privateKey = createPrivateKey(rawKey.replace(/\\n/g, "\n"));
   if (privateKey.asymmetricKeyType !== "rsa") throw new Error(app.keyEnv + " must be an RSA private key.");
+
+  const appConfigPath = path.join(ROOT, "android-wrapper", app.name, "capacitor.config.json");
+  const appConfig = JSON.parse(await readFile(appConfigPath, "utf8"));
+  const configuredPublicKey = appConfig?.plugins?.LiveUpdate?.publicKey;
+  if (typeof configuredPublicKey !== "string" || !configuredPublicKey.includes("BEGIN PUBLIC KEY")) {
+    throw new Error("Missing embedded Live Update public key for " + app.name + ".");
+  }
+  const derivedPublicKey = createPublicKey(privateKey).export({ type: "spki", format: "pem" }).toString();
+  const normalizeKey = (value) => value.replace(/\\s+/g, "");
+  if (normalizeKey(derivedPublicKey) !== normalizeKey(configuredPublicKey)) {
+    throw new Error("OTA signing key does not match the public key embedded in the " + app.name + " APK.");
+  }
+
   const signature = sign("sha256", zip, privateKey).toString("base64");
 
   return {
