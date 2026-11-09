@@ -13,15 +13,17 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   if (!expectedAppIds[config.app] || config.appId !== expectedAppIds[config.app]) return;
 
   window.__RUKN_NATIVE_OTA__ = true;
-  const ready = LiveUpdate.ready();
-  ready.then(() => {
-    const check = () => checkForUpdate().catch(() => {});
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", () => setTimeout(check, 500), { once: true });
-    } else {
-      setTimeout(check, 500);
-    }
-  }).catch(() => {});
+  const markReadyAndCheck = async () => {
+    try {
+      await LiveUpdate.ready();
+      setTimeout(() => checkForUpdate().catch(() => {}), 500);
+    } catch (_) {}
+  };
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => { void markReadyAndCheck(); }, { once: true });
+  } else {
+    void markReadyAndCheck();
+  }
 
   function addStyles() {
     if (document.getElementById("rukn-ota-style")) return;
@@ -63,7 +65,6 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
       '<div id="rukn-ota-status">التحديث جاهز للتحميل</div>' +
       '<div class="rukn-ota-actions">' +
       '<button id="rukn-ota-start" type="button">تحديث الآن</button>' +
-      '<button id="rukn-ota-later" type="button">لاحقًا</button>' +
       "</div></section>";
     document.body.appendChild(overlay);
 
@@ -73,9 +74,7 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
     }
 
     const start = document.getElementById("rukn-ota-start");
-    const later = document.getElementById("rukn-ota-later");
-    later.addEventListener("click", () => overlay.remove());
-    start.addEventListener("click", () => downloadAndApply(manifest, overlay, start, later));
+    start.addEventListener("click", () => downloadAndApply(manifest, overlay, start));
     return overlay;
   }
 
@@ -123,9 +122,8 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
     createDialog(manifest);
   }
 
-  async function downloadAndApply(manifest, overlay, start, later) {
+  async function downloadAndApply(manifest, overlay, start) {
     start.disabled = true;
-    later.disabled = true;
     start.textContent = "جارٍ التحديث...";
     setProgress(0, "جارٍ تجهيز ملفات التحديث");
 
@@ -157,7 +155,6 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
     } catch (error) {
       if (progressListener) await progressListener.remove().catch(() => {});
       start.disabled = false;
-      later.disabled = false;
       start.textContent = "إعادة المحاولة";
       setProgress(0, "تعذر تثبيت التحديث. النسخة الحالية ما زالت تعمل بأمان.");
     }
