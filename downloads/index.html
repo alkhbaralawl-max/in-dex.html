@@ -2,62 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b0b0b">
-  <title>تحميل تطبيقات ركن الغرب</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="تحميل تطبيق ركن الغرب للأندرويد">
+  <title>تحميل تطبيق ركن الغرب</title>
   <style>
     :root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#303030;--gold:#d7b66b;--muted:#b9b9b9}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#292116 0,#111 38%,var(--bg) 75%);color:#fff;font-family:Tahoma,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px}
-    main{width:min(100%,620px)}
-    .brand{text-align:center;margin-bottom:26px}
-    .mark{width:74px;height:74px;border:1px solid #8d7545;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;color:var(--gold);font-size:34px;font-weight:700;background:linear-gradient(145deg,#302719,#121212);box-shadow:0 12px 40px #0008}
-    h1{font-size:clamp(25px,5vw,34px);margin:0 0 9px}
-    .sub{color:var(--muted);line-height:1.8;margin:0}
-    .card{background:linear-gradient(145deg,#1b1b1b,#101010);border:1px solid var(--line);border-radius:20px;padding:22px;margin:14px 0;box-shadow:0 14px 38px #0005}
-    .row{display:flex;align-items:center;gap:15px;margin-bottom:18px}
-    .icon{width:52px;height:52px;border-radius:15px;background:#2b2519;color:var(--gold);display:grid;place-items:center;font-size:25px;flex:0 0 auto}
+    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#302719 0,#111 42%,var(--bg) 78%);color:#fff;font-family:Tahoma,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:calc(22px + env(safe-area-inset-top)) 18px calc(22px + env(safe-area-inset-bottom))}
+    main{width:min(100%,520px)}
+    .brand{text-align:center;margin-bottom:24px}
+    .mark{width:78px;height:78px;border:1px solid #8d7545;border-radius:23px;display:grid;place-items:center;margin:0 auto 16px;color:var(--gold);background:linear-gradient(145deg,#302719,#121212);box-shadow:0 12px 40px #0008}
+    .mark svg{width:38px;height:38px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+    h1{font-size:clamp(26px,6vw,34px);margin:0 0 9px}
+    .sub{color:var(--muted);line-height:1.9;margin:0}
+    .card{background:linear-gradient(145deg,#1b1b1b,#101010);border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 14px 38px #0005}
+    .row{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+    .icon{width:54px;height:54px;border-radius:16px;background:#2b2519;color:var(--gold);display:grid;place-items:center;flex:0 0 auto}
+    .icon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
     h2{margin:0 0 5px;font-size:20px}
-    .desc{color:var(--muted);font-size:14px;line-height:1.7}
-    a.button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;text-decoration:none;border-radius:13px;background:linear-gradient(135deg,#e5c77d,#b58d45);color:#17130c;font-weight:700;font-size:16px}
+    .desc{color:var(--muted);font-size:13px;line-height:1.8}
+    a.button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:56px;text-decoration:none;border-radius:14px;background:linear-gradient(135deg,#ead08b,#b58d45);color:#17130c;font-weight:900;font-size:16px;box-shadow:0 8px 22px #b58d4533}
+    a.button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
     a.button:focus-visible{outline:3px solid white;outline-offset:3px}
-    .note{color:#aaa;font-size:13px;line-height:1.9;text-align:center;margin:22px 8px 0}
-    footer{text-align:center;color:#777;font-size:12px;margin-top:24px}
-    @media(max-width:420px){body{padding:16px}.card{padding:18px}}
+    .details{margin-top:16px;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:10px;color:var(--muted);font-size:11px}
+    .note{color:#aaa;font-size:12px;line-height:1.9;text-align:center;margin:20px 8px 0}
+    footer{text-align:center;color:#777;font-size:11px;margin-top:22px}
+    @media(max-width:420px){body{padding-left:14px;padding-right:14px}.card{padding:18px}}
   </style>
 </head>
 <body>
   <main>
     <header class="brand">
-      <div class="mark" aria-hidden="true">ر</div>
-      <h1>تطبيقات ركن الغرب</h1>
-      <p class="sub">اختَر التطبيق المناسب لهاتفك وحمّله مباشرة من هنا.</p>
+      <div class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 9 5 4 4-8 4 8 5-4-2 11H5L3 9Z"/><path d="M5 22h14"/></svg></div>
+      <h1>ركن الغرب</h1>
+      <p class="sub">تطبيق اللاعبين للأندرويد<br>حمّل التطبيق وثبّته على هاتفك.</p>
     </header>
-
     <section class="card" aria-labelledby="players-title">
       <div class="row">
-        <div class="icon" aria-hidden="true">⚽</div>
+        <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M7 12h5m-2.5-2.5v5M16 11h.01M18 14h.01"/></svg></div>
         <div>
-          <h2 id="players-title">تطبيق اللاعبين</h2>
-          <div class="desc">النسخة المخصصة للاعبين والدخول إلى الموقع من التطبيق.</div>
+          <h2 id="players-title">تطبيق ركن الغرب</h2>
+          <div class="desc">النسخة المخصصة للاعبين — أيقونة مستقلة وواجهة تعمل كتطبيق على الهاتف.</div>
         </div>
       </div>
-      <a class="button" href="./Rukn-AlGharb-Players.apk" download>تحميل تطبيق اللاعبين <span aria-hidden="true">↓</span></a>
+      <a class="button" href="./Rukn-AlGharb-Players.apk" download>
+        تحميل تطبيق اللاعبين
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 19v2h16v-2"/></svg>
+      </a>
+      <div class="details"><span>Android APK</span><span>يتطلب اتصالًا بالإنترنت</span></div>
     </section>
-
-    <section class="card" aria-labelledby="admin-title">
-      <div class="row">
-        <div class="icon" aria-hidden="true">⚙</div>
-        <div>
-          <h2 id="admin-title">تطبيق المشرف</h2>
-          <div class="desc">نسخة لوحة المشرف. الدخول يظل محميًا بحساب وصلاحيات المشرف.</div>
-        </div>
-      </div>
-      <a class="button" href="./Rukn-AlGharb-Admin.apk" download>تحميل تطبيق المشرف <span aria-hidden="true">↓</span></a>
-    </section>
-
-    <p class="note">بعد اكتمال التحميل، افتح ملف APK من مجلد التنزيلات ووافق على التثبيت عند ظهور رسالة أذونات التثبيت. يحتاج التطبيق إلى اتصال بالإنترنت لتسجيل الدخول واستخدام البيانات.</p>
-    <footer>ركن الغرب · صفحة تنزيل مستقلة</footer>
+    <p class="note">بعد التحميل افتح الملف من «التنزيلات»، ثم وافق على التثبيت عند ظهور رسالة السماح بالتثبيت من هذا المصدر.</p>
+    <footer>ركن الغرب · صفحة التحميل الرسمية للاعبين</footer>
   </main>
 </body>
 </html>
