@@ -68,6 +68,7 @@ jobs:
           mkdir -p android-wrapper/admin/www android-wrapper/admin/assets android-wrapper/dist
           cp index.html android-wrapper/player/www/index.html
           cp manifest.webmanifest install.html install.js pwa.js sw.js android-wrapper/player/www/
+          cp android-wrapper/shared/pwa-native.js android-wrapper/player/www/pwa.js
           cp icons/app-icon.svg android-wrapper/player/www/icons/app-icon.svg
           cp icons/app-icon.svg android-wrapper/player/assets/icon.svg
           cp admin-source/admin.html android-wrapper/admin/www/index.html
