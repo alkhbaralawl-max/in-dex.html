@@ -135,46 +135,8 @@ jobs:
             npm install --no-audit --no-fund
             npx cap add android
 
-            # The existing session system uses Secure, HttpOnly, SameSite=None,
-            # Partitioned cookies from Supabase. Android WebView blocks third-party
-            # cookies by default, so allow them only in this bundled app WebView.
-          python3 - <<'PY'
-          from pathlib import Path
-          import re
-
-          for app in ("player", "admin"):
-              root = Path("android-wrapper") / app / "android"
-              candidates = list((root / "app/src/main/java").rglob("MainActivity.java"))
-              if len(candidates) != 1:
-                  raise SystemExit(f"{app}: expected one MainActivity.java, found {len(candidates)}")
-              activity = candidates[0]
-              original = activity.read_text(encoding="utf-8")
-              package = re.search(r"^package\s+([A-Za-z0-9_.]+);", original, re.M)
-              if not package:
-                  raise SystemExit(f"{app}: MainActivity package declaration missing")
-              source = "\n".join([
-                  f"package {package.group(1)};",
-                  "",
-                  "import android.os.Bundle;",
-                  "import android.webkit.CookieManager;",
-                  "import com.getcapacitor.BridgeActivity;",
-                  "",
-                  "public class MainActivity extends BridgeActivity {",
-                  "    @Override",
-                  "    public void onCreate(Bundle savedInstanceState) {",
-                  "        super.onCreate(savedInstanceState);",
-                  "        CookieManager cookies = CookieManager.getInstance();",
-                  "        cookies.setAcceptCookie(true);",
-                  "        if (getBridge() != null && getBridge().getWebView() != null) {",
-                  "            cookies.setAcceptThirdPartyCookies(getBridge().getWebView(), true);",
-                  "        }",
-                  "    }",
-                  "}",
-                  ""
-              ])
-              activity.write_text(source, encoding="utf-8")
-              print(f"{app}: configured the WebView session-cookie policy")
-          PY
+            # Preserve the existing Supabase cookie-session authentication in Android WebView.
+            bash "$GITHUB_WORKSPACE/android-wrapper/enable-webview-cookies.sh" "$APP_DIR"
 
             npx capacitor-assets generate --android --assetPath assets \
               --iconBackgroundColor "#080806" \
