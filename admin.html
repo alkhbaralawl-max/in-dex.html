@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#13091f">
+<title>لوحة المشرف | ركن الغرب — معاينة</title>
+<style>
+:root{color-scheme:dark;--bg:#100819;--panel:#1b1028;--panel2:#261238;--line:#573674;--purple:#a83cff;--gold:#ffd778;--text:#fff6ff;--muted:#c0accf;--green:#35d69a;--red:#f05b88}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -10%,#51216f 0,#20102f 27%,var(--bg) 62%);color:var(--text);font-family:Tahoma,"Segoe UI",Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}
+#admin{max-width:520px;min-height:100vh;margin:auto;padding-bottom:85px}
+.preview{margin:9px 12px;padding:8px;border:1px solid #68428b;background:#21122f;border-radius:10px;color:#e7c8ff;font-size:10px;text-align:center}
+.top{display:flex;align-items:center;justify-content:space-between;padding:15px 14px}.brand{font-size:20px;font-weight:900;color:var(--gold)}.sub{color:var(--muted);font-size:10px;margin-top:4px}
+.card{border:1px solid #573674;border-radius:17px;background:linear-gradient(150deg,#28143b,#170d22);padding:13px;margin:0 12px 11px;box-shadow:0 7px 20px #0005}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 12px 12px}.stat{border:1px solid #573674;border-radius:14px;background:#21122f;text-align:center;padding:11px 4px}.stat b{display:block;color:var(--gold);font-size:20px}.stat small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.section-title{font-size:14px;font-weight:900;margin:0 0 10px;color:#f6e9ff}
+.search{width:100%;padding:11px;border:1px solid #68428b;background:#140b1d;border-radius:12px;color:#fff;margin-bottom:9px;outline:none}
+.game-list{display:grid;gap:7px}.game-row{display:flex;gap:9px;align-items:center;border:1px solid #48305d;background:#1b1028;border-radius:12px;padding:9px}.game-emoji{font-size:25px;width:39px;height:39px;display:grid;place-items:center;background:#34204a;border-radius:10px}.game-row-info{flex:1;min-width:0}.game-row-info b{display:block;font-size:11px}.game-row-info small{display:block;color:var(--muted);font-size:9px;margin-top:4px}
+.switch{border:1px solid #477f68;background:#173d30;color:#a8ffda;border-radius:18px;padding:6px 9px;font-size:9px}.switch.off{border-color:#7b4759;background:#40202e;color:#ffb1c5}
+.field{display:block;color:#d7c4e4;font-size:10px;margin:9px 0 5px}.control{width:100%;border:1px solid #68428b;background:#130b1d;color:#fff;border-radius:11px;padding:10px}
+textarea.control{min-height:74px;resize:vertical}
+.save{width:100%;border:1px solid #ffe49c;border-radius:12px;background:linear-gradient(120deg,#ffe49c,#bd8128);color:#27142d;padding:12px;font-weight:900;margin-top:11px}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,520px);display:grid;grid-template-columns:repeat(4,1fr);padding:8px 5px calc(8px + env(safe-area-inset-bottom));background:#170d23ef;backdrop-filter:blur(16px);border-top:1px solid #68418a}
+.nav button{border:0;background:none;color:#bea8cd;font-size:9px;padding:5px 2px}.nav button span{display:block;font-size:19px;margin-bottom:3px}.nav button.active{color:var(--gold)}
+.notice{font-size:9px;color:#d8c3e8;line-height:1.8;border:1px dashed #755296;border-radius:11px;padding:9px;margin-top:10px}
+.toast{display:none;margin-top:9px;border-radius:10px;padding:9px;background:#173a2d;color:#b6ffda;font-size:10px}.toast.show{display:block}
+.view{display:none}.view.active{display:block}
+@media(min-width:480px){.game-list{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="admin">
+  <div class="preview">معاينة تصميم لوحة المشرف — جميع التغييرات محلية ولا تُحفظ في الخادم</div>
+  <header class="top"><div><div class="brand">♛ ركن الغرب</div><div class="sub">مركز التحكم وإدارة الألعاب</div></div><div style="font-size:24px;color:var(--gold)">⚙</div></header>
+  <section id="dashboard" class="view active">
+    <div class="stats"><div class="stat"><b>20</b><small>إجمالي الألعاب</small></div><div class="stat"><b id="activeCount">20</b><small>ألعاب مفعّلة</small></div><div class="stat"><b>0</b><small>مباريات كرة قدم</small></div></div>
+    <section class="card"><h3 class="section-title">نظرة عامة</h3><div style="font-size:11px;color:var(--muted);line-height:2">إدارة الألعاب والنصوص والألوان من لوحة واحدة. لكل لعبة إعداداتها الخاصة وسجل تغييراتها.</div><div class="notice">نظام كرة القدم غير موجود في هذه الواجهة. هذه لوحة معاينة فقط ولا تتصل بقاعدة البيانات.</div></section>
+    <section class="card"><h3 class="section-title">الألعاب الأكثر إعدادًا</h3><div id="dashboardTop" class="game-list"></div></section>
+  </section>
+  <section id="gamesPage" class="view">
+    <section class="card"><h3 class="section-title">إدارة الألعاب العشرين</h3><input id="gameSearch" class="search" placeholder="ابحث عن لعبة"><div class="game-list" id="gameList"></div></section>
+    <section class="card" id="editorCard"><h3 class="section-title">تفاصيل اللعبة</h3><div id="emptyEditor" style="color:var(--muted);font-size:10px">اختر لعبة من القائمة لعرض إعداداتها.</div><div id="editor" hidden>
+      <label class="field">اسم اللعبة</label><input class="control" id="titleInput">
+      <label class="field">وصف اللعبة</label><textarea class="control" id="descInput"></textarea>
+      <label class="field">تعليمات اللعبة</label><textarea class="control" id="rulesInput"></textarea>
+      <label class="field">التصنيف</label><select class="control" id="categoryInput"><option value="classic">الكلاسيكية</option><option value="quick">السريعة</option><option value="original">الأصلية</option><option value="cards">ألعاب الورق</option></select>
+      <label class="field">الحد الأدنى للنقاط التجريبية</label><input class="control" type="number" id="minInput" min="0" step="1">
+      <label class="field">الحد الأقصى للنقاط التجريبية</label><input class="control" type="number" id="maxInput" min="0" step="1">
+      <label class="field">المضاعف الأقصى المعروض</label><input class="control" type="number" id="multInput" min="1" max="100" step=".1">
+      <label class="field">رابط صورة اللعبة</label><input class="control" id="imageInput" placeholder="/assets/games/...">
+      <button class="save" id="saveGame">حفظ إعدادات المعاينة</button><div class="toast" id="savedToast">تم تحديث بيانات المعاينة محليًا فقط.</div>
+    </div></section>
+  </section>
+  <section id="contentPage" class="view">
+    <section class="card"><h3 class="section-title">النصوص العامة</h3><label class="field">عنوان البانر</label><input class="control" value="أهلاً بك في مملكتك"><label class="field">النص التعريفي</label><textarea class="control">اكتشف ألعابًا متنوعة في تجربة ملكية بلمسات بنفسجية وذهبية.</textarea><label class="field">رسالة الفوز التجريبية</label><input class="control" value="أحسنت! هذه نتيجة توضيحية."><label class="field">رسالة عدم الفوز</label><input class="control" value="حاول مرة أخرى في العرض التوضيحي."><div class="notice">تُحرر جميع النصوص من هنا في النسخة الفعلية، مع معاينة قبل النشر وسجل للتعديلات.</div></section>
+  </section>
+  <section id="designPage" class="view">
+    <section class="card"><h3 class="section-title">هوية المنصة</h3><label class="field">اللون الأساسي</label><input class="control" type="color" value="#a83cff"><label class="field">اللون المساعد</label><input class="control" type="color" value="#ffd778"><label class="field">صورة الشخصية الملكية</label><input class="control" value="/assets/royal-king.webp"><label class="field">ترتيب البانر</label><select class="control"><option>الشخصية يسار والنص يمين</option><option>الشخصية يمين والنص يسار</option></select><div class="notice">في النسخة الفعلية ستُحفظ الألوان والأصول في إعدادات الموقع بعد اختبار المعاينة.</div></section>
+  </section>
+  <nav class="nav"><button class="active" data-page="dashboard"><span>⌂</span>الرئيسية</button><button data-page="gamesPage"><span>🎮</span>الألعاب</button><button data-page="contentPage"><span>✎</span>النصوص</button><button data-page="designPage"><span>🎨</span>التصميم</button></nav>
+</div>
+<script src="/admin.js" defer></script>
+</body>
+</html>
