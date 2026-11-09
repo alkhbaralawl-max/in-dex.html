@@ -103,7 +103,7 @@ function resolve(g,choice){
  case "coinflip":{const side=rand(2),label=side===0?"صورة":"كتابة";won=choice===side;mult=1.9;detail="نتيجة العملة: "+label;break;}
  case "wheel":{const colors=["ذهبي","بنفسجي","أزرق","بنفسجي","ذهبي","أزرق","بنفسجي","ذهبي","أزرق","بنفسجي"];const c=pick(colors);won=c===["ذهبي","بنفسجي","أزرق"][choice];mult=2.7;detail="توقفت العجلة على "+c;break;}
  case "scratch":{const s=["🍀","💎","⭐","🍒","👑"],r=[pick(s),pick(s),pick(s)],same=r[0]===r[1]&&r[1]===r[2],pair=r[0]===r[1]||r[0]===r[2]||r[1]===r[2];mult=same?4:pair?1.5:0;detail="البطاقة: "+r.join("  ");break;}
- case "dragon-tiger":{const d=card(),t=card(),w=d>t?"التنين":t>d?"النمر":"تعادل";won=choice===({0:"التنين",1:"النمر",2:"تعادل"}[choice])&&choice===({ "التنين":0,"النمر":1,"تعادل":2}[w]);mult=w==="تعادل"?8:2;detail="التنين "+cardName(d)+" · النمر "+cardName(t)+" · "+w;break;}
+ case "dragon-tiger":{const d=card(),t=card(),w=d>t?"التنين":t>d?"النمر":"تعادل";won=choice===({"التنين":0,"النمر":1,"تعادل":2}[w]);mult=w==="تعادل"?8:2;detail="التنين "+cardName(d)+" · النمر "+cardName(t)+" · "+w;break;}
  case "craps":{const a=dice(),b=dice(),sum=a+b;won=choice===0?[7,11].includes(sum):[2,3,12].includes(sum);mult=choice===0?2:3;detail="رمي النرد "+a+" + "+b+" = "+sum;break;}
  }
  const autoWin=["slots","video-poker","plinko","scratch"].includes(g.id);
@@ -133,7 +133,7 @@ function showMessage(message,win){
 function updateBalance(){
  const live=$("liveBalance");if(live)live.textContent=money(balance);
  const stats=document.querySelectorAll(".game-stats .stat b");if(stats[0])stats[0].textContent=money(balance);
- const account=$("accountView");if(account){let p=account.querySelector(".game-desc");if(p)p.textContent="الرصيد الافتراضي الحالي: "+money(balance)+" نقطة. تم حفظ سجل الجولات والمفضلة على هذا الجهاز للمعاينة.";}
+ const account=$("accountView");if(account){let p=account.querySelector(".game-desc");if(p)p.textContent="الرصيد الافتراضي الحالي: "+money(balance)+" نقطة. تم حفظ سجل الجولات والمفضلة على هذا الجهاز للمعاينة.";let panel=account.querySelector(".play-panel");if(panel&&!$("resetDemoBalance")){const b=document.createElement("button");b.id="resetDemoBalance";b.className="primary";b.textContent="إعادة ضبط الرصيد إلى 10,000 نقطة";b.style.marginTop="12px";b.onclick=()=>{balance=START_BALANCE;save();updateBalance();if(p)p.textContent="تمت إعادة ضبط رصيدك الافتراضي إلى 10,000 نقطة.";};panel.appendChild(b);}}
 }
 $("backHome").addEventListener("click",()=>setView("homeView"));
 $("homeIcon").addEventListener("click",()=>setView("homeView"));
@@ -160,3 +160,4 @@ const style=document.createElement("style");
 style.textContent='.demo-balance-row{display:flex;justify-content:space-between;align-items:center;background:#21132f;border:1px solid #654180;border-radius:12px;padding:10px 12px;margin-bottom:10px;color:#ddc5ee;font-size:12px}.demo-balance-row b{color:#ffd778;font-size:17px}.demo-label{display:block;text-align:right;color:#d9c5e8;font-size:11px;margin:8px 0 5px}.demo-stake{width:100%;height:44px;border:1px solid #654180;background:#160d20;color:#fff;border-radius:11px;padding:0 12px;font-size:16px}.demo-choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin:10px 0}.favorite-btn{width:100%;padding:10px;border:1px solid #88632c;border-radius:11px;background:#2b1d20;color:#ffd778;font-weight:800}.demo-fee{margin-top:9px;color:#d0b8df;font-size:9px;line-height:1.8}.demo-message{white-space:normal;line-height:1.9}';
 document.head.appendChild(style);
 renderGames();updateBalance();
+const initialResults=document.querySelector("#gameView .results");if(initialResults&&history.length)initialResults.innerHTML=history.slice(0,6).map(x=>'<span class="result-dot" title="'+x.game+'">'+(x.net>0?"✓":x.net===0?"=":"×")+'</span>').join("");
