@@ -1,2 +1,8 @@
 [functions.auth-api]
 verify_jwt = false
+
+[functions.ota-publish]
+verify_jwt = false
+
+[functions.ota-api]
+verify_jwt = false
