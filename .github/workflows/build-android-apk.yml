@@ -6,10 +6,13 @@ on:
       - main
     paths:
       - "icons/**"
-      - "android-wrapper/**"
-      - "scripts/**"
-      - "package.json"
-      - "package-lock.json"
+      - "android-wrapper/player/package.json"
+      - "android-wrapper/admin/package.json"
+      - "android-wrapper/player/capacitor.config.json"
+      - "android-wrapper/admin/capacitor.config.json"
+      - "android-wrapper/enable-webview-cookies.sh"
+      - "android-wrapper/player/android/**"
+      - "android-wrapper/admin/android/**"
       - ".github/workflows/build-android-apk.yml"
   workflow_dispatch:
 
