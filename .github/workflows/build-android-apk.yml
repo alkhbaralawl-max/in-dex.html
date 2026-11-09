@@ -6,7 +6,6 @@ on:
       - main
     paths:
       - "icons/**"
-      - "android-wrapper/shared/**"
       - "android-wrapper/player/package.json"
       - "android-wrapper/admin/package.json"
       - "android-wrapper/player/capacitor.config.json"
