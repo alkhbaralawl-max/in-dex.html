@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" type="image/svg+xml" href="/icons/app-icon.svg">
-<link rel="apple-touch-icon" href="/icons/app-icon.svg">
 <meta name="theme-color" content="#080806">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>ركن الغرب</title>
@@ -782,11 +776,11 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
       <div class="welcome-copy"><span class="welcome-kicker">03 / حسابك وتجربتك</span><h1>كل جولة لها <em>حكاية</em></h1><p>تابع سجل اللعب والنتائج، وارجع لألعابك بسهولة من أي شاشة. التجربة برصيد افتراضي فقط، ولا توجد أموال أو سحوبات حقيقية.</p></div>
     </article>
   </div>
-  <div class="welcome-bottom"><div id="welcomeDots" class="welcome-dots"><span class="active"></span><span></span><span></span></div><div class="welcome-actions"><button id="welcomeBack" class="welcome-back" type="button" hidden aria-label="الصفحة السابقة">→</button><button id="welcomeNext" class="welcome-next" type="button">التالي <span>←</span></button></div><button class="welcome-install" type="button" data-install-app>＋ ثبّت التطبيق على جهازك</button></div>
+  <div class="welcome-bottom"><div id="welcomeDots" class="welcome-dots"><span class="active"></span><span></span><span></span></div><div class="welcome-actions"><button id="welcomeBack" class="welcome-back" type="button" hidden aria-label="الصفحة السابقة">→</button><button id="welcomeNext" class="welcome-next" type="button">التالي <span>←</span></button></div></div>
 </section>
 <div id="v_auth" class="authw" hidden>
   <div class="auth-hero">
-    <button class="auth-install-link" type="button" data-install-app><span>↓</span> تثبيت التطبيق</button>
+    
     <div class="alogo"><div class="lg big">👑</div><h1 data-t="title"></h1><small>تجربة توعوية • رصيد افتراضي فقط</small></div>
     <h2>أهلاً بك في ركن الغرب</h2><p>ادخل إلى حسابك أو أنشئ حسابًا جديدًا بخطوات بسيطة.</p>
   </div>
@@ -2585,7 +2579,7 @@ document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
   $("activityPick").setAttribute("aria-expanded","false");
   renderAct();
 });
-let welcomeIndex=0,installPromptEvent=null;
+let welcomeIndex=0;
 function renderWelcome(){
   document.querySelectorAll("[data-welcome-slide]").forEach((slide,i)=>slide.hidden=i!==welcomeIndex);
   const dots=$("welcomeDots");if(dots)dots.querySelectorAll("span").forEach((dot,i)=>dot.classList.toggle("active",i===welcomeIndex));
@@ -2604,13 +2598,6 @@ function closeWelcome(){
 $("welcomeNext").onclick=()=>{if(welcomeIndex<2){welcomeIndex++;renderWelcome();}else closeWelcome();};
 $("welcomeBack").onclick=()=>{if(welcomeIndex>0){welcomeIndex--;renderWelcome();}};
 $("welcomeSkip").onclick=closeWelcome;
-window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPromptEvent=event;});
-window.addEventListener("appinstalled",()=>{installPromptEvent=null;toast("تم تثبيت تطبيق ركن الغرب على جهازك.");});
-async function installRuknApp(){
-  if(installPromptEvent){installPromptEvent.prompt();try{await installPromptEvent.userChoice;}catch(e){}installPromptEvent=null;return;}
-  location.href="/install.html";
-}
-document.querySelectorAll("[data-install-app]").forEach(button=>button.addEventListener("click",installRuknApp));
 setAuth("login");showAuth();loadPublicConfig();openWelcome();
 (async()=>{
   try{const data=await apiCall("me",{},false);if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
@@ -2618,5 +2605,4 @@ setAuth("login");showAuth();loadPublicConfig();openWelcome();
 })();
 setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
 </script>
-<script src="/pwa.js" defer></script>
 </body></html>
