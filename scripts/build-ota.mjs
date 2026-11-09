@@ -6,7 +6,7 @@ import archiver from "archiver";
 import { build } from "esbuild";
 
 const ROOT = process.cwd();
-const BASE_URL = (process.env.OTA_BASE_URL || "https://rukn-algharb-ota.vercel.app").replace(/\/$/, "");
+const BASE_URL = (process.env.OTA_BASE_URL || "https://rukn-algharb-main.vercel.app").replace(/\/$/, "");
 const SUPABASE_URL = "https://qoeefydvmkdigixsbpuy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY =
   process.env.SUPABASE_PUBLISHABLE_KEY ||
@@ -169,7 +169,7 @@ async function publishAdminBundle(result) {
 }
 
 async function publishAll() {
-  const playerOtaRoot = path.join(ROOT, "public", "ota", "player");
+  const playerOtaRoot = path.join(ROOT, "ota", "player");
   await rm(playerOtaRoot, { recursive: true, force: true });
   await mkdir(playerOtaRoot, { recursive: true });
   if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
