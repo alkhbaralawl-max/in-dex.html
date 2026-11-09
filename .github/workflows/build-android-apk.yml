@@ -199,12 +199,14 @@ jobs:
           test -s downloads/Rukn-AlGharb-Admin.apk
           test -s downloads/SHA256SUMS.txt
           (cd downloads && sha256sum -c SHA256SUMS.txt)
+          (cd downloads && sha256sum Rukn-AlGharb-Players.apk > SHA256SUMS-Players.txt)
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add downloads/Rukn-AlGharb-Players.apk downloads/Rukn-AlGharb-Admin.apk downloads/SHA256SUMS.txt
+          git rm -f --ignore-unmatch downloads/Rukn-AlGharb-Admin.apk downloads/SHA256SUMS.txt
+          git add downloads/Rukn-AlGharb-Players.apk downloads/SHA256SUMS-Players.txt
           if git diff --cached --quiet; then
-            echo "Published APK files are already current."
+            echo "Public player APK is already current."
           else
-            git commit -m "Publish latest Rukn Algharb Android APKs"
+            git commit -m "Publish player-only Rukn Algharb download"
             git push origin HEAD:main
           fi
