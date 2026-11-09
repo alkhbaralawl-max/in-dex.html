@@ -245,18 +245,18 @@ function genCrashPoint(rtp:number,scale:number,cap=20) {
   if(secureRandom()>(scale)) cp=Math.min(cp,money(1+secureRandom()*.3));
   return cp;
 }
-function slotRaw(a:number,b:number,c:number) {
-  const pay=[0,2,4,8,16,20];
-  if(a===b&&b===c)return pay[a];
-  if(a===b||b===c||a===c)return 2;
+const DEFAULT_SLOT_PAYOUTS=[0,2,4,8,16,20];
+function slotRaw(a:number,b:number,c:number,payTable:number[]=DEFAULT_SLOT_PAYOUTS,pairPayout=2) {
+  if(a===b&&b===c)return Number(payTable[a]||0);
+  if(a===b||b===c||a===c)return Number(pairPayout)||0;
   return 0;
 }
-function slotScale(rtp:number,cap=20) {
+function slotScale(rtp:number,cap=20,payTable:number[]=DEFAULT_SLOT_PAYOUTS,pairPayout=2) {
   const p=[.44,.26,.16,.09,.04,.01];let lo=0,hi=100;
   for(let i=0;i<52;i++){
     const s=(lo+hi)/2;let exp=0;
     for(let a=0;a<6;a++)for(let b=0;b<6;b++)for(let c=0;c<6;c++)
-      exp+=p[a]*p[b]*p[c]*Math.min(slotRaw(a,b,c)*s,cap);
+      exp+=p[a]*p[b]*p[c]*Math.min(slotRaw(a,b,c,payTable,pairPayout)*s,cap);
     if(exp<rtp/100)lo=s;else hi=s;
   }
   return (lo+hi)/2;
@@ -469,7 +469,7 @@ async function main(req:Request) {
       "logout","play","active_start","apple_pick","apple_cash","crash_tick","crash_cash",
       "sports_bet","sports_chain","chat_send","credit_request","admin_adjust","admin_status","admin_match_save",
       "admin_market_settle","admin_credit_review","admin_config_save","admin_chat_send",
-      "admin_create_account","admin_update_account","admin_set_sports_enabled","virtual_withdrawal","profile_update","admin_set_scale","admin_set_game_caps","admin_reset_stats","admin_delete_account","admin_match_delete","sports_feed_sync"
+      "admin_create_account","admin_update_account","admin_reset_account_password","admin_set_sports_enabled","virtual_withdrawal","profile_update","admin_set_scale","admin_set_game_caps","admin_reset_stats","admin_delete_account","admin_match_delete","sports_feed_sync"
     ]);
     const {session,user}=await authenticate(db,req,writes.has(action));
     if(action==="sports_feed_sync") {
@@ -561,12 +561,17 @@ async function main(req:Request) {
       const scale=await userScale(user),cap=userGameCap(user,game,gameId);
       let payout=0,outcome:Obj={};
       if(game.engine==="slot") {
-        const weights=[.44,.26,.16,.09,.04,.01],factor=slotScale(rtp,cap);
+        const weights=[.44,.26,.16,.09,.04,.01];
+        const hasFinalPaytable=Array.isArray(game.slotPayouts)&&game.slotPayouts.length===6;
+        const payTable=hasFinalPaytable?game.slotPayouts.map((x:any)=>Number(x)||0):DEFAULT_SLOT_PAYOUTS;
+        const pairPayout=hasFinalPaytable?Number(game.slotPairPayout??2):2;
+        // Custom table values are final display multipliers; legacy configurations retain their original RTP scaling.
+        const factor=hasFinalPaytable?1:slotScale(rtp,cap,payTable,pairPayout);
         let triple=[0,0,0],raw=0;
         const forceLoss=secureRandom()>(scale);
         for(let n=0;n<120;n++){
           triple=[pickWeighted(weights),pickWeighted(weights),pickWeighted(weights)];
-          raw=Math.min(slotRaw(triple[0],triple[1],triple[2])*factor,cap);
+          raw=Math.min(slotRaw(triple[0],triple[1],triple[2],payTable,pairPayout)*factor,cap);
           if(!forceLoss||raw===0) break;
         }
         payout=money(stake*raw);outcome={symbols:triple,multiplier:raw};
@@ -903,6 +908,28 @@ async function main(req:Request) {
       }
       throw new HttpError(409,"legacy_id_generation_failed");
     }
+    if(action==="admin_reset_account_password") {
+      requireAdmin(user);
+      const target=String(body.userId||"");
+      if(!target) throw new HttpError(400,"invalid_account_id");
+      const {data:targetUser,error:targetError}=await db.from("app_users")
+        .select("id,username,role,status,legacy_user_id").eq("id",target).maybeSingle();
+      if(targetError||!targetUser) throw new HttpError(404,"account_not_found");
+      if(targetUser.role!=="player"||targetUser.status!=="active") throw new HttpError(403,"account_not_resettable");
+      const alphabet="ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%";
+      const bytes=crypto.getRandomValues(new Uint8Array(20));
+      const temporaryPassword=Array.from(bytes,(x)=>alphabet[x%alphabet.length]).join("");
+      const {data:updated,error:updateError}=await db.from("app_users")
+        .update({password_hash:await passwordHash(temporaryPassword),legacy_password_hash:null})
+        .eq("id",target).eq("role","player").select("id").maybeSingle();
+      if(updateError||!updated) throw new HttpError(500,"password_reset_failed");
+      const now=new Date().toISOString();
+      const {error:sessionError}=await db.from("app_sessions").update({revoked_at:now})
+        .eq("user_id",target).is("revoked_at",null);
+      if(sessionError) throw new HttpError(500,"session_revoke_failed");
+      await audit(db,user.id,target,"account.password_reset","user",target,{username:targetUser.username,legacy_user_id:targetUser.legacy_user_id||null});
+      return response({ok:true,username:targetUser.username,legacyUserId:targetUser.legacy_user_id,temporaryPassword});
+    }
     if(action==="admin_update_account") {
       requireAdmin(user);
       const target=String(body.userId||"");
@@ -1071,6 +1098,26 @@ async function main(req:Request) {
       const allowed=["games","texts","colors","settings","pages"];
       if(!allowed.includes(section)||!body.value||typeof body.value!=="object"||Array.isArray(body.value))
         throw new HttpError(400,"invalid_config_section");
+      if(section==="games"){
+        for(const [gameId,game] of Object.entries(body.value as Obj)){
+          if(!/^[a-z0-9_-]{1,60}$/.test(gameId)||!game||typeof game!=="object"||Array.isArray(game))
+            throw new HttpError(400,"invalid_game_config");
+          const cfg=game as Obj;
+          if(cfg.maxMultiplier!==undefined&&cfg.maxMultiplier!==null){
+            const cap=Number(cfg.maxMultiplier);
+            if(!Number.isFinite(cap)||cap<1||cap>100) throw new HttpError(400,"invalid_game_multiplier_cap");
+          }
+          if(cfg.slotPayouts!==undefined){
+            if(!Array.isArray(cfg.slotPayouts)||cfg.slotPayouts.length!==6||
+              cfg.slotPayouts.some((x:any)=>!Number.isFinite(Number(x))||Number(x)<0||Number(x)>100))
+              throw new HttpError(400,"invalid_slot_payouts");
+          }
+          if(cfg.slotPairPayout!==undefined){
+            const pair=Number(cfg.slotPairPayout);
+            if(!Number.isFinite(pair)||pair<0||pair>100) throw new HttpError(400,"invalid_slot_pair_payout");
+          }
+        }
+      }
       const current=await appConfig(db);
       const next={...current,[section]:body.value};
       if(section==="settings"){
