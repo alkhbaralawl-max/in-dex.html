@@ -131,7 +131,10 @@ async function createSignedBundle(directory, app) {
   }
   const derivedPublicKey = createPublicKey(privateKey).export({ type: "spki", format: "pem" }).toString();
   const normalizeKey = (value) => value.replace(/\\s+/g, "");
-  if (normalizeKey(derivedPublicKey) !== normalizeKey(configuredPublicKey)) {
+  const derivedFingerprint = createHash("sha256").update(normalizeKey(derivedPublicKey)).digest("hex");
+  const embeddedFingerprint = createHash("sha256").update(normalizeKey(configuredPublicKey)).digest("hex");
+  console.log(app.name + " OTA signing-key fingerprint: private-derived=" + derivedFingerprint + " embedded=" + embeddedFingerprint);
+  if (derivedFingerprint !== embeddedFingerprint) {
     throw new Error("OTA signing key does not match the public key embedded in the " + app.name + " APK.");
   }
 
