@@ -156,7 +156,8 @@ async function publishAdminBundle(result) {
       "x-ota-bundle-id": result.bundleId,
       "x-ota-checksum": result.manifest.checksum,
       "x-ota-signature": result.manifest.signature,
-      "x-ota-release-notes": result.manifest.releaseNotes
+      "x-ota-release-notes": result.manifest.releaseNotes,
+      "x-ota-source-commit": process.env.VERCEL_GIT_COMMIT_SHA || ""
     },
     body: result.zip
   });
@@ -171,6 +172,11 @@ async function publishAll() {
   const playerOtaRoot = path.join(ROOT, "public", "ota", "player");
   await rm(playerOtaRoot, { recursive: true, force: true });
   await mkdir(playerOtaRoot, { recursive: true });
+  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+    await writeFile(path.join(playerOtaRoot, "preview-build.txt"), "OTA publishing runs only from the production branch.\\n", "utf8");
+    console.log("preview: skipped production OTA publication");
+    return;
+  }
   const temporary = await mkdtemp(path.join(os.tmpdir(), "rukn-ota-"));
 
   try {
