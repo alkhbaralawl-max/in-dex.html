@@ -35,6 +35,7 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   window.addEventListener("focus", retryUpdateCheck);
   document.addEventListener("visibilitychange", retryUpdateCheck);
   window.addEventListener("online", retryUpdateCheck);
+  window.setInterval(retryUpdateCheck, 45000);
 
   function addStyles() {
     if (document.getElementById("rukn-ota-style")) return;
