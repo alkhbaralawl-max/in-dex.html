@@ -12,6 +12,7 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   };
   if (!expectedAppIds[config.app] || config.appId !== expectedAppIds[config.app]) return;
 
+  window.__RUKN_NATIVE_OTA__ = true;
   const ready = LiveUpdate.ready();
   ready.then(() => {
     const check = () => checkForUpdate().catch(() => {});
