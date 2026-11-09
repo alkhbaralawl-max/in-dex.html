@@ -172,11 +172,6 @@ async function publishAll() {
   const playerOtaRoot = path.join(ROOT, "ota", "player");
   await rm(playerOtaRoot, { recursive: true, force: true });
   await mkdir(playerOtaRoot, { recursive: true });
-  if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
-    await writeFile(path.join(playerOtaRoot, "preview-build.txt"), "OTA publishing runs only from the production branch.\\n", "utf8");
-    console.log("preview: skipped production OTA publication");
-    return;
-  }
   const temporary = await mkdtemp(path.join(os.tmpdir(), "rukn-ota-"));
 
   try {
@@ -209,6 +204,15 @@ async function publishAll() {
     );
     if (!adminResponse.ok) throw new Error("Could not fetch the current admin.html source: HTTP " + adminResponse.status);
     await writeFile(path.join(adminDir, "index.html"), await adminResponse.text(), "utf8");
+
+    if (process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "production") {
+      const playerPreviewId = await makeBundle(playerDir, { ...APPS.player, name: "player" });
+      const adminPreviewId = await makeBundle(adminDir, { ...APPS.admin, name: "admin" });
+      console.log("preview: player OTA bundle assembled " + playerPreviewId);
+      console.log("preview: admin OTA bundle assembled " + adminPreviewId);
+      console.log("preview: skipped signing and production publication");
+      return;
+    }
 
     const playerResult = await createSignedBundle(playerDir, { ...APPS.player, name: "player" });
     await writeFile(path.join(playerOtaRoot, playerResult.bundleId + ".zip"), playerResult.zip);
