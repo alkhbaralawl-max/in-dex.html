@@ -808,11 +808,7 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
   <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">♛</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
-  <section class="matches-section" id="sportsHomeSection">
-    <div class="matches-heading"><div><b>⚽ <span data-t="matchesTitle">مباريات اليوم</span></b><small data-t="matchesSubtitle">اختر نتيجة المباراة</small></div><span id="matchesCount" class="matches-count">0 مباراة</span></div>
-    <div id="matchesList" class="matches-list"></div>
-    <div id="matchesEmpty" class="matches-empty" data-t="matchesEmpty">لا توجد مباريات مضافة حاليًا.</div>
-  </section>
+  <section id="sportsHomeSection" hidden aria-hidden="true"><div id="matchesList"></div><div id="matchesEmpty"></div><span id="matchesCount"></span></section>
   <section class="games-home-section" id="gamesHomeSection" hidden>
     <div class="matches-heading"><div><b>🎮 ألعاب ركن الغرب</b><small>اختر لعبة وابدأ جولة جديدة برصيد افتراضي</small></div><span class="games-count" id="gamesHomeCount"></span></div>
     <div class="games-home-grid" id="gamesHomeList"></div>
