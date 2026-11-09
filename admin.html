@@ -34,8 +34,8 @@ textarea.control{min-height:74px;resize:vertical}
   <div class="preview">معاينة تصميم لوحة المشرف — جميع التغييرات محلية ولا تُحفظ في الخادم</div>
   <header class="top"><div><div class="brand">♛ ركن الغرب</div><div class="sub">مركز التحكم وإدارة الألعاب</div></div><div style="font-size:24px;color:var(--gold)">⚙</div></header>
   <section id="dashboard" class="view active">
-    <div class="stats"><div class="stat"><b>20</b><small>إجمالي الألعاب</small></div><div class="stat"><b id="activeCount">20</b><small>ألعاب مفعّلة</small></div><div class="stat"><b>0</b><small>مباريات كرة قدم</small></div></div>
-    <section class="card"><h3 class="section-title">نظرة عامة</h3><div style="font-size:11px;color:var(--muted);line-height:2">إدارة الألعاب والنصوص والألوان من لوحة واحدة. لكل لعبة إعداداتها الخاصة وسجل تغييراتها.</div><div class="notice">نظام كرة القدم غير موجود في هذه الواجهة. هذه لوحة معاينة فقط ولا تتصل بقاعدة البيانات.</div></section>
+    <div class="stats"><div class="stat"><b>20</b><small>إجمالي الألعاب</small></div><div class="stat"><b id="activeCount">20</b><small>ألعاب مفعّلة</small></div><div class="stat"><b>4</b><small>أقسام الإدارة</small></div></div>
+    <section class="card"><h3 class="section-title">نظرة عامة</h3><div style="font-size:11px;color:var(--muted);line-height:2">إدارة الألعاب والنصوص والألوان من لوحة واحدة. لكل لعبة إعداداتها الخاصة وسجل تغييراتها.</div><div class="notice">جميع أدوات هذه اللوحة مخصصة لإدارة ألعاب المنصة ومحتواها. هذه معاينة فقط ولا تتصل بقاعدة البيانات.</div></section>
     <section class="card"><h3 class="section-title">الألعاب الأكثر إعدادًا</h3><div id="dashboardTop" class="game-list"></div></section>
   </section>
   <section id="gamesPage" class="view">
@@ -58,7 +58,14 @@ textarea.control{min-height:74px;resize:vertical}
   <section id="designPage" class="view">
     <section class="card"><h3 class="section-title">هوية المنصة</h3><label class="field">اللون الأساسي</label><input class="control" type="color" value="#a83cff"><label class="field">اللون المساعد</label><input class="control" type="color" value="#ffd778"><label class="field">صورة الشخصية الملكية</label><input class="control" value="/assets/royal-king.webp"><label class="field">ترتيب البانر</label><select class="control"><option>الشخصية يسار والنص يمين</option><option>الشخصية يمين والنص يسار</option></select><div class="notice">في النسخة الفعلية ستُحفظ الألوان والأصول في إعدادات الموقع بعد اختبار المعاينة.</div></section>
   </section>
-  <nav class="nav"><button class="active" data-page="dashboard"><span>⌂</span>الرئيسية</button><button data-page="gamesPage"><span>🎮</span>الألعاب</button><button data-page="contentPage"><span>✎</span>النصوص</button><button data-page="designPage"><span>🎨</span>التصميم</button></nav>
+  <section id="historyPage" class="view">
+    <section class="card"><h3 class="section-title">سجل التغييرات</h3>
+      <div class="game-row"><div class="game-emoji">🎮</div><div class="game-row-info"><b>تحديث وصف لعبة السلوتس</b><small>معاينة محلية · منذ دقائق</small></div><span style="color:var(--green);font-size:9px">تجريبي</span></div>
+      <div class="game-row"><div class="game-emoji">🎨</div><div class="game-row-info"><b>تغيير لون الواجهة</b><small>معاينة محلية · اليوم</small></div><span style="color:var(--green);font-size:9px">تجريبي</span></div>
+      <div class="notice">في النسخة المتصلة بالخادم سيُسجّل اسم المشرف والوقت والقيم السابقة والجديدة لكل تعديل.</div>
+    </section>
+  </section>
+  <nav class="nav"><button class="active" data-page="dashboard"><span>⌂</span>الرئيسية</button><button data-page="gamesPage"><span>🎮</span>الألعاب</button><button data-page="contentPage"><span>✎</span>النصوص</button><button data-page="designPage"><span>🎨</span>التصميم</button><button data-page="historyPage"><span>◷</span>السجل</button></nav>
 </div>
 <script src="/admin.js" defer></script>
 </body>
