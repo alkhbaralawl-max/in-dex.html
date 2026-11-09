@@ -28,6 +28,8 @@ jobs:
     name: Build player and private admin APKs
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: read
     steps:
       - name: Checkout player site source
         uses: actions/checkout@v4
@@ -169,3 +171,40 @@ jobs:
             android-wrapper/dist/SHA256SUMS.txt
           if-no-files-found: error
           retention-days: 30
+
+  publish-downloads:
+    name: Publish APKs to the separate download page
+    runs-on: ubuntu-latest
+    needs: build-android
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout the Pages source branch
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Download the freshly built APKs
+        uses: actions/download-artifact@v4
+        with:
+          name: Rukn-AlGharb-Two-Android-Apps
+          path: downloads
+
+      - name: Verify and publish direct APK files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s downloads/Rukn-AlGharb-Players.apk
+          test -s downloads/Rukn-AlGharb-Admin.apk
+          test -s downloads/SHA256SUMS.txt
+          (cd downloads && sha256sum -c SHA256SUMS.txt)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add downloads/Rukn-AlGharb-Players.apk downloads/Rukn-AlGharb-Admin.apk downloads/SHA256SUMS.txt
+          if git diff --cached --quiet; then
+            echo "Published APK files are already current."
+          else
+            git commit -m "Publish latest Rukn Algharb Android APKs"
+            git push origin HEAD:main
+          fi
