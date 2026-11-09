@@ -9,5 +9,13 @@
   },
   "android": {
     "allowMixedContent": false
+  },
+  "plugins": {
+    "LiveUpdate": {
+      "publicKey": "-----BEGIN PUBLIC KEY-----MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAuaPy45B4PQCrER/oH0SyN3EoRVefoH18653qKG7YR7bzJKkUTlOT3U7J2B+5nsOsll2W928XPeXo0BKdX55xUnSFLbNIWJze/lWd+KqVRvHsQkMmhxOVSQbZWDyRqJ40lcCPtdTnlm/eyVDLMKSodmFGE0eLYdiKkeT+1xcqdmp0wR1Q67JBTkqt9CBXviHmsRyolLA8Mmlzt9q8yco0e01b+ZJZBeIrtYydFxg+DwkwGVJXZWJq0jnQF75e49uoNe/UaD/Ch++8ExBwEOjxuQvzoEMNGn5js5pQdaJ5+emtCIvZY8kp1TGlbt/rIR8gzBSfd0Ei9PFisYBZmxEpcrvyAcmEXPPzaJ0Fd2RJAPqE9+8//rcD2zzm+N2QgjYEMLc6xi5O9mgCh10AgckOLHTxUtd9/d6XDjUPGEDSsCmHrBJVi2dirtvMcDNxi/7ePP3rSu1cS6pIcJQRpMjB0bEeeg5aVRuDfgYUDWewNieXIXz0Ny4Ycw0WoKsojmy8Mo5Wyjbjlu89r8oFZoFUi/ZlKloPNbBM1i5THFR/RpbFvspE+tlr5T3YjB1cGl/oea+Y3UWdDCVroKLYwB/31nVmTy0oQBYlo4OU4fBUQ1UIDC7DJh1kTZk4E84uPIBHIwTaxo6KhjBdcfUjCB+ztuTB0uNF2hnN8WKyaoPCVFkCAwEAAQ==-----END PUBLIC KEY-----",
+      "readyTimeout": 20000,
+      "autoUpdateStrategy": "none",
+      "autoBlockRolledBackBundles": true
+    }
   }
 }
