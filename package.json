@@ -1,0 +1,16 @@
+{
+  "name": "rukn-algharb-ota-publisher",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:ota": "node scripts/build-ota.mjs --mode publish"
+  },
+  "dependencies": {
+    "@capawesome/capacitor-live-update": "8.7.1",
+    "archiver": "7.0.1",
+    "esbuild": "0.25.10"
+  }
+}
