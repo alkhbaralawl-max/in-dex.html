@@ -3,14 +3,14 @@ set -euo pipefail
 
 APP_DIR="${1:?Usage: enable-webview-cookies.sh <capacitor-app-directory>}"
 ANDROID_DIR="$APP_DIR/android"
-MAIN_ACTIVITY="$(find "$ANDROID_DIR/app/src/main/java" \\( -name MainActivity.kt -o -name MainActivity.java \\) -print -quit)"
+MAIN_ACTIVITY="$(find "$ANDROID_DIR/app/src/main/java" \( -name MainActivity.kt -o -name MainActivity.java \) -print -quit)"
 
 if [[ -z "$MAIN_ACTIVITY" || ! -f "$MAIN_ACTIVITY" ]]; then
   echo "MainActivity source was not generated for $APP_DIR" >&2
   exit 1
 fi
 
-APP_PACKAGE="$(sed -nE 's/^package[[:space:]]+([A-Za-z0-9_.]+);?$/\\1/p' "$MAIN_ACTIVITY" | head -n 1)"
+APP_PACKAGE="$(sed -nE 's/^package[[:space:]]+([A-Za-z0-9_.]+);?$/\1/p' "$MAIN_ACTIVITY" | head -n 1)"
 if [[ -z "$APP_PACKAGE" ]]; then
   echo "Could not read the MainActivity package from $MAIN_ACTIVITY" >&2
   exit 1
