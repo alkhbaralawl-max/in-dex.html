@@ -95,18 +95,32 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
     if (typeof manifest.signature !== "string" || !/^[A-Za-z0-9+/]+=*$/.test(manifest.signature)) return false;
     if (typeof manifest.url !== "string") return false;
     const url = new URL(manifest.url);
-    const manifestOrigin = new URL(config.manifestUrl).origin;
-    return url.protocol === "https:" &&
-      url.origin === manifestOrigin &&
-      url.pathname.startsWith("/ota/" + config.app + "/") &&
-      url.pathname.endsWith(".zip");
+    if (url.protocol !== "https:") return false;
+    if (config.app === "player") {
+      const manifestOrigin = new URL(config.manifestUrl).origin;
+      return url.origin === manifestOrigin &&
+        url.pathname.startsWith("/ota/player/") &&
+        url.pathname.endsWith(".zip");
+    }
+    if (config.app === "admin") {
+      return url.origin === "https://qoeefydvmkdigixsbpuy.supabase.co" &&
+        url.pathname.startsWith("/storage/v1/object/sign/ota-admin/admin/") &&
+        url.pathname.endsWith(".zip") &&
+        url.searchParams.has("token");
+    }
+    return false;
   }
 
   async function checkForUpdate() {
+    const isAdmin = config.app === "admin";
     const response = await fetch(config.manifestUrl, {
-      method: "GET",
+      method: isAdmin ? "POST" : "GET",
       cache: "no-store",
-      headers: { Accept: "application/json" }
+      credentials: isAdmin ? "include" : "omit",
+      headers: isAdmin
+        ? { "Content-Type": "application/json", apikey: config.supabasePublishableKey }
+        : { Accept: "application/json" },
+      body: isAdmin ? JSON.stringify({ action: "admin_manifest" }) : undefined
     });
     if (!response.ok) return;
     const manifest = await response.json();
