@@ -46,6 +46,13 @@ async function makeBundle(directory, app) {
   await rm(path.join(directory, "ota.js"), { force: true });
   await rm(path.join(directory, "ota-config.js"), { force: true });
 
+  const indexPath = path.join(directory, "index.html");
+  let html = await readFile(indexPath, "utf8");
+  html = html
+    .replace(/<script\b[^>]*src=["'][^"']*ota-config\.js[^"']*["'][^>]*><\/script>/gi, "")
+    .replace(/<script\b[^>]*src=["'][^"']*ota\.js[^"']*["'][^>]*><\/script>/gi, "");
+  await writeFile(indexPath, html, "utf8");
+
   await build({
     entryPoints: [path.join(ROOT, "android-wrapper/shared/ota-runtime.js")],
     bundle: true,
@@ -80,11 +87,6 @@ async function makeBundle(directory, app) {
     "utf8"
   );
 
-  const indexPath = path.join(directory, "index.html");
-  let html = await readFile(indexPath, "utf8");
-  html = html
-    .replace(/<script\b[^>]*src=["'][^"']*ota-config\.js[^"']*["'][^>]*><\/script>/gi, "")
-    .replace(/<script\b[^>]*src=["'][^"']*ota\.js[^"']*["'][^>]*><\/script>/gi, "");
   const tags = '<script src="./ota-config.js"></script><script src="./ota.js"></script>';
   if (!/<\/head>/i.test(html)) throw new Error("index.html is missing </head>.");
   html = html.replace(/<\/head>/i, tags + "</head>");
