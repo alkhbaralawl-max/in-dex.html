@@ -5,14 +5,11 @@ on:
     branches:
       - main
     paths:
-      - "index.html"
-      - "manifest.webmanifest"
-      - "install.html"
-      - "install.js"
-      - "pwa.js"
-      - "sw.js"
       - "icons/**"
       - "android-wrapper/**"
+      - "scripts/**"
+      - "package.json"
+      - "package-lock.json"
       - ".github/workflows/build-android-apk.yml"
   workflow_dispatch:
 
@@ -55,6 +52,9 @@ jobs:
           distribution: temurin
           java-version: "21"
 
+      - name: Install OTA builder dependencies
+        run: npm install --no-audit --no-fund
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
@@ -74,6 +74,10 @@ jobs:
           cp icons/app-icon.svg android-wrapper/admin/assets/icon.svg
           test -s android-wrapper/player/www/index.html
           test -s android-wrapper/admin/www/index.html
+          node scripts/build-ota.mjs --mode embedded --app player --dir android-wrapper/player/www
+          node scripts/build-ota.mjs --mode embedded --app admin --dir android-wrapper/admin/www
+          test -s android-wrapper/player/www/ota.js
+          test -s android-wrapper/admin/www/ota.js
           ! grep -q '"url"' android-wrapper/player/capacitor.config.json
           ! grep -q '"url"' android-wrapper/admin/capacitor.config.json
 
