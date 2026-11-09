@@ -156,7 +156,6 @@ async function publishAdminBundle(result) {
       "x-ota-bundle-id": result.bundleId,
       "x-ota-checksum": result.manifest.checksum,
       "x-ota-signature": result.manifest.signature,
-      "x-ota-release-notes": result.manifest.releaseNotes,
       "x-ota-source-commit": process.env.VERCEL_GIT_COMMIT_SHA || ""
     },
     body: result.zip
