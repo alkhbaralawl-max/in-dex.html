@@ -9,7 +9,8 @@
   },
   "dependencies": {
     "@capacitor/android": "8.5.3",
-    "@capacitor/core": "8.5.3"
+    "@capacitor/core": "8.5.3",
+    "@capawesome/capacitor-live-update": "8.7.1"
   },
   "devDependencies": {
     "@capacitor/assets": "4.0.0",
