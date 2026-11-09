@@ -1,0 +1,4 @@
+node_modules/
+**/node_modules/
+/ota/
+.DS_Store
