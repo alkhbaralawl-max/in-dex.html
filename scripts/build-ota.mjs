@@ -130,7 +130,7 @@ async function createSignedBundle(directory, app) {
     throw new Error("Missing embedded Live Update public key for " + app.name + ".");
   }
   const derivedPublicKey = createPublicKey(privateKey).export({ type: "spki", format: "pem" }).toString();
-  const normalizeKey = (value) => value.replace(/\\s+/g, "");
+  const normalizeKey = (value) => value.replace(/\s+/g, "");
   const derivedFingerprint = createHash("sha256").update(normalizeKey(derivedPublicKey)).digest("hex");
   const embeddedFingerprint = createHash("sha256").update(normalizeKey(configuredPublicKey)).digest("hex");
   console.log(app.name + " OTA signing-key fingerprint: private-derived=" + derivedFingerprint + " embedded=" + embeddedFingerprint);
