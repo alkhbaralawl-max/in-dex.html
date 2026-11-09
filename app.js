@@ -28,10 +28,10 @@ function renderGames(){
  $("gamesGrid").innerHTML=list.map(g=>'<button class="game-card" data-game="'+g.id+'" style="--glow:'+({classic:"#c44dff88",quick:"#e3a94d88",original:"#4dbdff77",cards:"#e55eaa77"}[g.category])+'"><div class="game-art"><span class="game-tag">'+g.tag+'</span><span class="emoji">'+g.emoji+'</span></div><div class="game-info"><div><b>'+g.name+'</b><small>افتح التفاصيل</small></div><span class="game-arrow">←</span></div></button>').join("");
  document.querySelectorAll("[data-game]").forEach(btn=>btn.addEventListener("click",()=>openGame(btn.dataset.game)));
 }
-function setView(id){
+function setView(id,navActive){
  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
  $(id).classList.add("active");
- document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.nav===id.replace("View","").toLowerCase()));
+ document.querySelectorAll(".nav-item").forEach(n=>n.classList.toggle("active",n.dataset.nav===(navActive||id.replace("View","").toLowerCase())));
  window.scrollTo({top:0,behavior:"smooth"});
 }
 function openGame(id){
@@ -43,7 +43,7 @@ function openGame(id){
  selectedOption=0;
  document.querySelectorAll("[data-option]").forEach(b=>b.addEventListener("click",()=>{selectedOption=Number(b.dataset.option);document.querySelectorAll("[data-option]").forEach(x=>x.classList.toggle("selected",x===b));$("demoMessage").classList.remove("show");}));
  $("demoMessage").classList.remove("show");
- setView("gameView");
+ setView("gameView","games");
 }
 $("runDemo").addEventListener("click",()=>{
  const options=document.querySelectorAll("[data-option]");
