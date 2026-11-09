@@ -13,10 +13,11 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   if (!expectedAppIds[config.app] || config.appId !== expectedAppIds[config.app]) return;
 
   window.__RUKN_NATIVE_OTA__ = true;
+  let checkingForUpdate = false;
   const markReadyAndCheck = async () => {
     try {
       await LiveUpdate.ready();
-      setTimeout(() => checkForUpdate().catch(() => {}), 500);
+      setTimeout(() => checkForUpdate().catch(() => {}), 800);
     } catch (_) {}
   };
   if (document.readyState === "loading") {
@@ -24,6 +25,16 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   } else {
     void markReadyAndCheck();
   }
+  // The admin app may start before the admin signs in. Recheck after login,
+  // when the user returns to the app, and after the app becomes visible.
+  const retryUpdateCheck = () => {
+    if (document.visibilityState === "visible") {
+      setTimeout(() => checkForUpdate().catch(() => {}), 250);
+    }
+  };
+  window.addEventListener("focus", retryUpdateCheck);
+  document.addEventListener("visibilitychange", retryUpdateCheck);
+  window.addEventListener("online", retryUpdateCheck);
 
   function addStyles() {
     if (document.getElementById("rukn-ota-style")) return;
@@ -112,6 +123,16 @@ import { LiveUpdate } from "@capawesome/capacitor-live-update";
   }
 
   async function checkForUpdate() {
+    if (checkingForUpdate || document.getElementById("rukn-ota-overlay")) return;
+    checkingForUpdate = true;
+    try {
+      await performUpdateCheck();
+    } finally {
+      checkingForUpdate = false;
+    }
+  }
+
+  async function performUpdateCheck() {
     const isAdmin = config.app === "admin";
     const response = await fetch(config.manifestUrl, {
       method: isAdmin ? "POST" : "GET",
