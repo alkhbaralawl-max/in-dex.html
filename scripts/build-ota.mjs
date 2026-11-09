@@ -1,5 +1,4 @@
 import { createHash, createPrivateKey, sign } from "node:crypto";
-import { createReadStream } from "node:fs";
 import { cp, mkdir, mkdtemp, readFile, readdir, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -7,7 +6,11 @@ import archiver from "archiver";
 import { build } from "esbuild";
 
 const ROOT = process.cwd();
-const BASE_URL = "https://rukn-algharb-main.vercel.app";
+const BASE_URL = (process.env.OTA_BASE_URL || "https://rukn-algharb-ota.vercel.app").replace(/\/$/, "");
+const SUPABASE_URL = "https://qoeefydvmkdigixsbpuy.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =
+  process.env.SUPABASE_PUBLISHABLE_KEY ||
+  "sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
 const APPS = {
   player: {
     appId: "com.ruknalgharb.player",
@@ -18,7 +21,8 @@ const APPS = {
   admin: {
     appId: "com.ruknalgharb.admin",
     keyEnv: "OTA_ADMIN_PRIVATE_KEY",
-    manifestUrl: BASE_URL + "/ota/admin/latest.json",
+    manifestUrl: SUPABASE_URL + "/functions/v1/ota-api",
+    supabasePublishableKey: SUPABASE_PUBLISHABLE_KEY,
     releaseNotes: "تحديث جديد للوحة المشرف"
   }
 };
@@ -79,7 +83,8 @@ async function makeBundle(directory, app) {
     app: app.name,
     appId: app.appId,
     embeddedVersion: bundleId,
-    manifestUrl: app.manifestUrl
+    manifestUrl: app.manifestUrl,
+    supabasePublishableKey: app.supabasePublishableKey || null
   };
   await writeFile(
     path.join(directory, "ota-config.js"),
@@ -127,7 +132,9 @@ async function createSignedBundle(directory, app) {
       appId: app.appId,
       bundleId,
       artifactType: "zip",
-      url: BASE_URL + "/ota/" + app.name + "/" + bundleId + ".zip",
+      url: app.name === "player"
+        ? BASE_URL + "/ota/player/" + bundleId + ".zip"
+        : null,
       checksum,
       signature,
       releaseNotes: app.releaseNotes,
@@ -136,10 +143,34 @@ async function createSignedBundle(directory, app) {
   };
 }
 
+async function publishAdminBundle(result) {
+  const token = process.env.OTA_PUBLISH_TOKEN;
+  if (!token || token.length < 64) throw new Error("Missing Vercel environment variable OTA_PUBLISH_TOKEN.");
+  const response = await fetch(SUPABASE_URL + "/functions/v1/ota-publish", {
+    method: "POST",
+    headers: {
+      apikey: SUPABASE_PUBLISHABLE_KEY,
+      "content-type": "application/zip",
+      "x-ota-publish-token": token,
+      "x-ota-app-id": result.manifest.appId,
+      "x-ota-bundle-id": result.bundleId,
+      "x-ota-checksum": result.manifest.checksum,
+      "x-ota-signature": result.manifest.signature,
+      "x-ota-release-notes": result.manifest.releaseNotes
+    },
+    body: result.zip
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok || payload.ok !== true || payload.bundleId !== result.bundleId) {
+    throw new Error("Private admin OTA publish failed: HTTP " + response.status + " " + String(payload.error || "unknown"));
+  }
+  return payload;
+}
+
 async function publishAll() {
-  const otaRoot = path.join(ROOT, "ota");
-  await rm(otaRoot, { recursive: true, force: true });
-  await mkdir(otaRoot, { recursive: true });
+  const playerOtaRoot = path.join(ROOT, "public", "ota", "player");
+  await rm(playerOtaRoot, { recursive: true, force: true });
+  await mkdir(playerOtaRoot, { recursive: true });
   const temporary = await mkdtemp(path.join(os.tmpdir(), "rukn-ota-"));
 
   try {
@@ -173,16 +204,14 @@ async function publishAll() {
     if (!adminResponse.ok) throw new Error("Could not fetch the current admin.html source: HTTP " + adminResponse.status);
     await writeFile(path.join(adminDir, "index.html"), await adminResponse.text(), "utf8");
 
-    for (const name of ["player", "admin"]) {
-      const app = { ...APPS[name], name };
-      const directory = name === "player" ? playerDir : adminDir;
-      const result = await createSignedBundle(directory, app);
-      const target = path.join(otaRoot, name);
-      await mkdir(target, { recursive: true });
-      await writeFile(path.join(target, result.bundleId + ".zip"), result.zip);
-      await writeFile(path.join(target, "latest.json"), JSON.stringify(result.manifest, null, 2) + "\n", "utf8");
-      console.log(name + ": published bundle " + result.bundleId);
-    }
+    const playerResult = await createSignedBundle(playerDir, { ...APPS.player, name: "player" });
+    await writeFile(path.join(playerOtaRoot, playerResult.bundleId + ".zip"), playerResult.zip);
+    await writeFile(path.join(playerOtaRoot, "latest.json"), JSON.stringify(playerResult.manifest, null, 2) + "\n", "utf8");
+    console.log("player: published public bundle " + playerResult.bundleId);
+
+    const adminResult = await createSignedBundle(adminDir, { ...APPS.admin, name: "admin" });
+    const adminPublish = await publishAdminBundle(adminResult);
+    console.log("admin: uploaded private bundle " + adminPublish.bundleId + " (" + adminPublish.uploadedBytes + " bytes)");
   } finally {
     await rm(temporary, { recursive: true, force: true });
   }
