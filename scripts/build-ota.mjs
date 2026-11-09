@@ -153,7 +153,6 @@ async function publishAll() {
       "manifest.webmanifest",
       "install.html",
       "install.js",
-      "pwa.js",
       "sw.js",
       "icons/app-icon.svg"
     ];
@@ -162,6 +161,10 @@ async function publishAll() {
       await mkdir(path.dirname(destination), { recursive: true });
       await cp(path.join(ROOT, relative), destination);
     }
+    await cp(
+      path.join(ROOT, "android-wrapper/shared/pwa-native.js"),
+      path.join(playerDir, "pwa.js")
+    );
 
     const adminResponse = await fetch(
       "https://raw.githubusercontent.com/alkhbaralawl-max/in-dex.html/admin-private-domain-fix/admin.html",
