@@ -106,8 +106,9 @@ function resolve(g,choice){
  case "dragon-tiger":{const d=card(),t=card(),w=d>t?"التنين":t>d?"النمر":"تعادل";won=choice===({0:"التنين",1:"النمر",2:"تعادل"}[choice])&&choice===({ "التنين":0,"النمر":1,"تعادل":2}[w]);mult=w==="تعادل"?8:2;detail="التنين "+cardName(d)+" · النمر "+cardName(t)+" · "+w;break;}
  case "craps":{const a=dice(),b=dice(),sum=a+b;won=choice===0?[7,11].includes(sum):[2,3,12].includes(sum);mult=choice===0?2:3;detail="رمي النرد "+a+" + "+b+" = "+sum;break;}
  }
- if(!won&&mult>0)mult=0;
- return {mult,detail};
+ const autoWin=["slots","video-poker","plinko","scratch"].includes(g.id);
+ if(autoWin)won=mult>0;else if(!won&&mult>0)mult=0;
+ return {mult,detail,won};
 }
 function runRound(){
  if(!selectedGame)return;
@@ -123,6 +124,7 @@ function runRound(){
  history.unshift(item);save();updateBalance();
  const status=net>0?"فوز تجريبي":net===0?"تعادل":"لم تفز في هذه الجولة";
  showMessage(status+" — "+detail+" — "+(net>0?"صافي العائد ":"صافي التغير ")+(net>0?"+":"")+money(net)+" نقطة. الرصيد الآن "+money(balance)+".",net>0);
+ const resultBox=document.querySelector("#gameView .results");if(resultBox)resultBox.innerHTML=history.slice(0,6).map(x=>'<span class="result-dot" title="'+x.game+'">'+(x.net>0?"✓":x.net===0?"=":"×")+'</span>').join("");
  const stats=document.querySelectorAll(".game-stats .stat b");if(stats[0])stats[0].textContent=money(balance);
 }
 function showMessage(message,win){
