@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0b0b">
+  <title>تحميل تطبيقات ركن الغرب</title>
+  <style>
+    :root{color-scheme:dark;--bg:#090909;--panel:#151515;--line:#303030;--gold:#d7b66b;--muted:#b9b9b9}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at top,#292116 0,#111 38%,var(--bg) 75%);color:#fff;font-family:Tahoma,Arial,sans-serif;display:flex;align-items:center;justify-content:center;padding:24px}
+    main{width:min(100%,620px)}
+    .brand{text-align:center;margin-bottom:26px}
+    .mark{width:74px;height:74px;border:1px solid #8d7545;border-radius:22px;display:grid;place-items:center;margin:0 auto 16px;color:var(--gold);font-size:34px;font-weight:700;background:linear-gradient(145deg,#302719,#121212);box-shadow:0 12px 40px #0008}
+    h1{font-size:clamp(25px,5vw,34px);margin:0 0 9px}
+    .sub{color:var(--muted);line-height:1.8;margin:0}
+    .card{background:linear-gradient(145deg,#1b1b1b,#101010);border:1px solid var(--line);border-radius:20px;padding:22px;margin:14px 0;box-shadow:0 14px 38px #0005}
+    .row{display:flex;align-items:center;gap:15px;margin-bottom:18px}
+    .icon{width:52px;height:52px;border-radius:15px;background:#2b2519;color:var(--gold);display:grid;place-items:center;font-size:25px;flex:0 0 auto}
+    h2{margin:0 0 5px;font-size:20px}
+    .desc{color:var(--muted);font-size:14px;line-height:1.7}
+    a.button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:52px;text-decoration:none;border-radius:13px;background:linear-gradient(135deg,#e5c77d,#b58d45);color:#17130c;font-weight:700;font-size:16px}
+    a.button:focus-visible{outline:3px solid white;outline-offset:3px}
+    .note{color:#aaa;font-size:13px;line-height:1.9;text-align:center;margin:22px 8px 0}
+    footer{text-align:center;color:#777;font-size:12px;margin-top:24px}
+    @media(max-width:420px){body{padding:16px}.card{padding:18px}}
+  </style>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <div class="mark" aria-hidden="true">ر</div>
+      <h1>تطبيقات ركن الغرب</h1>
+      <p class="sub">اختَر التطبيق المناسب لهاتفك وحمّله مباشرة من هنا.</p>
+    </header>
+
+    <section class="card" aria-labelledby="players-title">
+      <div class="row">
+        <div class="icon" aria-hidden="true">⚽</div>
+        <div>
+          <h2 id="players-title">تطبيق اللاعبين</h2>
+          <div class="desc">النسخة المخصصة للاعبين والدخول إلى الموقع من التطبيق.</div>
+        </div>
+      </div>
+      <a class="button" href="./Rukn-AlGharb-Players.apk" download>تحميل تطبيق اللاعبين <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <section class="card" aria-labelledby="admin-title">
+      <div class="row">
+        <div class="icon" aria-hidden="true">⚙</div>
+        <div>
+          <h2 id="admin-title">تطبيق المشرف</h2>
+          <div class="desc">نسخة لوحة المشرف. الدخول يظل محميًا بحساب وصلاحيات المشرف.</div>
+        </div>
+      </div>
+      <a class="button" href="./Rukn-AlGharb-Admin.apk" download>تحميل تطبيق المشرف <span aria-hidden="true">↓</span></a>
+    </section>
+
+    <p class="note">بعد اكتمال التحميل، افتح ملف APK من مجلد التنزيلات ووافق على التثبيت عند ظهور رسالة أذونات التثبيت. يحتاج التطبيق إلى اتصال بالإنترنت لتسجيل الدخول واستخدام البيانات.</p>
+    <footer>ركن الغرب · صفحة تنزيل مستقلة</footer>
+  </main>
+</body>
+</html>
