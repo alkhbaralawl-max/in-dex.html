@@ -13,7 +13,6 @@ on:
       - "android-wrapper/enable-webview-cookies.sh"
       - "android-wrapper/player/android/**"
       - "android-wrapper/admin/android/**"
-      - ".github/workflows/build-android-apk.yml"
   workflow_dispatch:
 
 permissions:
