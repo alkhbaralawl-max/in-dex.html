@@ -3,20 +3,43 @@ set -euo pipefail
 
 APP_DIR="${1:?Usage: enable-webview-cookies.sh <capacitor-app-directory>}"
 ANDROID_DIR="$APP_DIR/android"
-MAIN_ACTIVITY="$(find "$ANDROID_DIR/app/src/main/java" -name MainActivity.java -print -quit)"
+MAIN_ACTIVITY="$(find "$ANDROID_DIR/app/src/main/java" \\( -name MainActivity.kt -o -name MainActivity.java \\) -print -quit)"
 
 if [[ -z "$MAIN_ACTIVITY" || ! -f "$MAIN_ACTIVITY" ]]; then
-  echo "MainActivity.java was not generated for $APP_DIR" >&2
+  echo "MainActivity source was not generated for $APP_DIR" >&2
   exit 1
 fi
 
-APP_PACKAGE="$(sed -n 's/^package \([^;]*\);/\1/p' "$MAIN_ACTIVITY" | head -n 1)"
+APP_PACKAGE="$(sed -nE 's/^package[[:space:]]+([A-Za-z0-9_.]+);?$/\\1/p' "$MAIN_ACTIVITY" | head -n 1)"
 if [[ -z "$APP_PACKAGE" ]]; then
   echo "Could not read the MainActivity package from $MAIN_ACTIVITY" >&2
   exit 1
 fi
 
-cat > "$MAIN_ACTIVITY" <<JAVA
+case "$MAIN_ACTIVITY" in
+  *.kt)
+    cat > "$MAIN_ACTIVITY" <<KOTLIN
+package $APP_PACKAGE
+
+import android.os.Bundle
+import android.webkit.CookieManager
+import com.getcapacitor.BridgeActivity
+
+class MainActivity : BridgeActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val cookies = CookieManager.getInstance()
+        cookies.setAcceptCookie(true)
+        val bridge = getBridge()
+        if (bridge != null) {
+            cookies.setAcceptThirdPartyCookies(bridge.webView, true)
+        }
+    }
+}
+KOTLIN
+    ;;
+  *.java)
+    cat > "$MAIN_ACTIVITY" <<JAVA
 package $APP_PACKAGE;
 
 import android.os.Bundle;
@@ -35,5 +58,7 @@ public class MainActivity extends BridgeActivity {
     }
 }
 JAVA
+    ;;
+esac
 
 echo "Configured Supabase session cookies for $APP_PACKAGE"
