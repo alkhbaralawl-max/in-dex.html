@@ -1582,6 +1582,8 @@ ENG.rocket={open(g,b){
   });
   cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("flightLaunch").disabled=busy;};
 }};
+// Keep the original rising-curve airplane game active; the checkpoint prototype above is not used.
+ENG.rocket=crashEng;
 /* ======== Dice Duel ======== */
 const DICE_FACE=["⚀","⚁","⚂","⚃","⚄","⚅"];
 const diceMultiplier=(g,pick)=>r2((rtpOf(g)/100)/(pick==="seven"?(6/36):(15/36)));
