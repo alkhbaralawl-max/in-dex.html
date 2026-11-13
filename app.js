@@ -1515,7 +1515,7 @@ async function wheelSpin(g){
 /* ======== Sky Mission: server-settled checkpoint flight ======== */
 const FLIGHT_STEP=0.8;
 const flightMultiplier=(g,n)=>r2((rtpOf(g)/100)/Math.pow(FLIGHT_STEP,n));
-ENG.rocket={open(g,b){
+const skyMissionEngine={open(g,b){
   let stages=3,finalFlight=null;
   const stageButtons=[1,2,3,4,5].map(n=>'<button type="button" class="flight-stage '+(n===stages?'selected':'')+'" data-flight-stages="'+n+'"><b>'+n+'</b><small>'+(n===1?'قصيرة':n===2?'خفيفة':n===3?'متوسطة':n===4?'بعيدة':'بعيدة جدًا')+'</small></button>').join("");
   b.innerHTML='<div class="gc flight-arena"><div class="flight-head"><div><small>SKY MISSION / CONTROL</small><b>مركز قيادة الرحلة</b></div><span>✈️ رحلة جوية</span></div><div class="flight-sky"><div class="flight-cloud cloud-one"></div><div class="flight-cloud cloud-two"></div><div class="flight-sun"></div><div class="flight-route" id="flightRoute"><div class="flight-route-line"></div><div class="flight-plane" id="flightPlane">✈️</div><div class="flight-points" id="flightPoints"></div></div><div class="flight-horizon"></div></div><div class="flight-status" id="flightStatus">اختار عدد نقاط العبور وجهّز الطيارة للإقلاع</div><div class="flight-stats"><span>نقاط العبور <b id="flightCount">3</b></span><span>فرصة الهبوط <b id="flightChance">51.2%</b></span><span>العائد عند النجاح <b id="flightPrize">×1.84</b></span></div></div>'+
