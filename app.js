@@ -76,6 +76,7 @@ msgStart:"حط رهانك واضغط ابدأ",
 ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تمامًا، وتطابق الرموز النادرة بيدي مكسب كبير. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
+ruleRocket:"اختار عدد نقاط العبور من 1 إلى 5. كل نقطة لها فرصة اجتياز 80%. لازم تكمل كل النقاط عشان تهبط بسلام وتحصل على العائد المعروض. النتيجة تعتمد من الخادم. العائد النظري {rtp}%.",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleDice:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7. يتم رمي نردين عشوائيًا على الخادم، وتظهر نتيجة الرمية بعد اعتمادها. العائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
@@ -89,7 +90,7 @@ let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{},matches:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
-  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","ruleDice"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  ["notice","ruleSlot","ruleApple","ruleCrash","ruleRocket","ruleWheel","ruleDice"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{},matches:c.matches||{}};
 }
 function games(){
@@ -1348,7 +1349,7 @@ const crashEng={open(g,b){
     }
   };
 }};
-ENG.crash=crashEng;ENG.rocket=crashEng;
+ENG.crash=crashEng;
 async function crStart(g){
   if(busy||crLock||!U)return;
   const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
@@ -1508,6 +1509,70 @@ async function wheelSpin(g){
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
+/* ======== Sky Mission: server-settled checkpoint flight ======== */
+const FLIGHT_STEP=0.8;
+const flightMultiplier=(g,n)=>r2((rtpOf(g)/100)/Math.pow(FLIGHT_STEP,n));
+ENG.rocket={open(g,b){
+  let stages=3,finalFlight=null;
+  const stageButtons=[1,2,3,4,5].map(n=>'<button type="button" class="flight-stage '+(n===stages?'selected':'')+'" data-flight-stages="'+n+'"><b>'+n+'</b><small>'+(n===1?'قصيرة':n===2?'خفيفة':n===3?'متوسطة':n===4?'بعيدة':'بعيدة جدًا')+'</small></button>').join("");
+  b.innerHTML='<div class="gc flight-arena"><div class="flight-head"><div><small>SKY MISSION / CONTROL</small><b>مركز قيادة الرحلة</b></div><span>✈️ رحلة جوية</span></div><div class="flight-sky"><div class="flight-cloud cloud-one"></div><div class="flight-cloud cloud-two"></div><div class="flight-sun"></div><div class="flight-route" id="flightRoute"><div class="flight-route-line"></div><div class="flight-plane" id="flightPlane">✈️</div><div class="flight-points" id="flightPoints"></div></div><div class="flight-horizon"></div></div><div class="flight-status" id="flightStatus">اختار عدد نقاط العبور وجهّز الطيارة للإقلاع</div><div class="flight-stats"><span>نقاط العبور <b id="flightCount">3</b></span><span>فرصة الهبوط <b id="flightChance">51.2%</b></span><span>العائد عند النجاح <b id="flightPrize">×1.84</b></span></div></div>'+
+    '<div class="gc flight-select"><label>حدد مسافة الرحلة</label><div class="flight-stages">'+stageButtons+'</div><div class="flight-quote" id="flightQuote"></div></div>'+
+    betBox("",'<button class="btn y full flight-launch" id="flightLaunch">🛫 ابدأ مهمة الطيران</button>')+
+    rulesBox(tpl(C.texts.ruleRocket,{rtp:rtpOf(g)}))+histBox;
+  bindBet(b);
+  const pointState=(index,o,shown)=>{
+    if(!o||!shown)return "pending";
+    return o.path?.[index]===true?"passed":o.path?.[index]===false?"failed":"pending";
+  };
+  const drawRoute=(o=null,shown=0)=>{
+    const pts=$("flightPoints");if(!pts)return;
+    pts.innerHTML=Array.from({length:stages},(_,i)=>'<div class="flight-point '+pointState(i,o,shown)+'"><span>'+(i+1)+'</span><small>نقطة '+(i+1)+'</small></div>').join("");
+    const plane=$("flightPlane"),den=Math.max(1,stages-1),progress=o?Math.min(stages,shown):0;
+    if(plane)plane.style.right=(8+Math.min(84,(progress/Math.max(1,stages))*84))+"%";
+  };
+  const updateQuote=()=>{
+    const chance=Math.pow(FLIGHT_STEP,stages)*100;
+    $("flightCount").textContent=String(stages);
+    $("flightChance").textContent=chance.toFixed(2)+"%";
+    $("flightPrize").textContent="×"+flightMultiplier(g,stages).toFixed(2);
+    $("flightQuote").textContent="فرصة إكمال "+stages+" نقاط: "+chance.toFixed(2)+"% — العائد النظري عند الهبوط: ×"+flightMultiplier(g,stages).toFixed(2);
+    drawRoute();
+  };
+  b.querySelectorAll("[data-flight-stages]").forEach(button=>button.onclick=()=>{
+    if(busy)return;
+    stages=Number(button.dataset.flightStages);
+    b.querySelectorAll("[data-flight-stages]").forEach(x=>x.classList.toggle("selected",x===button));
+    updateQuote();
+  });
+  updateQuote();
+  safeClick($("flightLaunch"),async()=>{
+    if(busy||!U)return;
+    const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+    lastAction=Date.now();busy=true;hold=true;$("flightLaunch").disabled=true;finalFlight=null;
+    $("flightStatus").textContent="المحركات تعمل... جارٍ طلب مسار الرحلة من الخادم";
+    $("flightPlane").classList.add("flight-moving");drawRoute();
+    try{
+      const data=await apiCall("play",{gameId:g.id,stake:bet,pick:stages,idempotencyKey:crypto.randomUUID()});
+      const o=data.outcome||{},path=Array.isArray(o.path)?o.path:[],total=Math.max(1,Number(o.stages)||stages);
+      for(let i=0;i<path.length;i++){
+        drawRoute(o,i+1);
+        $("flightStatus").textContent=path[i]?"تم اجتياز نقطة العبور "+(i+1)+" — الطيارة مستمرة":"تعثر المسار عند نقطة العبور "+(i+1);
+        await sleep(300);
+        if(!path[i])break;
+      }
+      finalFlight=o;$("flightPlane").classList.remove("flight-moving");drawRoute(o,path.length);
+      $("flightStatus").textContent=o.won?"🛬 هبوط ناجح! أكملت كل نقاط العبور":"⚠️ تعثرت الرحلة قبل الهبوط — انتهت المهمة";
+      U.balance=Number(data.balance);hold=false;busy=false;render();
+      result(Number(data.payout),bet,o.won?"هبوط ناجح":"تعثر الرحلة");
+      refreshMe(false).then(()=>render()).catch(()=>{});
+    }catch(e){
+      $("flightPlane").classList.remove("flight-moving");hold=false;busy=false;upd();
+      $("flightStatus").textContent="تعذر إكمال الرحلة. يمكنك المحاولة مرة أخرى.";
+      gmsg(e.message||C.texts.errNet,"er");
+    }
+  });
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("flightLaunch").disabled=busy;};
+}};
 /* ======== Dice Duel ======== */
 const DICE_FACE=["⚀","⚁","⚂","⚃","⚄","⚅"];
 const diceMultiplier=(g,pick)=>r2((rtpOf(g)/100)/(pick==="seven"?(6/36):(15/36)));
