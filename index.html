@@ -5,7 +5,7 @@
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>ركن الغرب</title>
 <style>
-:root{--b:#1677D2;--bd:#0B1E3A;--b2:#245A91;--bg:#F3F6FA;--card:#fff;--tx:#172B45;--tx2:#718096;--ok:#20A464;--er:#E5484D;--yl:#FFC83D;--line:#E1E8F0}
+:root{color-scheme:dark;--b:#A83CFF;--bd:#160B24;--b2:#4A1C69;--bg:#100819;--card:#1B1028;--tx:#FFF6FF;--tx2:#C0ACCF;--ok:#35D69A;--er:#F05B88;--yl:#FFD778;--line:#53316F}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;padding:0;overflow-x:hidden;background:var(--bg);color:var(--tx);font-family:Tahoma,"Segoe UI",Arial,sans-serif;font-size:15px}
 button,input,textarea,select{font-family:inherit}
@@ -932,6 +932,46 @@ body:has(#v_pay:not([hidden])) #shell,body:has(#v_withdraw:not([hidden])) #shell
 }
 </style>
 
+
+<style id="rukn-royal-theme-overrides">
+html,body{background:radial-gradient(ellipse at 50% -12%,#51216f 0,#20102f 28%,#100819 68%)!important;color:#fff6ff}
+body{min-height:100vh}
+.top{background:linear-gradient(100deg,#180c25,#3a1752 60%,#241034)!important;border-bottom:1px solid #68428b;box-shadow:0 8px 24px #0005}
+.brand b{color:#ffe0a0;text-shadow:0 2px 12px #f5bf5b44}
+.brand small{color:#d7c2e8}
+.lg{background:linear-gradient(145deg,#ffe39a,#b77a24)!important;color:#261431;border:1px solid #fff0bf;box-shadow:0 0 14px #f4cf7955}
+.usd{background:linear-gradient(145deg,#a83cff,#6d2698)!important;border:1px solid #d69cff;box-shadow:0 0 0 3px #ffffff18,0 5px 15px #0006}
+.bal{background:#2a1739!important;border:1px solid #80519c;color:#ffdf96}
+.ribbon{background:#241331!important;color:#f5d995!important;border-bottom:1px solid #68428b}
+.ban{background:radial-gradient(circle at 12% 35%,#8235ac 0,#4a1c69 25%,#21102e 70%)!important;border:1px solid #8752ad;box-shadow:0 14px 32px #0008;min-height:176px}
+.ban:before{background:#eac4ff18}
+.ban h2{color:#ffe0a0;text-shadow:0 2px 12px #0005}
+.ban p{color:#f2e4ff}
+.ban .em{font-size:78px;color:#ffe4aa;text-shadow:0 6px 14px #0009;filter:drop-shadow(0 0 10px #d98cff66)}
+.warn{background:#2b1527!important;border:1px solid #773753!important;color:#ffc9d9!important}
+.search input{background:#1b1028!important;border:1px solid #53316f!important;color:#fff6ff!important}
+.search input::placeholder{color:#bca7cb}
+.chip{background:#21122f!important;border-color:#53316f!important;color:#e9d9f5!important}
+.chip.on{background:linear-gradient(135deg,#a83cff,#6d2698)!important;border-color:#d39aff!important;color:#fff!important}
+.gcard{background:linear-gradient(150deg,#21122f,#140b1d)!important;border-color:#53316f!important;box-shadow:0 6px 18px #0006}
+.gi b{color:#ffe0a0}
+.gi p{color:#c0accf}
+.btn{box-shadow:0 5px 14px #0005}
+.btn.y{background:linear-gradient(135deg,#ffe39a,#b77a24)!important;color:#24132e!important}
+.btn.g{background:#2a1a39!important;color:#f5eaff!important;border:1px solid #68428b}
+.card{background:linear-gradient(150deg,#211431,#170d22)!important;border-color:#53316f!important;color:#fff6ff}
+.row{border-color:#432751!important}
+.back{background:#2a1838!important;color:#fff6ff!important;border-color:#68428b!important}
+.nav{background:rgba(18,9,28,.97)!important;border-top:1px solid #68428b!important;box-shadow:0 -8px 28px #0008}
+.nav button{color:#bda9cf!important}
+.nav button.on{color:#ffdf96!important}
+#gl .gc,.gl .gc{background:linear-gradient(145deg,#211431,#160c20)!important;border:1px solid #53316f!important;color:#fff6ff}
+#gl input,#gl select,#gl textarea{background:#21132f!important;color:#fff6ff!important;border:1px solid #68428b!important}
+#gl .game-choice,#gl .bar button{background:#2c193b!important;color:#f5eaff!important;border:1px solid #68428b!important}
+#gl .game-choice.on,#gl .game-choice.selected{background:linear-gradient(135deg,#ffe39a,#b77a24)!important;color:#24132e!important}
+#ov .ovb{border:1px solid #9565b1;box-shadow:0 18px 48px #000a}
+.toast{background:#2a1739!important;border:1px solid #80519c!important;color:#fff6ff!important}
+</style>
 </head>
 <body><div class="app">
 <div id="fatal" hidden></div>
@@ -982,7 +1022,7 @@ body:has(#v_pay:not([hidden])) #shell,body:has(#v_withdraw:not([hidden])) #shell
 <div class="ribbon" data-t="ribbon"></div>
 
 <main id="v_home">
-  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em">♛</div></div>
+  <div class="ban" id="ban"><h2 data-t="banT"></h2><p data-t="banD"></p><button class="btn y" id="banbtn" data-t="banBtn"></button><div class="em" aria-hidden="true">🤴</div></div>
   <div id="payreqbanner"></div>
   <div class="warn" data-t="notice"></div>
   <section id="sportsHomeSection" hidden aria-hidden="true"><div id="matchesList"></div><div id="matchesEmpty"></div><span id="matchesCount"></span></section>
