@@ -1549,7 +1549,7 @@ function mapAccount(data){
   const active=data.active||null;
   return {
     id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
-    scale:Number(a.scale)||100,balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
+    balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
     wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,displayName:a.displayName||"",profile:a.profile||{},
     hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:Number(x.i)})),sportsBets:bets,
     sportsChains:(data.sportsChains||[]).map(x=>({
