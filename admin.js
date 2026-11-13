@@ -4,7 +4,7 @@ const SUPABASE_URL="https://ffovnyfpxdzsbszzivua.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_If3JGOuGTIlZf4yMSHKXhA_cVT6F3HQ";
 const AUTH_API="/api/auth";
 const APP_API="/api/app";
-const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app","https://rukn-algharb-admin.vercel.app","https://rukn-algharb-admin-alkhbaralawl-4273.vercel.app"]);
+const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app","https://rukn-algharb-admin.vercel.app"]);
 const $=id=>document.getElementById(id);
 let csrfToken="";
 class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
