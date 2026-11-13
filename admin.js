@@ -146,7 +146,7 @@ function accounts(){
   list.forEach(x=>{if(x[2]>0)w++;else if(x[2]<0)l++;});$("fsum").textContent="الإجمالي: "+list.length+" حساب | 🟢 رابحين: "+w+" | 🔴 خاسرين: "+l;
   if(FILT==="win")list=list.filter(x=>x[2]>0);else if(FILT==="lose")list=list.filter(x=>x[2]<0);if(q)list=list.filter(([n,u])=>n.includes(q)||String(u.id||"").includes(q));list.sort((a,b)=>FILT==="lose"?a[2]-b[2]:b[2]-a[2]);
   if(!list.length){box.textContent="مفيش حسابات.";return;}
-  list.forEach(([n,u,net])=>{const d=el("div","acc");d.appendChild(el("div","idbig",String(u.id||"—")));d.appendChild(el("div","","الاسم: "+n+" — "+(u.closed?"🔴 مغلق":"🟢 مفتوح")+(u.scale&&u.scale<100?" — 🎚 خسارة إضافية "+Math.round(100-u.scale)+"%":"")));
+  list.forEach(([n,u,net])=>{const d=el("div","acc");d.appendChild(el("div","idbig",String(u.id||"—")));d.appendChild(el("div","","الاسم: "+n+" — "+(u.closed?"🔴 مغلق":"🟢 مفتوح")));
     const b=el("div","balbig","💰 الرصيد الافتراضي: "+f(u.balance||0));b.style.fontSize="20px";b.style.padding="8px";d.appendChild(b);d.appendChild(el("div","net "+(net>0?"up":net<0?"dn":"eq"),net>0?"🟢 رابح: +"+f(net):net<0?"🔴 خاسر: -"+f(-net):"⚪ متعادل"));
     [["تسجيل",fdate(u.created)+" | رصيد التسجيل: "+(u.regBonus!=null?f(u.regBonus):"—")],["كسب / خسر",(u.wins||0)+" / "+(u.losses||0)+" | جولات: "+(u.rounds||0)],["راهن",f(u.wagered||0)+" | عائده: "+f(u.returned||0)],["آخر لعب",fdate(u.last)]].forEach(([a,b2])=>d.appendChild(el("div","",a+": "+b2)));
     const row=el("div");btn(row,"💰 شحن/سحب","b",()=>{$("cid").value=u.id;go("p2");lookup();});d.appendChild(row);box.appendChild(d);
