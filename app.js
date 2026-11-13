@@ -1,8 +1,8 @@
 
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
-const SUPABASE_URL="https://qoeefydvmkdigixsbpuy.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY="sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
-const SAME_ORIGIN_API=location.origin==="https://rukn-algharb-main.vercel.app"||location.origin==="https://rukn-algharb-main-alkhbaralawl-4273.vercel.app";
+const SUPABASE_URL="https://ffovnyfpxdzsbszzivua.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_If3JGOuGTIlZf4yMSHKXhA_cVT6F3HQ";
+const SAME_ORIGIN_API=false;
 const AUTH_API=SAME_ORIGIN_API?"/api/auth":SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SAME_ORIGIN_API?"/api/app":SUPABASE_URL+"/functions/v1/app-api";
 let csrfToken="";
@@ -36,25 +36,21 @@ const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess4";
 const CAP=20;
 function capOf(g){
-  const personal=Number(U?.gameCaps?.[g?.id]);
-  if(personal>=1&&personal<=100)return personal;
   const configured=Number(g?.maxMultiplier);
   return configured>=1&&configured<=100?configured:CAP;
 }
 
 
-const BASE={slot:96,apple:96,rocket:96,crash:97,wheel:95,plinko:96,dice:96,cards:95};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#b56d13","#ffcf65","#241405"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"],dice:["#78531c","#f5d27a","#1a1208"],cards:["#742c26","#e5b85c","#160907"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"✈",crash:"📈",wheel:"🎡",plinko:"🎯",dice:"⚄",cards:"♠"};
+const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,plinko:94};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#b56d13","#ffcf65","#241405"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"✈",crash:"📈",wheel:"🎡",plinko:"🎯"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"لعبة الطيارة",desc:"تابع صعود الطيارة واسحب قبل انتهاء الجولة",engine:"rocket",cat:"الطيارة",tag:"الطيارة",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6},
-{id:"dice",name:"Lucky Dice",desc:"اختار مجموع النرد: أقل من 7 أو يساوي 7 أو أكبر من 7",engine:"dice",cat:"النرد",tag:"النرد",order:7},
-{id:"cards",name:"Red or Black",desc:"اختار لون الورقة قبل كشفها: أحمر أم أسود",engine:"cards",cat:"الأوراق",tag:"أوراق",order:8}];
+{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -83,7 +79,7 @@ ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط �
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 rulePlinko:"الكرة بتنزل من فوق وتتنطط يمين أو شمال 8 مرات، وتستقر في خانة لها مضاعف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
-scaleNote:"ℹ️ فرصة الفوز على حسابك مخفّضة بقرار المشرف ({pct}% خسارة إضافية).",
+scaleNote:"",
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
 btnDrop:"🎯 أسقط الكرة",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
 };
@@ -97,10 +93,11 @@ function merge(c){
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{},matches:c.matches||{}};
 }
 function games(){
+  const allowed=new Set(["wwg","apple","rocket","crash","wheel","plinko"]);
   const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));
   const o=C.games||{};
-  for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
-  return Object.values(m).filter(g=>g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
+  for(const id in o)if(allowed.has(id))m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
+  return Object.values(m).filter(g=>allowed.has(g.id)&&g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
 }
 const gOn=g=>g.on!==false;
 const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
@@ -108,7 +105,7 @@ const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
 let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",gameCat="الكل",apLast=null,crLock=false,crFinal=null,crFlight=null,raf=0,crPollTimer=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false,sportsPick=null,sportsChainDraft=[],sportsChainStake=0,sportsSettleBusy=false,sportsSettleQueued=false,sportScoreStarted=false,sportScoreTimer=0,chatPollTimer=0;
-const scU=()=>U?(U.scale||100)/100:1;
+const scU=()=>1;
 const histArr=()=>Array.isArray(U.hist)?U.hist:Object.values(U.hist||{});
 function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2800);}
 function tpl(s,o){o=o||{};return String(s||"").replace(/\{(\w+)\}/g,(_,k)=>o[k]!=null?o[k]:"");}
@@ -1025,19 +1022,10 @@ function secureClientSymbol(){return Math.floor(rnd()*6);}
 
 /* ======== Apple of Fortune ======== */
 const AP_ROWS=5,AP_COLS=5,AP_REAL_P=.8,AP_CAP=8;
-function apSafeCount(){return Math.max(1,Math.min(AP_COLS,Math.round(AP_COLS*AP_REAL_P*scU())));}
+function apSafeCount(){return 4;}
 function apMult(g,k,safeN){
   const chance=Math.max(1,Math.min(AP_COLS,Number(safeN)||apSafeCount()))/AP_COLS;
   return r2(Math.min(Math.pow(1/chance,k)*(rtpOf(g)/100),AP_CAP));
-}
-function apMakeHazards(safeN,picks){
-  const traps=AP_COLS-Math.max(1,Math.min(AP_COLS,Number(safeN)||1));
-  return Array.from({length:AP_ROWS},(_,r)=>{
-    const excluded=Array.isArray(picks)&&picks[r]!=null?[picks[r]]:[];
-    const pool=Array.from({length:AP_COLS},(_,i)=>i).filter(i=>!excluded.includes(i));
-    for(let i=pool.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-    return pool.slice(0,Math.min(traps,pool.length));
-  });
 }
 ENG.apple={open(g,b){
   const safeN=apSafeCount();
@@ -1115,7 +1103,7 @@ const K=0.06;
 const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
 function genCp(g){
   const r=rnd();
-  let c=Math.floor((rtpOf(g)/100)/(1-r)*100)/100;
+  let c=Math.ceil((rtpOf(g)/100)/(1-r)*100)/100;
   if(c<1)c=1;if(c>capOf(g))c=capOf(g);
   return c;
 }
@@ -1444,7 +1432,16 @@ ENG.cards={open(g,b){
 /* ======== Spin and Win ======== */
 const WH=[0,0,.3,0,1,0,.5,0,2,0,0,.3,1,0,.5,8,0,0,1,.3];
 const WC={0:"#2b3a52",.3:"#8a5a1a",.5:"#8a5a1a",1:"#245A91",2:"#20A464",8:"#d49a10"};
-function wv(g){const expected=WH.reduce((a,b)=>a+b,0)/WH.length,scale=(rtpOf(g)/100)/expected;return WH.map(v=>r2(Math.min(v*scale,CAP)));}
+function wv(g){
+  const cap=Math.max(1,Math.min(8,Number(g.maxMultiplier)||8));
+  let lo=0,hi=100;
+  for(let i=0;i<60;i++){
+    const scale=(lo+hi)/2;
+    const expected=WH.reduce((sum,v)=>sum+Math.min(v*scale,cap),0)/WH.length;
+    if(expected<rtpOf(g)/100)lo=scale;else hi=scale;
+  }
+  return WH.map(v=>Math.min(v*hi,cap));
+}
 function wheelDraw(g){
   const cv=$("wcv"),x=cv.getContext("2d"),S=cv.width,c=S/2,R=c-6,n=20,a=2*Math.PI/n,V=wv(g);
   x.clearRect(0,0,S,S);
@@ -1476,11 +1473,17 @@ async function wheelSpin(g){
 }
 
 /* ======== Plinko ======== */
-const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[6.21,.45,3.5,.35,2.5,.2,1.5,.1,.05];
+const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[16,5,2,1.1,.4,1.1,2,5,16];
 const multText=n=>Number(n).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:4});
 function plMults(g){
-  const scale=rtpOf(g)/96;
-  return PL_RAW.map(v=>Math.min(v*scale,CAP));
+  const cap=Math.max(1,Math.min(CAP,Number(g.maxMultiplier)||CAP));
+  let lo=0,hi=100;
+  for(let n=0;n<60;n++){
+    const scale=(lo+hi)/2;
+    const expected=PL_COEF.reduce((sum,w,i)=>sum+w*Math.min(PL_RAW[i]*scale,cap)/256,0);
+    if(expected<rtpOf(g)/100)lo=scale;else hi=scale;
+  }
+  return PL_RAW.map(v=>Math.min(v*hi,cap));
 }
 function resetBall(){
   const ball=$("plball");if(!ball)return;
