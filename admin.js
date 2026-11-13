@@ -1,0 +1,438 @@
+
+window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
+const SUPABASE_URL="https://ffovnyfpxdzsbszzivua.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY="sb_publishable_If3JGOuGTIlZf4yMSHKXhA_cVT6F3HQ";
+const AUTH_API=SUPABASE_URL+"/functions/v1/auth-api";
+const APP_API=SUPABASE_URL+"/functions/v1/app-api";
+const ADMIN_ALLOWED_ORIGINS=new Set(["https://rukn-algharb-control-private.vercel.app","https://rukn-algharb-admin.vercel.app"]);
+const $=id=>document.getElementById(id);
+let csrfToken="";
+class ApiError extends Error{constructor(message,status=400){super(message);this.status=status;}}
+async function sendApi(url,action,payload={},csrf=true){
+  if(!ADMIN_ALLOWED_ORIGINS.has(window.location.origin)) throw new ApiError("أنت تفتح نسخة معاينة أو رابطًا غير منشور على الموقع. افتح لوحة المشرف من نطاق الموقع المنشور فقط حتى يسمح السيرفر بالاتصال.",0);
+  const headers={"content-type":"application/json","apikey":SUPABASE_PUBLISHABLE_KEY};
+  if(csrf&&csrfToken)headers["x-csrf-token"]=csrfToken;
+  let res,data;
+  try{res=await fetch(url,{method:"POST",credentials:"include",headers,body:JSON.stringify({action,...payload})});data=await res.json();}
+  catch(e){throw new ApiError("تعذر الاتصال بالسيرفر. راجع الإنترنت وحاول مرة أخرى.",0);}
+  if(!res.ok){
+    const messages={unauthorized:"انتهت جلسة الدخول أو بيانات المشرف غير صحيحة.",csrf_failed:"انتهت صلاحية الطلب. حدّث الصفحة وحاول مرة أخرى.",admin_required:"هذا الحساب لا يملك صلاحية المشرف.",invalid_credentials:"كلمة المرور غير صحيحة أو حساب المشرف لم يتم تهيئته بعد.",username_taken:"اسم المستخدم مستخدم بالفعل.",password_policy:"كلمة المرور يجب أن تكون 10 أحرف على الأقل.",request_already_reviewed:"تمت مراجعة هذا الطلب من قبل."};
+    throw new ApiError(messages[data?.error]||data?.error||"حدث خطأ في السيرفر.",res.status);
+  }
+  return data;
+}
+const authCall=(action,payload={},csrf=true)=>sendApi(AUTH_API,action,payload,csrf);
+const apiCall=(action,payload={},csrf=true)=>sendApi(APP_API,action,payload,csrf);
+const nd=s=>String(s==null?"":s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
+const pf=s=>parseFloat(nd(s).replace(/[,٬\s]/g,"").replace(/٫/g,"."));
+const f=n=>Number(n||0).toLocaleString("en",{maximumFractionDigits:2}),r2=n=>Math.round(Number(n||0)*100)/100;
+const fdate=t=>t?new Date(typeof t==="string"?t:Number(t)).toLocaleString("ar-EG"):"—";
+const el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e;};
+const btn=(par,txt,cls,fn)=>{const b=el("button",cls,txt);b.onclick=fn;par.appendChild(b);return b;};
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+function twoTap(b,label,fn){let armed=false,t;b.onclick=()=>{if(!armed){armed=true;b.textContent="⚠️ اضغط تاني للتأكيد";t=setTimeout(()=>{armed=false;b.textContent=label;},4000);return;}clearTimeout(t);armed=false;b.textContent=label;Promise.resolve(fn()).catch(e=>alert(e.message||"تعذر تنفيذ العملية"));};}
+const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,dice:94};
+const ENGL={slot:"🎰 سلوت",apple:"🍎 تفاح",rocket:"🚀 رحلة الطيارة",crash:"📈 كراش",wheel:"🎡 عجلة",dice:"🎲 النرد"};
+const DEFG=[
+{id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
+{id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
+{id:"rocket",name:"Red Rocket Crash",desc:"اسحب قبل ما الصاروخ ينفجر",engine:"rocket",cat:"كراش",tag:"كراش",order:3},
+{id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
+{id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
+{id:"dice",name:"Dice Duel",desc:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7 في تحدي النرد",engine:"dice",cat:"النرد",tag:"النرد",order:6}];
+const DEFT={
+title:"ركن الغرب",subtitle:"تجربة توعوية",ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
+notice:"⚠️ المراهنات خطر حقيقي على الفرد والمجتمع. هذه تجربة توعوية: الألعاب مضبوطة لصالح المنصة كما في منصات المراهنات الحقيقية.",banT:"ألعاب جديدة 🔥",banD:"جرّب الألعاب برصيد وهمي، واعرف بنفسك إزاي الخسارة هي النتيجة المتوقعة.",banBtn:"ابدأ اللعب",banImg:"",searchPh:"ابحث عن لعبة...",featTitle:"⭐ ألعاب مميزة",allTitle:"🎮 كل الألعاب",noGames:"مفيش لعبة بالاسم ده",eduNote:"الألعاب هنا من تنفيذنا بنفس فكرة الألعاب المعروفة، وليست النسخ الأصلية المرخّصة. نسب الربح للمنصة زي المواقع الحقيقية.",
+actTitle:"🕘 النشاط",moreTitle:"⋯ المزيد",noPages:"لا توجد صفحات بعد",supTitle:"💬 الدعم المباشر",chatPh:"اكتب رسالتك...",meTitle:"👤 حسابي",lblRounds:"جولات",lblWins:"كسب",lblLoss:"خسر",lblWager:"إجمالي الرهان",lblReturn:"إجمالي العائد",lblNet:"الخسارة الصافية",lblBal:"الرصيد (وهمي)",
+navHome:"الرئيسية",navGames:"الألعاب",navSup:"الدعم",navAct:"النشاط",navMore:"المزيد",navMe:"حسابي",btnLogin2:"تسجيل الدخول",btnReg2:"حساب جديد",btnLogin:"دخول",btnReg:"إنشاء حساب",btnOut:"تسجيل الخروج",
+phUser:"اسم المستخدم (حروف إنجليزي أو أرقام)",phPass:"كلمة السر (6 أحرف على الأقل)",phPass2:"أعد كتابة كلمة السر",forgotLink:"نسيت كلمة السر؟",forgotMsg:"لإعادة تعيين كلمة السر تواصل مع المشرف من صفحة الدعم المباشر.",
+payTitle:"💳 الدفع",payMethods:"📱 فودافون كاش\n📱 اتصالات كاش\n📱 أورنج كاش\n⚡ إنستاباي\n🏪 فوري\n💳 بطاقة بنكية",payWarn:"📢 رسالة من المشرف: لا يوجد شحن حاليًا. لو محتاج رصيد تجريبي اكتب طلبك، وهيراجعه المشرف ويرد عليك.",phoneLbl:"📱 رقم الهاتف",phonePh:"اكتب أرقامًا فقط",phoneWarn:"⚠️ اكتب أرقام وهمية فقط — لا تكتب رقمك الحقيقي أبدًا.",amtLbl:"💰 المبلغ (حتى 50,000 جنيه)",amtPh:"مثال: 500",shotLbl:"🧾 صورة إيصال وهمية (اختياري)",shotPh:"اضغط لرفع صورة وهمية",shotPh2:"✅ تم اختيار الصورة (اضغط لتغييرها)",transferBtn:"تحويل",payFooter:"🔒 تجربة توعوية. لا تُستخدم بيانات حقيقية ولا تحويلات حقيقية.",backMethods:"رجوع للطرق",payChoose:"اختار طريقة الدفع",payOk:"✅ وصل طلبك للمشرف، وبيراجعه دلوقتي",payApprovedTpl:"✅ تمت الموافقة على طلب الإيداع وتم إضافة {amount} لرصيدك",payRejectedTpl:"❌ تم رفض طلب الإيداع",ackBtn:"تمام",
+msgWin:"كسبت {amount} 🎉",msgLost:"خسرت {amount}",msgTie:"تعادل: رجعلك رهانك",noBal:"الرصيد مش كفاية",closedMsg:"هذا الحساب مغلق",regClosed:"التسجيل مغلق حاليًا",errNet:"تعذر الاتصال، تأكد من الإنترنت وجرّب تاني",errStuck:"حصل تأخير، حاول تاني",errBusy:"عندك جولة شغالة",errBetVal:"اكتب رهان صحيح",msgStart:"حط رهانك واضغط ابدأ",
+ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تمامًا، وتطابق الرموز النادرة بيدي مكسب كبير. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",ruleDice:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7. يتم رمي نردين عشوائيًا على الخادم، وتظهر نتيجة الرمية بعد اعتمادها. العائد النظري {rtp}%.",riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",btnRollDice:"🎲 ارْمِ النرد",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"};
+const TL={title:"عنوان الموقع",subtitle:"وصف صغير تحت العنوان",ribbon:"الشريط الأصفر أعلى الشاشة",notice:"التحذير التوعوي (لا يقل عن 15 حرف)",banT:"عنوان البانر",banD:"وصف البانر",banBtn:"زر البانر",banImg:"صورة البانر (رابط https)",searchPh:"نص خانة البحث",featTitle:"عنوان الألعاب المميزة",allTitle:"عنوان كل الألعاب",noGames:"رسالة عدم وجود ألعاب",eduNote:"ملاحظة أسفل قائمة الألعاب",actTitle:"عنوان صفحة النشاط",moreTitle:"عنوان صفحة المزيد",noPages:"رسالة عدم وجود صفحات",supTitle:"عنوان صفحة الدعم",chatPh:"نص خانة كتابة الدردشة",meTitle:"عنوان صفحة الحساب",lblRounds:"كلمة: جولات",lblWins:"كلمة: كسب",lblLoss:"كلمة: خسر",lblWager:"كلمة: إجمالي الرهان",lblReturn:"كلمة: إجمالي العائد",lblNet:"كلمة: الخسارة الصافية",lblBal:"كلمة: الرصيد",navHome:"زر الرئيسية",navGames:"زر الألعاب",navSup:"زر الدعم",navAct:"زر النشاط",navMore:"زر المزيد",navMe:"زر حسابي",btnLogin2:"تبويب دخول",btnReg2:"تبويب حساب جديد",btnLogin:"زر دخول",btnReg:"زر إنشاء حساب",btnOut:"زر تسجيل الخروج",phUser:"نص خانة الاسم",phPass:"نص خانة كلمة السر",phPass2:"نص تأكيد كلمة السر",forgotLink:"رابط نسيت كلمة السر",forgotMsg:"رسالة نسيت كلمة السر",payTitle:"عنوان صفحة شحن الحساب",payMethods:"طرق الشحن (كل سطر طريقة)",payDestNumber:"الرقم الوهمي الظاهر تحت عنوان رقم مهم",payWarn:"رسالة اختيارية أعلى صفحة الشحن",phoneLbl:"عنوان خانة الرقم الوهمي",phonePh:"نص خانة الهاتف",phoneWarn:"تحذير الأرقام الوهمية",amtLbl:"عنوان خانة المبلغ",amtPh:"نص خانة المبلغ",shotLbl:"عنوان رفع الصورة",shotPh:"نص قبل رفع الصورة",shotPh2:"نص بعد رفع الصورة",transferBtn:"زر تحويل",payFooter:"ملاحظة أسفل صفحة الدفع",backMethods:"زر رجوع للطرق",payChoose:"عنوان اختيار الطريقة",payOk:"رسالة بعد إرسال الطلب",payApprovedTpl:"رسالة الموافقة ({amount})",payRejectedTpl:"رسالة الرفض",ackBtn:"زر تمام",msgWin:"رسالة الكسب ({amount})",msgLost:"رسالة الخسارة ({amount})",msgTie:"رسالة التعادل",noBal:"رسالة الرصيد لا يكفي",closedMsg:"رسالة الحساب المغلق",regClosed:"رسالة التسجيل المغلق",errNet:"رسالة خطأ الاتصال",errStuck:"رسالة التأخير",errBusy:"رسالة جولة شغالة",errBetVal:"رسالة رهان غلط",msgStart:"رسالة ابدأ اللعب",ruleSlot:"قواعد السلوت",ruleApple:"قواعد التفاح",ruleCrash:"قواعد الكراش",ruleWheel:"قواعد العجلة",ruleDice:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7. يتم رمي نردين عشوائيًا على الخادم، وتظهر نتيجة الرمية بعد اعتمادها. العائد النظري {rtp}%.",riskLoseLbl:"كلمة: لو غلطت تخسر",riskWinLbl:"كلمة: لو نجحت تكسب",riskCashLbl:"كلمة: لو سحبت الآن",riskSurvLbl:"كلمة: فرصة النجاة",riskOneWrong:"تحذير الغلطة الواحدة",rtpNote:"رسالة العائد الفعلي",btnRollDice:"🎲 ارْمِ النرد",btnSpinSlot:"زر لف السلوت",btnSpinWheel:"زر لف العجلة",btnStart:"زر ابدأ اللعبة",btnCash:"زر اسحب"};
+const BIG=["notice","banD","payMethods","payWarn","ruleSlot","ruleApple","ruleCrash","ruleWheel","ruleDice","eduNote"];
+const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"},CL={b:"الأزرق الأساسي",bd:"الأزرق الداكن",b2:"الأزرق الثانوي",bg:"خلفية الصفحات",ok:"الأخضر (نجاح)",er:"الأحمر (خسارة/تحذير)",yl:"الأصفر"};
+const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000};
+const EF=[["id","الرقم (9 أرقام)"],["balance","الرصيد"],["rounds","عدد الجولات"],["wins","مرات الكسب"],["losses","مرات الخسارة"],["wagered","إجمالي الرهانات"],["returned","إجمالي العائد"],["regBonus","رصيد التسجيل"]];
+
+let C={texts:{},colors:{},settings:{},games:{},pages:{},matches:{}},ALL={},TX=[],PL=[],curId="",editOpen=false,amtVal="",AM="",page="p1",built=false,started=false,FILT="all";
+const OPENC={};let chatRooms={},curChat=null,chatPoll=null,settlementSweepStarted=false,settlementSweepBusy=false;
+function merge(c){c=c||{};C={texts:Object.assign({},DEFT,c.texts||{}),colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{},matches:c.matches||{}};}
+const SUB=["ppg","ptt","pss","ptx"],PAGES=["p1","p2","p3","p4","p5","p6","p7"].concat(SUB);
+function go(p){page=p;PAGES.forEach(t=>$(t).hidden=t!==p);const nv=SUB.includes(p)?"p6":p;document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("on",x.dataset.p===nv));window.scrollTo(0,0);}
+const findU=id=>Object.entries(ALL).find(([n,u])=>String(u.id)===String(id));
+const netOf=u=>(Number(u.returned)||0)-(Number(u.wagered)||0);
+function findAccountByUserId(id){return Object.entries(ALL).find(([,u])=>u.userId===id);}
+async function saveConfig(section,value){await apiCall("admin_config_save",{section,value});C[section]=value;}
+function displayError(err){return err&&err.message?err.message:"تعذر تنفيذ العملية.";}
+function drawAll(){dash();accounts();txRender();payRender();chatListRender();if(!built){built=true;gamesForm();pagesForm();textsForm();settingsForm();}else{if(page==="p4")gamesForm();if(page==="ppg")pagesForm();}}
+async function refreshAll(){
+  const [a,c,t,p,h]=await Promise.all([
+    apiCall("admin_accounts",{},false),apiCall("admin_config_get",{},false),
+    apiCall("admin_ledger",{},false),apiCall("admin_credit_requests",{},false),apiCall("admin_chat_rooms",{},false)
+  ]);
+  ALL={};(a.accounts||[]).filter(x=>x.role==="player").forEach(x=>{
+    const d=x.customer||{},id=String(x.legacyUserId||d.id||"");
+    ALL[x.username]={...d,id,userId:x.id,username:x.username,displayName:x.displayName,role:x.role,status:x.status,
+      created:d.created||new Date(x.createdAt).getTime(),last:d.last||0,
+      balance:Number(x.wallet?.balance??d.balance??0),regBonus:Number(x.wallet?.registration_bonus??d.regBonus??0),
+      rounds:Number(x.wallet?.rounds??d.rounds??0),wins:Number(x.wallet?.wins??d.wins??0),losses:Number(x.wallet?.losses??d.losses??0),
+      wagered:Number(x.wallet?.wagered??d.wagered??0),returned:Number(x.wallet?.returned??d.returned??0),
+      closed:x.status!=="active"||!!d.closed};
+  });
+  merge(c);
+  TX=(t.ledger||[]).map(x=>({t:x.created_at,id:x.legacyUserId||"",name:x.username||"—",type:x.event_type,amt:Math.abs(Number(x.amount_delta)||0),after:Number(x.balance_after)||0,delta:Number(x.amount_delta)||0}));
+  PL=(p.requests||[]).map(x=>({_key:x.id,userId:x.user_id,id:x.legacyUserId||"—",name:x.username||"—",amt:Number(x.requested_amount)||0,status:x.status,t:x.created_at,note:x.note||"",method:x.method||"",userNumber:x.userNumber||"",destinationNumber:x.destinationNumber||"",proofUrl:x.proofUrl||""}));
+  chatRooms={};(h.rooms||[]).forEach(r=>{const key=String(r.legacyUserId||r.userId);const last=(r.messages||[]).slice(-1)[0];chatRooms[key]={userId:r.userId,legacyUserId:r.legacyUserId,username:r.username,messages:r.messages||[],last:last?new Date(last.created_at).getTime():0,lastMsg:last?.message||"",unread:last?.sender_role==="player"};});
+  drawAll();
+}
+function dash(){
+  const box=$("p1");box.innerHTML="";const list=Object.values(ALL);let W=0,R=0,B=0,op=0,cl=0,ch=0,wd=0,up=0,dn=0;
+  list.forEach(u=>{W+=u.wagered||0;R+=u.returned||0;B+=u.balance||0;u.closed?cl++:op++;const n=netOf(u);if(n>0)up++;else if(n<0)dn++;});
+  TX.forEach(x=>{if(String(x.type).includes("credit")||String(x.type).includes("grant"))ch+=x.amt;else if(x.delta<0)wd+=x.amt;else if(x.delta>0)ch+=x.amt;});
+  const pend=PL.filter(x=>x.status==="pending").length,p=W-R,g=el("div","grid2");
+  [["الحسابات",list.length],["مفتوحة / مغلقة",op+" / "+cl],["🟢 رابحين",up],["🔴 خاسرين",dn],["إجمالي الرهانات",f(W)],["إجمالي العائد",f(R)],["صافي الفرق الافتراضي",f(p)],["مجموع الأرصدة الافتراضية",f(B)],["تغييرات الرصيد (+)",f(ch)],["تخفيضات الرصيد (-)",f(wd)],["⏳ طلبات الرصيد المعلقة",pend]].forEach(([a,b])=>{const s=el("div","stat",a);s.appendChild(el("b","",String(b)));g.appendChild(s);});box.appendChild(g);
+  if(pend>0){const w=el("div","card");btn(w,"⏳ عندك "+pend+" طلب رصيد افتراضي ينتظر المراجعة — اضغط هنا","y",()=>go("p5")).style.width="100%";box.appendChild(w);}
+  const c=el("div","card");c.appendChild(el("div","sec","أكثر الحسابات خسارة"));const top=Object.entries(ALL).map(([n,u])=>[n,u,-netOf(u)]).sort((a,b)=>b[2]-a[2]).slice(0,5);
+  if(!top.length)c.appendChild(el("div","hint gray","لا توجد حسابات بعد."));top.forEach(([n,u,l])=>c.appendChild(el("div","line",n+" ("+(u.id||"—")+") — خسارة صافية: "+f(Math.max(0,l))+" | خسر "+(u.losses||0)+" مرة")));box.appendChild(c);
+  btn(box,"تسجيل خروج من اللوحة","r",logout).style.width="100%";
+}
+const setMsg=t=>{AM=t;const m=$("amsg");if(m)m.textContent=t;};
+
+async function move(type,amount){
+  const r=findU(curId);if(!r)return setMsg("❌ الحساب مش موجود");const u=r[1],current=Number(u.balance)||0;
+  if(type!=="withdraw_all"&&!(amount>0&&amount<=1000000000))return setMsg("❌ اكتب مبلغ افتراضي صحيح (حتى مليار)");
+  if(type==="withdraw_all"&&current<=0)return setMsg("❌ الرصيد صفر");
+  const delta=type==="charge"?r2(amount):-r2(type==="withdraw_all"?current:amount);
+  if(delta<0&&Math.abs(delta)>current)return setMsg("❌ المبلغ أكبر من الرصيد المتاح. الرصيد: "+f(current));
+  setMsg("جاري التنفيذ...");
+  try{const out=await apiCall("admin_adjust",{userId:u.userId,delta,reason:type==="charge"?"شحن رصيد افتراضي من لوحة المشرف":"سحب رصيد افتراضي من لوحة المشرف",idempotencyKey:crypto.randomUUID()});
+    u.balance=Number(out.balance);amtVal="";const inp=$("amt");if(inp)inp.value="";setMsg("✅ تم تعديل الرصيد الافتراضي: "+f(Math.abs(delta))+"\nالرصيد المتاح الآن: "+f(u.balance));dash();accounts();
+  }catch(e){setMsg("❌ "+displayError(e));}
+}
+async function saveEdit(fs){
+  const r=findU(curId);if(!r)return;const u=r[1],nid=nd(fs.id.value).trim();if(!/^\d{9}$/.test(nid))return setMsg("❌ الرقم لازم 9 أرقام بالظبط");
+  const vals={};for(const [k] of EF){if(k==="id")continue;const x=pf(fs[k].value);if(!(x>=0))return setMsg("❌ قيمة غلط في: "+k);vals[k]=r2(x);}
+  ["rounds","wins","losses"].forEach(k=>vals[k]=Math.floor(vals[k]));const pw=fs.pw.value;if(pw&&pw.length<10)return setMsg("❌ كلمة المرور الجديدة لازم 10 أحرف على الأقل");
+  setMsg("جاري حفظ التعديلات...");try{await apiCall("admin_update_account",{userId:u.userId,legacyUserId:nid,password:pw||"",wallet:{balance:vals.balance,registration_bonus:vals.regBonus,rounds:vals.rounds,wins:vals.wins,losses:vals.losses,wagered:vals.wagered,returned:vals.returned}});
+    u.id=nid;Object.assign(u,vals);curId=nid;$("cid").value=nid;editOpen=false;AM="✅ تم حفظ التعديلات";await refreshAll();await renderAcc();
+  }catch(e){setMsg("❌ "+displayError(e));}
+}
+function renderAcc(){
+  const box=$("accbox");box.innerHTML="";if(!curId)return;const r=findU(curId);if(!r){box.appendChild(el("div","nf","❌ لا يوجد حساب بالرقم "+curId));return;}
+  const n=r[0],u=r[1],c=el("div","card");c.appendChild(el("div","found","✅ الحساب موجود"));c.appendChild(el("div","idbig",String(u.id)));c.appendChild(el("div","line","الاسم: "+n+" — "+(u.closed?"🔴 مغلق":"🟢 مفتوح")));
+  const bal=el("div","balbig","💰 الرصيد الافتراضي المتاح: "+f(u.balance||0));bal.id="balbig";c.appendChild(bal);
+  const inp=el("input");inp.id="amt";inp.type="text";inp.inputMode="decimal";inp.placeholder="اكتب مبلغ الرصيد الافتراضي";inp.value=amtVal;inp.oninput=()=>amtVal=inp.value;c.appendChild(inp);
+  const chips=el("div","chips");[1000,10000,100000,1000000].forEach(v=>btn(chips,f(v),"b",()=>{inp.value=v;amtVal=String(v);}));c.appendChild(chips);
+  const two=el("div","two");btn(two,"➕ إضافة رصيد افتراضي","",()=>move("charge",pf(inp.value)));btn(two,"➖ خصم رصيد افتراضي","r",()=>move("withdraw",pf(inp.value)));c.appendChild(two);
+  const wb=btn(c,"تصفير الرصيد الافتراضي","y",()=>{});wb.style.width="100%";wb.style.marginTop="8px";twoTap(wb,"تصفير الرصيد الافتراضي",()=>move("withdraw_all"));
+  const m=el("div","hint",AM);m.id="amsg";c.appendChild(m);c.appendChild(el("div","sec","بيانات الحساب"));const net=netOf(u);
+  c.appendChild(el("div","net "+(net>0?"up":net<0?"dn":"eq"),net>0?"🟢 رابح: +"+f(net):net<0?"🔴 خاسر: -"+f(-net):"⚪ متعادل"));
+  [["تاريخ التسجيل",fdate(u.created)+" | رصيد التسجيل: "+(u.regBonus!=null?f(u.regBonus):"—")],["كسب / خسر",(u.wins||0)+" مرة / "+(u.losses||0)+" مرة (جولات: "+(u.rounds||0)+")"],["إجمالي ما راهن به",f(u.wagered||0)+" | إجمالي عائده: "+f(u.returned||0)],["آخر لعب",fdate(u.last)]].forEach(([a,b])=>c.appendChild(el("div","line",a+": "+b)));
+  const act=el("div");act.style.marginTop="10px";btn(act,editOpen?"إخفاء التعديل":"✏️ تعديل بيانات الحساب","b",()=>{editOpen=!editOpen;renderAcc();});
+  btn(act,u.closed?"افتح الحساب":"اغلق الحساب",u.closed?"":"r",async()=>{await apiCall("admin_status",{userId:u.userId,status:u.closed?"active":"closed"});u.closed=!u.closed;u.status=u.closed?"closed":"active";renderAcc();accounts();});
+  const rs=btn(act,"صفّر الإحصائيات","b",()=>{});twoTap(rs,"صفّر الإحصائيات",async()=>{await apiCall("admin_reset_stats",{userId:u.userId});u.rounds=u.wins=u.losses=u.wagered=u.returned=0;await refreshAll();setMsg("✅ تم تصفير الإحصائيات مع الاحتفاظ بالسجلات التاريخية");});
+  const dl=btn(act,"أغلق وأرشف الحساب","r",()=>{});twoTap(dl,"أغلق وأرشف الحساب",async()=>{await apiCall("admin_delete_account",{userId:u.userId});u.closed=true;u.status="closed";setMsg("✅ تم إغلاق الحساب مع الاحتفاظ بالسجلات التاريخية");await refreshAll();});c.appendChild(act);
+  if(editOpen){const p=el("div","card");p.style.background="#0f1f33";p.appendChild(el("div","sec","✏️ تعديل بيانات الحساب"));const fs={};
+    EF.forEach(([k,lab])=>{p.appendChild(el("label","",lab));const i=el("input");i.type="text";i.inputMode=k==="id"?"numeric":"decimal";if(k==="id")i.maxLength=12;i.value=k==="id"?u.id:(k==="regBonus"?u.regBonus:(u[k]||0));fs[k]=i;p.appendChild(i);});
+    p.appendChild(el("label","","كلمة مرور جديدة (اتركها فاضية للاحتفاظ بالحالية)"));const pw=el("input");pw.type="password";pw.placeholder="10 أحرف على الأقل";fs.pw=pw;p.appendChild(pw);btn(p,"💾 احفظ التعديلات","",()=>saveEdit(fs)).style.width="100%";c.appendChild(p);}
+  box.appendChild(c);
+}
+function liveAcc(){if(!curId)return;const r=findU(curId),b=$("balbig");if(r&&b){b.textContent="💰 الرصيد الافتراضي المتاح: "+f(r[1].balance||0);return;}if(!editOpen)renderAcc();}
+function lookup(){const v=nd($("cid").value).replace(/\D/g,"").slice(0,9);$("cid").value=v;editOpen=false;amtVal="";AM="";if(v.length===9){curId=v;$("cidmsg").textContent="";}else{curId="";$("cidmsg").textContent=v.length?"اكتب 9 أرقام ("+v.length+"/9)":"اكتب رقم الحساب لتظهر بياناته ورصيده";}renderAcc();}
+function accounts(){
+  const ae=document.activeElement;if(ae&&ae.tagName==="INPUT"&&ae!==$("q")&&$("list").contains(ae))return;
+  const q=nd($("q").value).trim().toLowerCase(),box=$("list");box.innerHTML="";let list=Object.entries(ALL).map(([n,u])=>[n,u,netOf(u)]),w=0,l=0;
+  list.forEach(x=>{if(x[2]>0)w++;else if(x[2]<0)l++;});$("fsum").textContent="الإجمالي: "+list.length+" حساب | 🟢 رابحين: "+w+" | 🔴 خاسرين: "+l;
+  if(FILT==="win")list=list.filter(x=>x[2]>0);else if(FILT==="lose")list=list.filter(x=>x[2]<0);if(q)list=list.filter(([n,u])=>n.includes(q)||String(u.id||"").includes(q));list.sort((a,b)=>FILT==="lose"?a[2]-b[2]:b[2]-a[2]);
+  if(!list.length){box.textContent="مفيش حسابات.";return;}
+  list.forEach(([n,u,net])=>{const d=el("div","acc");d.appendChild(el("div","idbig",String(u.id||"—")));d.appendChild(el("div","","الاسم: "+n+" — "+(u.closed?"🔴 مغلق":"🟢 مفتوح")+(u.scale&&u.scale<100?" — 🎚 خسارة إضافية "+Math.round(100-u.scale)+"%":"")));
+    const b=el("div","balbig","💰 الرصيد الافتراضي: "+f(u.balance||0));b.style.fontSize="20px";b.style.padding="8px";d.appendChild(b);d.appendChild(el("div","net "+(net>0?"up":net<0?"dn":"eq"),net>0?"🟢 رابح: +"+f(net):net<0?"🔴 خاسر: -"+f(-net):"⚪ متعادل"));
+    [["تسجيل",fdate(u.created)+" | رصيد التسجيل: "+(u.regBonus!=null?f(u.regBonus):"—")],["كسب / خسر",(u.wins||0)+" / "+(u.losses||0)+" | جولات: "+(u.rounds||0)],["راهن",f(u.wagered||0)+" | عائده: "+f(u.returned||0)],["آخر لعب",fdate(u.last)]].forEach(([a,b2])=>d.appendChild(el("div","",a+": "+b2)));
+    const row=el("div");btn(row,"💰 شحن/سحب","b",()=>{$("cid").value=u.id;go("p2");lookup();});d.appendChild(row);box.appendChild(d);
+  });
+}
+async function createAcc(){
+  const m=t=>$("mkmsg").textContent=t,n=$("nn").value.trim().toLowerCase(),p=$("np").value;
+  if(!/^[a-z0-9_]{3,20}$/.test(n))return m("❌ الاسم 3-20 حرف إنجليزي أو أرقام أو _");if(p.length<10)return m("❌ كلمة المرور 10 أحرف على الأقل");
+  const raw=$("nb").value.trim(),b=raw===""?null:pf(raw);if(raw!==""&&!(b>=0))return m("❌ الرصيد غلط");
+  m("جاري إنشاء الحساب...");try{const out=await apiCall("admin_create_account",{username:n,password:p,initialBalance:b});$("nn").value=$("np").value=$("nb").value="";m("✅ تم إنشاء الحساب. الرقم: "+out.legacyUserId);await refreshAll();}catch(e){m("❌ "+displayError(e));}
+}
+function txRender(){const box=$("txlist");box.innerHTML="";[...TX].slice(0,300).forEach(x=>box.appendChild(el("div","line",fdate(x.t)+" — "+x.type+" "+f(x.amt)+" — "+x.name+" ("+x.id+") — الرصيد بعدها: "+f(x.after))));if(!TX.length)box.textContent="لا توجد عمليات بعد.";}
+function mergedGames(){const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));const o=C.games||{};for(const id in o)m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});return Object.values(m).filter(g=>g.name).sort((a,b)=>(a.order||99)-(b.order||99));}
+const isDef=id=>DEFG.some(g=>g.id===id);
+function engSelect(v){const s=el("select");for(const k in ENGL){const o=el("option","",ENGL[k]);o.value=k;if(k===v)o.selected=true;s.appendChild(o);}return s;}
+function gamesForm(){
+  const box=$("gf");box.innerHTML="";
+  const intro=el("div","card");intro.appendChild(el("div","sec","🎮 إدارة الألعاب الست"));
+  intro.appendChild(el("div","hint gray","المحركات ثابتة وآمنة من لوحة المشرف. يمكنك تعديل الاسم والوصف والترتيب ونسبة العائد بين 93% و95% فقط."));
+  box.appendChild(intro);
+  const all=mergedGames().filter(g=>DEFG.some(d=>d.id===g.id));
+  DEFG.forEach(def=>{
+    const g=all.find(x=>x.id===def.id)||def;
+    const c=el("div","card"),gc=el("div","gcard");c.appendChild(el("div","sec","🎮 "+g.name));
+    const L=(t,x)=>{gc.appendChild(el("label","",t));gc.appendChild(x);return x;};
+    const nm=el("input");nm.value=g.name||def.name;const ds=el("input");ds.value=g.desc||def.desc;
+    const cat=el("input");cat.value=g.cat||def.cat;const tg=el("input");tg.value=g.tag||def.tag;
+    const od=el("input");od.inputMode="numeric";od.value=g.order||def.order;
+    const rt=el("input");rt.inputMode="decimal";rt.value=String(g.rtp??BASE[g.engine]);
+    const en=el("input");en.value=ENGL[g.engine]||g.engine;en.disabled=true;en.readOnly=true;
+    const on=el("input");on.type="checkbox";on.checked=g.on!==false;on.style.cssText="width:auto;margin-left:8px";
+    L("اسم اللعبة",nm);L("الوصف",ds);L("القسم",cat);L("الوسم",tg);L("الترتيب",od);L("نسبة العائد % (93–95)",rt);L("محرك اللعبة (ثابت)",en);
+    const lb=el("label");lb.append(on,"ظاهرة في الموقع");gc.appendChild(lb);const msg=el("div","hint","");
+    btn(gc,"💾 حفظ إعدادات اللعبة","",async()=>{
+      const rv=pf(rt.value);if(!(rv>=93&&rv<=95))return msg.textContent="❌ نسبة العائد يجب أن تكون بين 93 و95.";
+      const games={};DEFG.forEach(d=>games[d.id]=Object.assign({},d,C.games?.[d.id]||{}));
+      games[g.id]={...games[g.id],name:nm.value.trim()||g.name,desc:ds.value.trim(),cat:cat.value.trim(),tag:tg.value.trim(),order:Math.max(1,Math.floor(pf(od.value)||g.order)),rtp:rv,engine:def.engine,on:on.checked};
+      try{await saveConfig("games",games);msg.textContent="✅ تم حفظ الإعدادات على الخادم.";}catch(e){msg.textContent="❌ "+displayError(e);}
+    });
+    gc.appendChild(msg);c.appendChild(gc);box.appendChild(c);
+  });
+}
+/* بناء محرر المباراة: عمود مستقل للفريق الأول وعمود للفريق الثاني */
+function teamEditor(title,team){
+  const c=el("div","team-editor"),h=el("h4","",title);c.appendChild(h);
+  const placeholder="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Ccircle cx='45' cy='45' r='44' fill='%23e8eef5'/%3E%3Ctext x='45' y='57' font-size='34' text-anchor='middle' fill='%2335506e'%3E%3F%3C/text%3E%3C/svg%3E";
+  const img=document.createElement("img");img.className="logo-preview";img.alt="معاينة شعار الفريق";img.src=team.logo||placeholder;c.appendChild(img);
+  const n=el("input");n.type="text";n.placeholder="اسم الفريق";n.value=team.name||"";
+  const l=el("input");l.type="text";l.placeholder="رابط شعار الفريق https://";l.value=team.logo||"";
+  l.oninput=()=>{const url=l.value.trim();img.src=/^https:\/\//i.test(url)?url:placeholder;};
+  img.onerror=()=>{if(img.src!==placeholder)img.src=placeholder;};
+  c.appendChild(el("label","","اسم الفريق"));c.appendChild(n);c.appendChild(el("label","","شعار الفريق"));c.appendChild(l);
+  return {element:c,nameInput:n,get:()=>({name:n.value.trim(),logo:l.value.trim()})};
+}
+function marketEditor(data,t1,t2,onRemove){
+  const c=el("div","market-editor"),head=el("div","market-editor-head");head.appendChild(el("span","","نوع التوقع / السوق"));
+  if(onRemove){const remove=btn(head,"حذف السوق","r",()=>onRemove());remove.style.padding="6px 9px";remove.style.fontSize="12px";}
+  c.appendChild(head);
+  const title=el("input");title.type="text";title.placeholder="مثلاً: نتيجة المباراة";title.value=data.title||"";c.appendChild(el("label","","اسم السوق"));c.appendChild(title);
+  const rows=el("div");c.appendChild(rows);let next=1;
+  const opts=Object.entries(data.options||{}).map(([id,v])=>({id,...v}));
+  const usedIds=new Set(opts.map(o=>o.id));
+  function addOption(option){let id;if(option&&option.id){id=option.id;}else{while(usedIds.has("o"+next))next++;id="o"+(next++);}usedIds.add(id);const row=el("div","option-row");row.dataset.id=id;
+    const label=el("input");label.type="text";label.placeholder="الاختيار (مثلاً فوز الفريق الأول)";label.value=option&&option.label||"";
+    const odds=el("input");odds.type="number";odds.min="1.01";odds.max="1000";odds.step="0.01";odds.placeholder="المعامل";odds.value=option&&option.odds!=null?option.odds:"2.00";
+    const del=btn(row,"×","r",()=>{row.remove();refreshResult();});del.title="حذف الاختيار";row.append(label,odds,del);rows.appendChild(row);
+  }
+  if(opts.length)opts.forEach(o=>addOption(o));else if(data.title==="نتيجة المباراة"){
+    addOption({id:"home",label:"فوز {team1}",odds:2});addOption({id:"draw",label:"تعادل",odds:3});addOption({id:"away",label:"فوز {team2}",odds:2});
+  }else{
+    addOption({id:"o1",label:"",odds:2});addOption({id:"o2",label:"",odds:2});
+  }
+  btn(c,"＋ أضف اختيارًا للسوق","b",()=>addOption({label:"",odds:2})).style.width="100%";
+  const status=el("select");[["open","مفتوح للتوقعات"],["closed","مغلق مؤقتًا"],["settled","اعتماد النتيجة وتسوية التوقعات"]].forEach(([v,t])=>{const o=el("option","",t);o.value=v;if((data.status||"open")===v)o.selected=true;status.appendChild(o);});
+  c.appendChild(el("label","","حالة السوق"));c.appendChild(status);
+  const result=el("select");result.className="result-select";
+  const teamName=(x,fallback)=>{const value=typeof x==="function"?x():(x&&typeof x.get==="function"?x.get():x);return typeof value==="string"?value:(value&&value.name)||fallback;};
+  const refreshResult=()=>{const selected=result.value||data.resultOptionId||"";result.innerHTML="";const none=el("option","","— اختر الاختيار الفائز عند اعتماد النتيجة —");none.value="";result.appendChild(none);rows.querySelectorAll(".option-row").forEach(row=>{const inp=row.querySelector("input[type=text]");if(!inp.value.trim())return;const label=inp.value.trim().replace(/\{team1\}/g,teamName(t1,"الفريق الأول")).replace(/\{team2\}/g,teamName(t2,"الفريق الثاني"));const o=el("option","",label);o.value=row.dataset.id;result.appendChild(o);});result.value=selected;};
+  rows.addEventListener("input",refreshResult);
+  if(t1&&t1.nameInput)t1.nameInput.addEventListener("input",refreshResult);
+  if(t2&&t2.nameInput)t2.nameInput.addEventListener("input",refreshResult);
+  refreshResult();
+  c.appendChild(el("label","","الاختيار الفائز (مطلوب عند اعتماد النتيجة)"));c.appendChild(result);
+  c.appendChild(el("div","hint gray","عند اختيار حالة (اعتماد النتيجة) ثم حفظ المباراة، لوحة التحكم تضيف العائد للفائزين فورًا وتغلق التذاكر لمنع تكرار الدفع."));
+  return {element:c,get:()=>{
+    const options={};let valid=true;
+    rows.querySelectorAll(".option-row").forEach(row=>{const fields=row.querySelectorAll("input"),label=fields[0].value.trim(),odds=Number(fields[1].value);if(!label||!(odds>=1.01&&odds<=1000)){valid=false;return;}options[row.dataset.id]={label:label,odds:r2(odds)};});
+    let rs=result.value;if(status.value==="settled"&&!options[rs])valid=false;
+    return {valid:valid,data:{title:title.value.trim(),options:options,status:status.value,resultOptionId:status.value==="settled"?rs:null}};
+  }};
+}
+
+async function settleMatchMarketBets(matchId,marketId,market){
+  if(!market||market.status!=="settled"||!market.resultOptionId)return {settled:0,winners:0,payout:0,errors:[]};
+  const out=await apiCall("admin_market_settle",{matchId,marketId,resultOptionId:market.resultOptionId,void:false});
+  return {settled:Number(out.settled)||0,winners:Number(out.winners)||0,payout:Number(out.payout)||0,errors:[]};
+}
+async function settleAllFinalizedSportsBets(){
+  if(settlementSweepBusy)return {settled:0,winners:0,payout:0,errors:[]};settlementSweepBusy=true;
+  const total={settled:0,winners:0,payout:0,errors:[]};
+  try{for(const [matchId,match] of Object.entries(C.matches||{})){for(const [marketId,market] of Object.entries(match&&match.markets||{})){
+    if(!market||market.status!=="settled"||!market.resultOptionId)continue;
+    try{const r=await settleMatchMarketBets(matchId,marketId,market);total.settled+=r.settled;total.winners+=r.winners;total.payout=r2(total.payout+r.payout);}catch(e){total.errors.push(matchId+"/"+marketId+": "+displayError(e));}
+  }}}finally{settlementSweepBusy=false;}return total;
+}
+function matchesForm(){
+  const box=$("gf"),section=el("div","card");section.appendChild(el("div","sec","⚽ مباريات اليوم — إضافة وإدارة المباريات"));
+  section.appendChild(el("div","hint gray","أضف الفريقين في عمودين متجاورين، وارفع شعار كل فريق. الشعارات ستظهر دائرية تلقائيًا في الموقع. أضف أكثر من سوق توقع، وحدد الاختيار الفائز عند انتهاء المباراة."));
+  const retrySettlementButton=btn(section,"🔄 إعادة محاولة تسوية النتائج المعتمدة","b",async()=>{
+    try{
+      retrySettlementButton.disabled=true;
+      const r=await settleAllFinalizedSportsBets();
+      const msg="تمت مراجعة النتائج المعتمدة. التذاكر المسوّاة: "+r.settled+" — الفائزون: "+r.winners+" — العوائد: "+f(r.payout);
+      alert(msg+(r.errors.length?"\nتعذر تحديث بعض الحسابات: "+r.errors.join("، "):""));
+    }catch(e){alert("تعذرت مراجعة النتائج: "+(e&&e.message?e.message:"خطأ غير معروف"));}
+    finally{retrySettlementButton.disabled=false;}
+  });
+  retrySettlementButton.style.width="100%";
+  const matchName=el("input");matchName.type="text";matchName.placeholder="عنوان المباراة / البطولة (اختياري)";section.appendChild(matchName);
+  const grid=el("div","teams-editor"),t1=teamEditor("الفريق الأول",{}),t2=teamEditor("الفريق الثاني",{});grid.append(t1.element,t2.element);section.appendChild(grid);
+  const date=el("input");date.type="text";date.placeholder="موعد المباراة (اختياري، مثال: 9:00 مساءً)";section.appendChild(el("label","","موعد المباراة"));section.appendChild(date);
+  const status=el("select");[["open","المباراة متاحة للتوقعات"],["closed","إغلاق التوقعات على المباراة"]].forEach(([v,t])=>{const o=el("option","",t);o.value=v;status.appendChild(o);});section.appendChild(el("label","","حالة المباراة"));section.appendChild(status);
+  const marketsBox=el("div");section.appendChild(el("div","sec","أنواع التوقعات"));section.appendChild(marketsBox);
+  let marketEditors=[];
+  const addMarket=(data)=>{
+    const entry={ed:null};
+    entry.ed=marketEditor(data||{},t1,t2,()=>{marketEditors=marketEditors.filter(x=>x!==entry);entry.ed.element.remove();});
+    marketEditors.push(entry);marketsBox.appendChild(entry.ed.element);
+  };
+  const defaultOutcomes={home:{label:"فوز {team1}",odds:2},draw:{label:"تعادل",odds:3},away:{label:"فوز {team2}",odds:2}};
+  addMarket({title:"نتيجة المباراة",status:"open",options:defaultOutcomes});
+  const add=btn(section,"＋ أضف نوع توقع جديد","b",()=>addMarket({title:"",status:"open",options:JSON.parse(JSON.stringify(defaultOutcomes))}));add.style.width="100%";
+  const msg=el("div","hint","");
+  btn(section,"💾 أضف المباراة إلى الرئيسية","",async()=>{
+    const a=t1.get(),b=t2.get();if(!a.name||!b.name){msg.textContent="❌ اكتب اسم الفريق الأول واسم الفريق الثاني";return;}
+    if(a.logo&&!/^https:\/\//i.test(a.logo)){msg.textContent="❌ رابط شعار الفريق الأول لازم يبدأ بـ https://";return;}
+    if(b.logo&&!/^https:\/\//i.test(b.logo)){msg.textContent="❌ رابط شعار الفريق الثاني لازم يبدأ بـ https://";return;}
+    const markets={};for(let i=0;i<marketEditors.length;i++){const m=marketEditors[i].ed.get();if(!m.valid||!m.data.title||Object.keys(m.data.options).length<2){msg.textContent="❌ راجع اسم السوق والاختيارات والمعاملات. كل سوق يحتاج اختيارين على الأقل.";return;}markets["m"+(i+1)] = m.data;}
+    const id="match"+Date.now().toString(36),obj={title:matchName.value.trim()||"مباراة اليوم",date:date.value.trim(),team1:a,team2:b,status:status.value,visible:true,order:Date.now(),markets:markets};
+    try{await apiCall("admin_match_save",{matchId:id,payload:obj,status:obj.status,kickoffAt:null});C.matches[id]=obj;msg.textContent="✅ تمت إضافة المباراة وستظهر في الرئيسية بعد تحديث البيانات.";matchName.value=date.value="";}
+    catch(e){msg.textContent="❌ لم يتم الحفظ. راجع اتصال قاعدة البيانات.";}
+  }).style.width="100%";section.appendChild(msg);box.appendChild(section);
+  const existing=Object.entries(C.matches||{}).map(([id,m])=>({id,...(m||{})})).sort((a,b)=>(b.order||0)-(a.order||0));
+  const list=el("div","card");list.appendChild(el("div","sec","📋 المباريات المضافة ("+existing.length+")"));
+  if(!existing.length)list.appendChild(el("div","hint gray","لا توجد مباريات مضافة حاليًا."));
+  existing.forEach(match=>{
+    const c=el("div","match-editor");c.appendChild(el("div","sec",(match.team1?.name||"الفريق الأول")+" × "+(match.team2?.name||"الفريق الثاني")));
+    const nm=el("input");nm.type="text";nm.value=match.title||"مباراة اليوم";nm.placeholder="اسم المباراة";c.appendChild(el("label","","عنوان المباراة"));c.appendChild(nm);
+    const tg=el("div","teams-editor"),et1=teamEditor("الفريق الأول",match.team1||{}),et2=teamEditor("الفريق الثاني",match.team2||{});tg.append(et1.element,et2.element);c.appendChild(tg);
+    const dt=el("input");dt.type="text";dt.value=match.date||"";dt.placeholder="موعد المباراة";c.appendChild(el("label","","موعد المباراة"));c.appendChild(dt);
+    const ms=el("select");[["open","متاحة للتوقعات"],["closed","مغلقة" ]].forEach(([v,t])=>{const o=el("option","",t);o.value=v;if((match.status||"open")===v)o.selected=true;ms.appendChild(o);});c.appendChild(el("label","","حالة المباراة"));c.appendChild(ms);
+    const mb=el("div");c.appendChild(el("div","sec","أسواق هذه المباراة"));c.appendChild(mb);const eds=[];let newMarketNo=1;
+    const addExistingMarket=(mid,m)=>{
+      const entry={id:mid,ed:null};
+      entry.ed=marketEditor(Object.assign({id:mid},m),et1,et2,()=>{eds.splice(eds.indexOf(entry),1);entry.ed.element.remove();});
+      eds.push(entry);mb.appendChild(entry.ed.element);
+    };
+    Object.entries(match.markets||{}).forEach(([mid,m])=>addExistingMarket(mid,m));
+    btn(c,"＋ أضف سوقًا آخر","b",()=>{
+      let mid;do{mid="m_new_"+(Date.now().toString(36))+"_"+(newMarketNo++);}while(eds.some(x=>x.id===mid));
+      addExistingMarket(mid,{title:"",status:"open",options:{home:{label:"فوز {team1}",odds:2},draw:{label:"تعادل",odds:3},away:{label:"فوز {team2}",odds:2}}});
+    }).style.width="100%";
+    const visible=el("input");visible.type="checkbox";visible.checked=match.visible!==false;visible.style.cssText="width:auto;margin-left:8px";const vl=el("label");vl.append(visible,"عرض المباراة في الصفحة الرئيسية");c.appendChild(vl);
+    const msg=el("div","hint","");const row=el("div","match-actions");
+    btn(row,"💾 حفظ تعديلات المباراة","",async()=>{
+      const a=et1.get(),b=et2.get();if(!a.name||!b.name){msg.textContent="❌ أسماء الفريقين مطلوبة";return;}
+      if((a.logo&&!/^https:\/\//i.test(a.logo))||(b.logo&&!/^https:\/\//i.test(b.logo))){msg.textContent="❌ روابط الشعارات لازم تبدأ بـ https://";return;}
+      const markets={};for(const x of eds){const d=x.ed.get();if(!d.valid||!d.data.title||Object.keys(d.data.options).length<2){msg.textContent="❌ راجع السوق: عنوانه واختياراته ومعاملاته مطلوبة";return;}markets[x.id]=d.data;}
+      try{
+        const payload={title:nm.value.trim()||"مباراة اليوم",date:dt.value.trim(),team1:a,team2:b,status:ms.value,visible:visible.checked,order:match.order||Date.now(),markets:markets};await apiCall("admin_match_save",{matchId:match.id,payload,status:ms.value,kickoffAt:null});C.matches[match.id]=payload;
+        let settled=0,winners=0,totalPaid=0;
+        const settlementErrors=[];
+        for(const [marketId,marketData] of Object.entries(markets)){
+          if(marketData.status==="settled"&&marketData.resultOptionId){
+            const result=await settleMatchMarketBets(match.id,marketId,marketData);
+            settled+=result.settled;winners+=result.winners;totalPaid=r2(totalPaid+result.payout);
+            settlementErrors.push(...(result.errors||[]));
+          }
+        }
+        // محاولة ثانية للتذاكر التي تعذر تحديثها أول مرة.
+        if(settlementErrors.length){
+          settlementErrors.splice(0);
+          for(const [marketId,marketData] of Object.entries(markets)){
+            if(marketData.status!=="settled"||!marketData.resultOptionId)continue;
+            const retry=await settleMatchMarketBets(match.id,marketId,marketData);
+            settled+=retry.settled;winners+=retry.winners;totalPaid=r2(totalPaid+retry.payout);
+            settlementErrors.push(...(retry.errors||[]));
+          }
+          if(!settlementErrors.length)msg.textContent="تمت إعادة المحاولة بنجاح بعد تعذر بعض التحديثات الأولية.";
+        }
+        const report="✅ تم حفظ المباراة والنتيجة. التذاكر المسوّاة: "+settled+" — الفائزون: "+winners+" — إجمالي العوائد: "+f(totalPaid);
+        msg.textContent=report+(settlementErrors.length?" — تنبيه: بعض الحسابات تحتاج إعادة محاولة.":"");
+        alert(msg.textContent+(settlementErrors.length?"\n"+settlementErrors.join("\n"):""));
+      }
+      catch(e){msg.textContent="❌ تعذر حفظ المباراة أو تسوية التوقعات: "+(e&&e.message?e.message:"خطأ غير معروف");}
+    });
+    const del=btn(row,"🗑 حذف المباراة","r",()=>{});twoTap(del,"🗑 حذف المباراة",async()=>{await apiCall("admin_match_delete",{matchId:match.id});if(C.matches[match.id])C.matches[match.id].visible=false;msg.textContent="✅ تم إخفاء المباراة وحفظ سجلات التوقعات";});
+    c.append(row,msg);list.appendChild(c);
+  });
+  box.appendChild(list);
+}
+
+function pagesForm(){
+  const box=$("pgf");box.innerHTML="";const add=el("div","card");add.appendChild(el("div","sec","➕ إضافة صفحة جديدة"));add.appendChild(el("div","hint gray","الصفحات بتظهر للاعبين في تبويب (المزيد)."));
+  const t=el("input"),e=el("input"),b=el("textarea");t.placeholder="عنوان الصفحة";e.placeholder="أيقونة (إيموجي) مثال: 📖";b.placeholder="محتوى الصفحة";[t,e,b].forEach(x=>add.appendChild(x));const am=el("div","hint","");
+  btn(add,"➕ أضف الصفحة","",async()=>{if(!t.value.trim())return am.textContent="❌ اكتب عنوان";const pages={...(C.pages||{}),["p"+Date.now().toString(36)]:{title:t.value.trim(),emo:e.value.trim()||"📄",body:b.value,order:50,on:true}};try{await saveConfig("pages",pages);am.textContent="✅ اتضافت";t.value=e.value=b.value="";pagesForm();}catch(err){am.textContent="❌ "+displayError(err);}}).style.width="100%";add.appendChild(am);box.appendChild(add);
+  Object.keys(C.pages||{}).sort((a,b2)=>(C.pages[a].order||99)-(C.pages[b2].order||99)).forEach(id=>{
+    const p=C.pages[id],c=el("div","card"),gc=el("div","gcard");c.appendChild(el("div","sec",(p.emo||"📄")+" "+(p.title||"")));const L=(tt,x)=>{gc.appendChild(el("label","",tt));gc.appendChild(x);return x;};
+    const ti=el("input");ti.value=p.title||"";const em=el("input");em.value=p.emo||"";const bd=el("textarea");bd.value=p.body||"";bd.style.minHeight="120px";const im=el("input");im.value=p.img||"";im.placeholder="https://...";const od=el("input");od.inputMode="numeric";od.value=p.order||"";const on=el("input");on.type="checkbox";on.checked=p.on!==false;on.style.cssText="width:auto;margin-left:8px";
+    L("العنوان",ti);L("الأيقونة",em);L("المحتوى",bd);L("صورة (رابط https، اختياري)",im);L("الترتيب",od);const lb=el("label");lb.append(on,"ظاهرة");gc.appendChild(lb);const msg=el("div","hint","");
+    btn(gc,"💾 احفظ","",async()=>{const pages={...(C.pages||{}),[id]:{title:ti.value.trim(),emo:em.value.trim(),body:bd.value,img:im.value.trim(),order:Math.floor(pf(od.value))||99,on:on.checked}};try{await saveConfig("pages",pages);msg.textContent="✅ اتحفظت";}catch(err){msg.textContent="❌ "+displayError(err);}});
+    const dl=btn(gc,"🗑 احذف الصفحة","r",()=>{});twoTap(dl,"🗑 احذف الصفحة",async()=>{const pages={...(C.pages||{})};delete pages[id];await saveConfig("pages",pages);pagesForm();});gc.appendChild(msg);c.appendChild(gc);box.appendChild(c);
+  });
+}
+
+async function payAct(key,approve){
+  const x=PL.find(p=>p._key===key);if(!x)return;
+  if(!confirm(approve?"تأكيد الدفع وإضافة الرصيد الافتراضي لهذا الحساب؟":"تأكيد رفض الطلب؟"))return;
+  try{await apiCall("admin_credit_review",{requestId:x._key,approve:!!approve});await refreshAll();}catch(e){alert(displayError(e));}
+}
+function payRender(){
+  const box=$("paylog");box.innerHTML="";const pending=PL.filter(x=>x.status==="pending"),done=PL.filter(x=>x.status!=="pending");
+  const s=el("div","card");s.appendChild(el("div","sec","⏳ طلبات الشحن المعلقة ("+pending.length+")"));if(!pending.length)s.appendChild(el("div","hint gray","لا توجد طلبات معلقة."));
+  pending.forEach(x=>{
+    const c=el("div","acc");c.appendChild(el("div","line","👤 الحساب: "+x.name+" — ID: "+x.id));
+    c.appendChild(el("div","line","⏰ الوقت: "+fdate(x.t)));c.appendChild(el("div","idbig",f(x.amt)));
+    if(x.method)c.appendChild(el("div","line","الطريقة: "+x.method));
+    if(x.destinationNumber)c.appendChild(el("div","line","الرقم المهم: "+x.destinationNumber));
+    if(x.userNumber)c.appendChild(el("div","line","رقم صاحب الطلب: "+x.userNumber));
+    if(x.note)c.appendChild(el("div","line","ملاحظة: "+x.note));
+    if(x.proofUrl){const im=el("img");im.src=x.proofUrl;im.alt="صورة الطلب";im.style.cssText="width:100%;max-width:320px;max-height:260px;object-fit:contain;border-radius:12px;background:#fff";c.appendChild(im);}
+    const row=el("div","two");btn(row,"تم الدفع — أضف الرصيد","",()=>payAct(x._key,true));btn(row,"لم تتم الموافقة","r",()=>payAct(x._key,false));c.appendChild(row);s.appendChild(c);
+  });box.appendChild(s);
+  const h=el("div","card");h.appendChild(el("div","sec","سجل الطلبات المنتهية"));if(!done.length)h.appendChild(el("div","hint gray","لا يوجد."));done.slice(0,100).forEach(x=>h.appendChild(el("div","line",fdate(x.t)+" — "+x.name+" ("+x.id+") — "+f(x.amt)+" — "+(x.status==="approved"?"تم الدفع": "لم تتم الموافقة"))));box.appendChild(h);
+}
+function chatListRender(){
+  const box=$("chatlist");if(!box)return;box.innerHTML="";const rooms=Object.entries(chatRooms).sort((a,b)=>(b[1].last||0)-(a[1].last||0)),c=el("div","card");c.appendChild(el("div","sec","💬 محادثات اللاعبين ("+rooms.length+")"));if(!rooms.length)c.appendChild(el("div","hint gray","لا توجد محادثات بعد."));
+  rooms.forEach(([id,r])=>{const row=el("button","mrow",(r.unread?"🔴 ":"")+(r.username||"لاعب")+" ("+id+") — "+(r.lastMsg||"").slice(0,30));row.onclick=()=>openChatThread(id,r.username||"لاعب");c.appendChild(row);});box.appendChild(c);
+}
+function openChatThread(id,nm){
+  curChat=id;const room=chatRooms[id];if(!room)return;$("chatlist").hidden=true;$("chatthread").hidden=false;
+  $("chatthread").innerHTML='<button class="b" id="chback">→ رجوع للقائمة</button><div class="card"><b>💬 '+String(nm).replace(/[<>]/g,"")+' ('+String(id)+')</b><div class="chatbox" id="cbox"></div><div class="chatin"><input id="cin" placeholder="اكتب الرد..."><button id="csend">➤</button></div></div>';
+  const draw=()=>{const box=$("cbox");if(!box)return;box.innerHTML="";(chatRooms[id]?.messages||[]).forEach(m=>{const b=el("div","bub "+(m.sender_role==="admin"?"me":"them"),m.message);b.appendChild(el("small","",new Date(m.created_at).toLocaleTimeString("ar-EG")));box.appendChild(b);});box.scrollTop=box.scrollHeight;};draw();
+  $("chback").onclick=()=>{curChat=null;$("chatlist").hidden=false;$("chatthread").hidden=true;chatListRender();};
+  $("csend").onclick=async()=>{const v=$("cin").value.trim();if(!v)return;try{await apiCall("admin_chat_send",{userId:room.userId,message:v.slice(0,2000)});$("cin").value="";await refreshChats();draw();}catch(e){alert(displayError(e));}};
+  $("cin").onkeydown=e=>{if(e.key==="Enter")$("csend").click();};
+}
+async function refreshChats(){const d=await apiCall("admin_chat_rooms",{},false);chatRooms={};(d.rooms||[]).forEach(r=>{const k=String(r.legacyUserId||r.userId),last=(r.messages||[]).slice(-1)[0];chatRooms[k]={userId:r.userId,username:r.username,messages:r.messages||[],last:last?new Date(last.created_at).getTime():0,lastMsg:last?.message||"",unread:last?.sender_role==="player"};});chatListRender();}
+function watchChats(){if(chatPoll)clearInterval(chatPoll);chatPoll=setInterval(()=>{if(document.visibilityState!=="hidden")refreshChats().then(()=>{if(curChat&&$("cbox")){const box=$("cbox"),room=chatRooms[curChat];if(room){box.innerHTML="";room.messages.forEach(m=>{const b=el("div","bub "+(m.sender_role==="admin"?"me":"them"),m.message);b.appendChild(el("small","",new Date(m.created_at).toLocaleTimeString("ar-EG")));box.appendChild(b);});box.scrollTop=box.scrollHeight;}}}).catch(e=>console.warn("chat refresh",e));},6000);}
+
+function textsForm(){
+  const box=$("f5");box.innerHTML="";box.appendChild(el("div","sec","💬 كل الكلام اللي بيظهر في الموقع"));box.appendChild(el("div","hint gray","{amount} المبلغ، {rtp} العائد، {cap} أعلى مضاعف، {edge} أفضلية المنصة، {p} فرصة النجاة، {pct} نسبة التخفيض."));const inputs={};
+  for(const k in TL){box.appendChild(el("label","",TL[k]));const i=el(BIG.includes(k)?"textarea":"input");if(!BIG.includes(k))i.type="text";i.value=C.texts[k]||"";inputs[k]=i;box.appendChild(i);}
+  btn(box,"💾 احفظ كل النصوص","",async()=>{const o={};for(const k in inputs)o[k]=inputs[k].value;if(o.notice.trim().length<15)return alert("التحذير التوعوي لازم 15 حرف على الأقل");try{await saveConfig("texts",o);alert("اتحفظ، وبيظهر للاعبين فور تحديث البيانات");}catch(e){alert(displayError(e));}}).style.width="100%";
+  const rb=btn(box,"رجّع كل النصوص الأصلية","r",()=>{});rb.style.width="100%";twoTap(rb,"رجّع كل النصوص الأصلية",async()=>{await saveConfig("texts",{});merge({...C,texts:{}});textsForm();});
+}
+function settingsForm(){
+  const box=$("f6");box.innerHTML="";const S=C.settings;box.appendChild(el("div","sec","⚙️ الإعدادات"));box.appendChild(el("div","hint gray","نسبة العائد لكل لعبة من تبويب الألعاب. كل الأرصدة افتراضية ولا توجد معاملات مالية حقيقية."));
+  const num=(lab,val)=>{box.appendChild(el("label","",lab));const i=el("input");i.type="text";i.inputMode="decimal";i.value=val;box.appendChild(i);return i;};
+  const chk=(lab,val)=>{const l=el("label"),c=el("input");c.type="checkbox";c.checked=!!val;c.style.cssText="width:auto;margin-left:8px";l.append(c,lab);box.appendChild(l);return c;};
+  const a=num("الرصيد الافتراضي للحسابات الجديدة (مرة واحدة)",S.initial),z=chk("الحسابات الجديدة تبدأ برصيد صفر",S.newZero),b=num("أقل رهان",S.minBet),mx=num("أقصى رهان (0 = بلا حد)",S.maxBet),c=num("الرهان الافتراضي",S.defBet),cb=chk("السماح بتسجيل حسابات جديدة",S.registration);
+  btn(box,"💾 احفظ الإعدادات","",async()=>{const value={...S,initial:Math.max(0,pf(a.value)||0),newZero:z.checked,minBet:Math.max(.01,pf(b.value)||1),maxBet:Math.max(0,pf(mx.value)||0),defBet:Math.max(1,pf(c.value)||1000),registration:cb.checked};try{await saveConfig("settings",value);alert("اتحفظت");}catch(e){alert(displayError(e));}}).style.width="100%";
+  box.appendChild(el("div","sec","🎨 الألوان"));const inputs={};for(const k in CL){const row=el("div","cl");row.appendChild(el("span","",CL[k]));const i=el("input");i.type="color";i.value=C.colors[k];inputs[k]=i;row.appendChild(i);box.appendChild(row);}
+  btn(box,"💾 احفظ الألوان","",async()=>{const o={};for(const k in inputs)o[k]=inputs[k].value;try{await saveConfig("colors",o);alert("اتحفظ");}catch(e){alert(displayError(e));}}).style.width="100%";
+  const rb=btn(box,"رجّع الألوان الأصلية","r",()=>{});rb.style.width="100%";twoTap(rb,"رجّع الألوان الأصلية",async()=>{await saveConfig("colors",{});C.colors={...DEFCOL};settingsForm();});
+}
+
+async function enter(){
+  $("login").hidden=true;$("panel").hidden=false;if(started)return;started=true;
+  try{await refreshAll();watchChats();$("cidmsg").textContent="اكتب 9 أرقام لتظهر بيانات الحساب";}
+  catch(e){started=false;$("panel").hidden=true;$("login").hidden=false;$("err").textContent="تعذر تحميل بيانات الإدارة: "+displayError(e);}
+}
+async function login(){
+  const p=$("pin").value;if(!p)return $("err").textContent="اكتب كلمة مرور المشرف";
+  $("go").disabled=true;$("err").textContent="جارٍ التحقق من السيرفر...";
+  try{const data=await authCall("login",{username:"ruknadmin",password:p},false);csrfToken=data.csrfToken||"";$("pin").value="";
+    if(data.user?.role!=="admin"){try{await authCall("logout",{},true);}catch{}csrfToken="";throw new ApiError("الحساب ليس حساب مشرف.",403);}
+    $("err").textContent="";await enter();
+  }catch(e){$("err").textContent=displayError(e);}
+  finally{$("go").disabled=false;}
+}
+async function logout(){try{await authCall("logout",{},true);}catch(e){console.warn("logout",e);}csrfToken="";started=false;if(chatPoll)clearInterval(chatPoll);$("panel").hidden=true;$("login").hidden=false;$("pin").value="";$("err").textContent="تم تسجيل الخروج.";}
+$("go").onclick=login;
+$("pin").onkeydown=e=>{if(e.key==="Enter")login();};
+$("q").oninput=accounts;$("cid").oninput=lookup;$("mk").onclick=()=>createAcc().catch(e=>$("mkmsg").textContent=displayError(e));
+document.querySelectorAll("#flt button").forEach(b=>b.onclick=()=>{FILT=b.dataset.f;document.querySelectorAll("#flt button").forEach(x=>x.className=x===b?"on":"b");accounts();});
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>{go(b.dataset.p);if(b.dataset.p==="p7"){$("chatlist").hidden=false;$("chatthread").hidden=true;curChat=null;chatListRender();}});
+document.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>go(b.dataset.s));document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>go("p6"));
+(async()=>{try{const me=await authCall("me",{},false);csrfToken=me.csrfToken||"";if(me.user?.role==="admin")await enter();else await authCall("logout",{},true);}catch{}})();
