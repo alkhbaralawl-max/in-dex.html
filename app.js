@@ -1459,11 +1459,11 @@ ENG.dice={open(g,b){
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;const stage=$("diceStage");stage.classList.add("rolling");$("diceRoll").disabled=true;gmsg("النرد بيتحرك...");
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const data=await apiCall("play",{gameId:g.id,stake:bet,pick:choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
       stage.classList.remove("rolling");const faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
       $("dieOne").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[0])||1))-1];
       $("dieTwo").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[1])||1))-1];
-      $("diceSum").textContent=String(o.sum??"—");U.balance=Number(data.balance);hold=false;busy=false;render();
+      $("diceSum").textContent=String(o.total??"—");U.balance=Number(data.balance);hold=false;busy=false;render();
       result(Number(data.payout),bet,(o.won?"اختيار صحيح":"لم تصب هذه الجولة")+" • ×"+Number(o.multiplier||0).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
     }catch(e){stage.classList.remove("rolling");hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
   });
