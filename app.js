@@ -2,7 +2,7 @@
 window.onerror=function(m,s,l){var e=document.getElementById("fatal");e.textContent="ERROR: "+m+" (line "+l+")";e.hidden=false;};
 const SUPABASE_URL="https://ffovnyfpxdzsbszzivua.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY="sb_publishable_If3JGOuGTIlZf4yMSHKXhA_cVT6F3HQ";
-const SAME_ORIGIN_API=false;
+const SAME_ORIGIN_API=["https://rukn-algharb-main.vercel.app","https://rukn-algharb-main-alkhbaralawl-4273.vercel.app","https://rukn-algharb-main-live.vercel.app","https://rukn-algharb-main-live-alkhbaralawl-4273.vercel.app"].includes(location.origin);
 const AUTH_API=SAME_ORIGIN_API?"/api/auth":SUPABASE_URL+"/functions/v1/auth-api";
 const APP_API=SAME_ORIGIN_API?"/api/app":SUPABASE_URL+"/functions/v1/app-api";
 let csrfToken="";
