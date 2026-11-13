@@ -41,16 +41,16 @@ function capOf(g){
 }
 
 
-const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,plinko:94};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#b56d13","#ffcf65","#241405"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],plinko:["#1a2a4a","#4a7dd4","#0a1222"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"✈",crash:"📈",wheel:"🎡",plinko:"🎯"};
+const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,dice:94};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#125b78","#4fd5e8","#062438"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],dice:["#194b45","#56d1a1","#061b20"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",dice:"🎲"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
 {id:"rocket",name:"لعبة الطيارة",desc:"تابع صعود الطيارة واسحب قبل انتهاء الجولة",engine:"rocket",cat:"الطيارة",tag:"الطيارة",order:3},
 {id:"wheel",name:"Spin and Win",desc:"عجلة الحظ بجوائز متفاوتة",engine:"wheel",cat:"عجلة",tag:"عجلة",order:4},
 {id:"crash",name:"Crash",desc:"المنحنى يرتفع... اسحب قبل الانهيار",engine:"crash",cat:"كراش",tag:"كراش",order:5},
-{id:"plinko",name:"Plinko",desc:"أسقط الكرة واستنى تستقر في خانة المضاعف",engine:"plinko",cat:"بلينكو",tag:"بلينكو",order:6}];
+{id:"dice",name:"Dice Duel",desc:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7 في تحدي النرد",engine:"dice",cat:"النرد",tag:"النرد",order:6}];
 const DEFT={
 title:"ركن الغرب",subtitle:"تجربة توعوية",
 ribbon:"🔒 تجربة توعوية • الرصيد وهمي بالكامل • لا إيداع ولا سحب حقيقي",
@@ -77,11 +77,11 @@ ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تم�
 ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
-rulePlinko:"الكرة بتنزل من فوق وتتنطط يمين أو شمال 8 مرات، وتستقر في خانة لها مضاعف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+ruleDice:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7. يتم رمي نردين عشوائيًا على الخادم، وتظهر نتيجة الرمية بعد اعتمادها. العائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
 
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
-btnDrop:"🎯 أسقط الكرة",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
+btnRollDice:"🎲 ارْمِ النرد",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
 };
 const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"};
 const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000,sportsEnabled:true};
@@ -89,11 +89,11 @@ let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{},matches:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
-  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","rulePlinko"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  ["notice","ruleSlot","ruleApple","ruleCrash","ruleWheel","ruleDice"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{},matches:c.matches||{}};
 }
 function games(){
-  const allowed=new Set(["wwg","apple","rocket","crash","wheel","plinko"]);
+  const allowed=new Set(["wwg","apple","rocket","crash","wheel","dice"]);
   const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));
   const o=C.games||{};
   for(const id in o)if(allowed.has(id))m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
@@ -1106,6 +1106,38 @@ function genCp(g){
   if(c<1)c=1;if(c>capOf(g))c=capOf(g);
   return c;
 }
+function drawRocketScene(x,W,H,t,m,st,limit){
+  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#071d35");bg.addColorStop(.5,"#0e5270");bg.addColorStop(1,"#061522");
+  x.fillStyle=bg;x.fillRect(0,0,W,H);
+  const glow=x.createRadialGradient(W*.72,H*.38,2,W*.72,H*.38,W*.62);glow.addColorStop(0,"rgba(80,220,245,.26)");glow.addColorStop(1,"rgba(80,220,245,0)");x.fillStyle=glow;x.fillRect(0,0,W,H);
+  STARS.forEach((a,i)=>{const sx=(a[0]*W+(t*10*(i%4+1)))%W,sy=a[1]*H*.72;x.fillStyle="rgba(220,248,255,"+(a[2]/3.4)+")";x.beginPath();x.arc(sx,sy,Math.max(.6,a[2]*.75),0,Math.PI*2);x.fill();});
+  x.strokeStyle="rgba(165,235,245,.16)";x.lineWidth=1;
+  for(let r=0;r<5;r++){const yy=H*.22+r*H*.13;x.beginPath();x.moveTo(0,yy);x.lineTo(W,yy);x.stroke();}
+  const progress=Math.max(0,Math.min(1,Math.log(Math.max(1,m))/Math.log(Math.max(2,limit))));
+  const rx=W*(.52+.12*Math.sin(t*.38)),ry=H*(.68-progress*.48);
+  // planet horizon and distant launch landscape
+  x.fillStyle="#071b24";x.beginPath();x.moveTo(0,H*.82);x.quadraticCurveTo(W*.25,H*.72,W*.47,H*.86);x.quadraticCurveTo(W*.76,H*.7,W,H*.83);x.lineTo(W,H);x.lineTo(0,H);x.closePath();x.fill();
+  x.fillStyle="rgba(9,35,45,.92)";for(let i=0;i<9;i++){const bx=i*W/8,bh=H*(.05+(i%3)*.018);x.fillRect(bx,H*.84-bh,W/14,bh);}
+  x.strokeStyle="rgba(106,228,244,.6)";x.lineWidth=2;x.beginPath();x.moveTo(W*.1,H*.9);x.lineTo(W*.9,H*.9);x.stroke();
+  // altitude trail
+  x.setLineDash([5,7]);x.strokeStyle="rgba(111,235,246,.45)";x.lineWidth=2;x.beginPath();x.moveTo(W*.52,H*.85);x.quadraticCurveTo(W*.68,H*.6,rx,ry+34);x.stroke();x.setLineDash([]);
+  if(st==="crash"){
+    x.save();x.translate(rx,ry);const radius=20+Math.min(26,(Date.now()/80)%24);const flame=x.createRadialGradient(0,0,2,0,0,radius);flame.addColorStop(0,"#fff7b4");flame.addColorStop(.3,"#ffb14e");flame.addColorStop(1,"rgba(244,64,47,0)");x.fillStyle=flame;x.beginPath();x.arc(0,0,radius,0,Math.PI*2);x.fill();x.restore();
+  }else{
+    x.save();x.translate(rx,ry);x.rotate(-.18);
+    const tail=x.createLinearGradient(0,15,0,58);tail.addColorStop(0,"#fff4a9");tail.addColorStop(.42,"#ff9d47");tail.addColorStop(1,"rgba(255,93,38,0)");x.fillStyle=tail;x.beginPath();x.moveTo(-8,14);x.quadraticCurveTo(0,38,0,58);x.quadraticCurveTo(9,33,8,14);x.closePath();x.fill();
+    x.shadowColor="#7bf4ff";x.shadowBlur=22;x.fillStyle="#edfaff";x.strokeStyle="#58cde2";x.lineWidth=2;x.beginPath();x.moveTo(0,-36);x.quadraticCurveTo(15,-10,11,16);x.lineTo(24,27);x.lineTo(23,34);x.lineTo(7,28);x.lineTo(0,34);x.lineTo(-7,28);x.lineTo(-23,34);x.lineTo(-24,27);x.lineTo(-11,16);x.quadraticCurveTo(-15,-10,0,-36);x.closePath();x.fill();x.stroke();
+    x.fillStyle="#1c7892";x.beginPath();x.ellipse(0,-4,5,9,0,0,Math.PI*2);x.fill();x.shadowBlur=0;x.restore();
+  }
+  x.fillStyle="rgba(4,18,31,.72)";x.beginPath();x.roundRect(18,15,190,48,13);x.fill();
+  x.textAlign="left";x.textBaseline="middle";x.font="bold 11px Tahoma";x.fillStyle="#83dbe7";x.fillText("FLIGHT TELEMETRY",31,30);
+  x.font="bold 15px Tahoma";x.fillStyle="#fff";x.fillText("ALTITUDE  "+Math.round(progress*100)+"%",31,48);
+  x.textAlign="center";x.font="900 "+Math.min(50,Math.max(34,W*.085))+"px Tahoma";
+  x.fillStyle=st==="crash"?"#ff7b6c":"#efffff";x.shadowColor=st==="crash"?"#ff513e":"#3edff5";x.shadowBlur=18;
+  x.fillText(st==="crash"?"انتهت الرحلة":"×"+Number(m).toFixed(2),W*.72,H*.2);x.shadowBlur=0;
+  x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ffb1a5":st==="pending"?"#ffe0a2":"#c0f4fa";
+  x.fillText(st==="crash"?"تم رصد نقطة التوقف":st==="pending"?"جارٍ تأكيد الهبوط":"اسحب الرصيد قبل نهاية الرحلة",W*.72,H*.2+31);
+}
 function drawCr(skin,t,m,st,limit=CAP){
   const cv=$("cv");if(!cv)return;
   const rect=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);
@@ -1114,6 +1146,7 @@ function drawCr(skin,t,m,st,limit=CAP){
   if(cv.width!==bw||cv.height!==bh){cv.width=bw;cv.height=bh;}
   const x=cv.getContext("2d");if(!x)return;
   x.setTransform(dpr,0,0,dpr,0,0);x.clearRect(0,0,W,H);
+  if(skin==="rocket"){drawRocketScene(x,W,H,t,m,st,limit);return;}
   const bg=x.createLinearGradient(0,0,W,H);
   bg.addColorStop(0,"#07172a");bg.addColorStop(.6,"#0a2740");bg.addColorStop(1,"#04101c");
   x.fillStyle=bg;x.fillRect(0,0,W,H);
@@ -1275,7 +1308,11 @@ function crLoop(){
   }
 }
 const crashEng={open(g,b){
-  b.innerHTML='<div class="gc" style="padding:0;overflow:hidden;background:#06172a"><canvas id="cv" width="720" height="420" style="width:100%;height:auto;aspect-ratio:12/7"></canvas></div><div class="strip" id="cstrip"></div>'+
+  const flight=g.engine==="rocket";
+  b.innerHTML=(flight
+    ?'<div class="gc rocket-console"><div class="rocket-console-head"><div><small>SKY CONTROL / 01</small><b>مركز قيادة الرحلة</b></div><span>🚀 جاهز للإقلاع</span></div><canvas id="cv" width="960" height="540"></canvas><div class="rocket-console-foot"><span>ALTITUDE <b id="rocketAltitude">0%</b></span><span>FLIGHT STATUS <b id="rocketStatus">STANDBY</b></span></div></div>'
+    :'<div class="gc crash-console"><div class="crash-console-head"><span>LIVE MULTIPLIER</span><b>مؤشر الكراش</b></div><canvas id="cv" width="720" height="420"></canvas></div>')+
+    '<div class="strip" id="cstrip"></div>'+
     betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
     rulesBox(tpl(C.texts.ruleCrash,{cap:capOf(g),rtp:rtpOf(g),edge:r2(100-rtpOf(g))}),g)+histBox;
   bindBet(b);safeClick($("cgo"),()=>crStart(g));safeClick($("ccash"),()=>crSettle("cash"));
@@ -1471,193 +1508,40 @@ async function wheelSpin(g){
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
-/* ======== Plinko ======== */
-const PL_ROWS=8,PL_COEF=[1,8,28,56,70,56,28,8,1],PL_RAW=[16,5,2,1.1,.4,1.1,2,5,16];
-const multText=n=>Number(n).toLocaleString("en",{minimumFractionDigits:2,maximumFractionDigits:4});
-function plMults(g){
-  const cap=Math.max(1,Math.min(CAP,Number(g.maxMultiplier)||CAP));
-  let lo=0,hi=100;
-  for(let n=0;n<60;n++){
-    const scale=(lo+hi)/2;
-    const expected=PL_COEF.reduce((sum,w,i)=>sum+w*Math.min(PL_RAW[i]*scale,cap)/256,0);
-    if(expected<rtpOf(g)/100)lo=scale;else hi=scale;
-  }
-  return PL_RAW.map(v=>Math.min(v*hi,cap));
-}
-function resetBall(){
-  const ball=$("plball");if(!ball)return;
-  ball.style.transition="none";ball.style.left="50%";ball.style.top="3%";ball.style.transform="rotate(0deg)";
-  const rope=$("plrope");if(rope){rope.style.left="50%";rope.style.height="18px";}
-  void ball.offsetWidth;
-  ball.style.transition="left .24s cubic-bezier(.2,.7,.2,1),top .24s cubic-bezier(.2,.7,.2,1),transform .24s ease";
-}
-function makePlinkoPath(targetK){
-  const path=Array(targetK).fill(1).concat(Array(PL_ROWS-targetK).fill(0));
-  for(let i=path.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[path[i],path[j]]=[path[j],path[i]];}
-  return path;
-}
-ENG.plinko={open(g,b){
-  const M=plMults(g);
-  b.innerHTML='<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="plbd" id="plbd"><div class="plrope" id="plrope"></div><div class="plball" id="plball"></div></div><div class="plbuckets" id="plbk">'+M.map((m,i)=>'<div class="plbk" data-i="'+i+'">×'+multText(m)+'</div>').join("")+'</div></div>'+
-    betBox("",'<button class="btn y full" id="pldrop">'+C.texts.btnDrop+'</button>')+
-    rulesBox(tpl(C.texts.rulePlinko,{cap:Math.max(...M),rtp:rtpOf(g)}))+histBox;
+/* ======== Dice Duel ======== */
+const DICE_FACE=["⚀","⚁","⚂","⚃","⚄","⚅"];
+const diceMultiplier=(g,pick)=>r2((rtpOf(g)/100)/(pick==="seven"?(6/36):(15/36)));
+ENG.dice={open(g,b){
+  let pick="low";
+  b.innerHTML='<div class="gc dice-arena"><div class="dice-arena-kicker">DICE DUEL <span>• تحدي النرد</span></div><div class="dice-score" id="diceScore">اختر توقعك ثم ارمِ النرد</div><div class="dice-pair" id="dicePair"><span>⚄</span><span>⚂</span></div><div class="dice-total"><small>مجموع النرد</small><b id="diceTotal">—</b></div><div class="dice-range" id="diceRange">اختر نطاق النتيجة من أسفل</div></div>'+
+    '<div class="gc dice-picks"><button type="button" class="dice-pick selected" data-pick="low"><small>المجموع 2 إلى 6</small><b>أقل من 7</b><strong id="lowOdd">×'+diceMultiplier(g,"low").toFixed(2)+'</strong></button><button type="button" class="dice-pick" data-pick="seven"><small>المجموع = 7</small><b>7 بالضبط</b><strong id="sevenOdd">×'+diceMultiplier(g,"seven").toFixed(2)+'</strong></button><button type="button" class="dice-pick" data-pick="high"><small>المجموع 8 إلى 12</small><b>أعلى من 7</b><strong id="highOdd">×'+diceMultiplier(g,"high").toFixed(2)+'</strong></button></div>'+
+    betBox("",'<button class="btn y full dice-roll-btn" id="diceRoll">'+C.texts.btnRollDice+'</button>')+
+    rulesBox(tpl(C.texts.ruleDice,{rtp:rtpOf(g)}))+histBox;
   bindBet(b);
-  const bd=$("plbd");
-  for(let r=0;r<PL_ROWS;r++)for(let c=0;c<=r;c++){
-    const px=50+(2*c-r)*(100/(2*(PL_ROWS+1)));
-    const p=el("div","plpeg");p.style.left=px+"%";p.style.top=(10+r*9.6)+"%";bd.appendChild(p);
-  }
-  resetBall();safeClick($("pldrop"),()=>plDrop(g,M));
-  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("pldrop").disabled=busy;};
+  const picks=b.querySelectorAll("[data-pick]");
+  picks.forEach(button=>button.onclick=()=>{if(busy)return;pick=button.dataset.pick;picks.forEach(x=>x.classList.toggle("selected",x===button));$("diceRange").textContent=button.querySelector("b").textContent+" — العائد النظري "+diceMultiplier(g,pick).toFixed(2)+"×";});
+  safeClick($("diceRoll"),()=>diceRoll(g,pick));
+  cur.upd=()=>{base();$("hist").innerHTML=histHTML(g);$("diceRoll").disabled=busy;};
 }};
-async function plDrop(g,M){
-  if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
-  lastAction=Date.now();busy=true;hold=true;plAnimating=true;$("pldrop").disabled=true;
-  document.querySelectorAll(".plbk").forEach(x=>x.classList.remove("hit"));resetBall();gmsg("الكرة بدأت النزول...");
+async function diceRoll(g,pick){
+  if(busy||!U)return;
+  const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
+  busy=true;hold=true;$("diceRoll").disabled=true;
+  $("diceScore").textContent="النرد بيتحرك...";
+  $("dicePair").classList.add("rolling");
+  gmsg("جارٍ تنفيذ الرمية والتحقق من نتيجتها على الخادم...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()}),o=data.outcome;
-    await plAnimate(o.path||[]);document.querySelectorAll(".plbk").forEach(x=>x.classList.toggle("hit",Number(x.dataset.i)===Number(o.bucket)));
-    await sleep(300);plAnimating=false;hold=false;busy=false;U.balance=Number(data.balance);render();result(Number(data.payout),bet,"×"+multText(o.multiplier));refreshMe(false).then(()=>render()).catch(()=>{});
-  }catch(e){plAnimating=false;hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
+    const data=await apiCall("play",{gameId:g.id,stake:bet,pick,idempotencyKey:crypto.randomUUID()});
+    const outcome=data.outcome||{},dice=Array.isArray(outcome.dice)?outcome.dice:[1,1],total=Number(outcome.total)||dice.reduce((a,x)=>a+Number(x),0);
+    $("dicePair").classList.remove("rolling");
+    $("dicePair").innerHTML=dice.map(x=>'<span>'+DICE_FACE[Math.max(0,Math.min(5,Number(x)-1))]+'</span>').join("");
+    $("diceTotal").textContent=String(total);
+    $("diceScore").textContent=outcome.won?"🎉 توقع صحيح":"انتهت الرمية";
+    $("diceRange").textContent="توقعك: "+(pick==="low"?"أقل من 7":pick==="seven"?"7 بالضبط":"أعلى من 7")+" • النتيجة: "+total;
+    U.balance=Number(data.balance);hold=false;busy=false;render();
+    result(Number(data.payout),bet,"النرد: "+dice.join(" + ")+" = "+total);
+    refreshMe(false).then(()=>render()).catch(()=>{});
+  }catch(e){
+    $("dicePair").classList.remove("rolling");hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");
+  }
 }
-function plAnimate(path){
-  return new Promise(res=>{
-    const ball=$("plball"),rope=$("plrope");if(!ball){res();return;}
-    const step=100/(PL_ROWS+1)/2;
-    let x=50,pos=0,angle=0;
-    const tick=()=>{
-      if(pos>=PL_ROWS){
-        ball.style.left=x+"%";ball.style.top="91%";ball.style.transform="rotate("+angle+"deg)";
-        if(rope){rope.style.left=x+"%";rope.style.height="91%";}
-        setTimeout(res,420);return;
-      }
-      const dir=path[pos]?1:-1;x+=dir*step;pos++;angle+=dir*105;
-      const y=10+pos*9.6;
-      ball.style.left=x+"%";ball.style.top=y+"%";ball.style.transform="rotate("+angle+"deg)";
-      if(rope){rope.style.left=x+"%";rope.style.height=y+"%";}
-      setTimeout(tick,250);
-    };
-    if(rope){rope.style.left="50%";rope.style.height="3%";}
-    tick();
-  });
-}
-
-/* ---------- الحسابات والاتصال الآمن بالخادم ---------- */
-function mapAccount(data){
-  const a=data.user||{},w=data.wallet||{};
-  const bets={};(data.sportsBets||[]).forEach(b=>{bets[b.id]={id:b.id,matchId:b.match_id,matchTitle:b.matchTitle,team1:b.team1,team2:b.team2,marketId:b.market_id,marketTitle:b.marketTitle,optionId:b.option_id,optionLabel:b.optionLabel,stake:Number(b.stake),odds:Number(b.odds),status:b.status,payout:Number(b.payout),createdAt:new Date(b.created_at).getTime()};});
-  const active=data.active||null;
-  return {
-    id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
-    balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
-    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,displayName:a.displayName||"",profile:a.profile||{},
-    hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:Number(x.i)})),sportsBets:bets,
-    sportsChains:(data.sportsChains||[]).map(x=>({
-      id:x.id,initialStake:Number(x.initial_stake)||0,currentBalance:Number(x.current_balance)||0,
-      totalLegs:Number(x.total_legs)||0,processedLegs:Number(x.processed_legs)||0,nextLegOrder:Number(x.next_leg_order)||1,
-      status:x.status,createdAt:x.created_at?new Date(x.created_at).getTime():0,
-      completedAt:x.completed_at?new Date(x.completed_at).getTime():0,
-      legs:(x.legs||x.sports_chain_legs||[]).map(l=>({
-        id:l.id,order:Number(l.order_no)||0,matchId:l.match_id,marketId:l.market_id,optionId:l.option_id,
-        snapshot:l.match_snapshot||{},odds:Number(l.odds)||0,stake:Number(l.actual_stake)||0,payout:Number(l.payout)||0,
-        result:l.result_status||"pending",processedAt:l.processed_at||null
-      })).sort((a,b)=>a.order-b.order)
-    })),
-    ap:active&&active.gameId==="apple"?{k:active.gameId,bet:active.stake,level:active.level,picks:active.picks||[],safeN:active.safeN,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
-    cr:active&&(active.gameId==="crash"||active.gameId==="rocket")?{k:active.gameId,bet:active.stake,t0:active.startedAt,auto:active.auto,roundId:active.id,version:active.version}:null,
-    creditRequest:null
-  };
-}
-async function refreshMe(shouldRender=true){
-  if(!name)return null;
-  const wasSportsEnabled=sportsFeatureEnabled();
-  const data=await apiCall("me",{},false);
-  if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;
-  csrfToken=data.csrfToken||csrfToken;
-  U=mapAccount(data);
-  if(shouldRender&&!hold&&!plAnimating)render();
-  if(wasSportsEnabled!==sportsFeatureEnabled())initSportScoreFeed();
-  if(U.cr&&cur&&cur.g.id===U.cr.k)crLoop();
-  return U;
-}
-async function loadPublicConfig(){
-  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();applySportsAvailability();if(U)render();}
-  catch(e){console.warn("site config unavailable",e);}
-}
-function attach(n){
-  name=n;ref=true;
-  refreshMe(false).then(()=>{showApp();render();settleUserSportsBets();initSportScoreFeed();}).catch(e=>{logout(e.message||"سجّل دخول من جديد");});
-}
-async function logout(t){
-  if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=0;crStop();
-  try{if(csrfToken)await apiCall("logout",{});}catch(e){console.warn("logout",e);}
-  ref=null;name=null;U=null;csrfToken="";hold=false;busy=false;chatOn=false;
-  localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");show("home");showAuth(t);
-}
-function setAuth(m){
-  authMode=m;$("confirmPasswordWrap").hidden=m!=="reg";$("p2").hidden=m!=="reg";
-  $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
-  $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;
-  $("forgot").hidden=m==="reg";$("aerr").textContent="";$("aerr").style.color="";
-}
-async function auth(){
-  const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
-  if(!/^[a-z0-9_]{3,20}$/.test(n))return err("اسم المستخدم من 3 إلى 20 حرف إنجليزي أو أرقام أو _ بدون مسافات");
-  if(reg&&p.length<10)return err("كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل");
-  if(!reg&&p.length<1)return err("اكتب كلمة السر");
-  if(reg){if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");}
-  err("جارٍ التحقق...");$("agb").disabled=true;
-  try{
-    const data=await authCall(reg?"register":"login",{username:n,password:p});
-    csrfToken=data.csrfToken||"";$("p").value="";$("p2").value="";localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
-    err("");attach(n);
-  }catch(e){err(e.message||C.texts.errNet);}
-  finally{$("agb").disabled=false;}
-}
-$("agb").type="button";$("agb").onclick=auth;
-$("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
-
-$("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
-$("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
-$("mout").onclick=()=>logout();
-$("pgback").onclick=()=>show("more");
-$("matchBack").onclick=()=>{show("home");requestAnimationFrame(()=>requestAnimationFrame(()=>window.scrollTo(0,sportsScrollY)));};
-$("gamesQ").oninput=renderGames;
-$("banbtn").onclick=()=>show("games");
-document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
-$("activityPick").onclick=()=>{
-  const menu=$("activityMenu");
-  menu.hidden=!menu.hidden;
-  $("activityPick").setAttribute("aria-expanded",String(!menu.hidden));
-};
-document.querySelectorAll("[data-activity]").forEach(b=>b.onclick=()=>{
-  activityType=b.dataset.activity==="games"?"games":"sports";
-  $("activityMenu").hidden=true;
-  $("activityPick").setAttribute("aria-expanded","false");
-  renderAct();
-});
-let welcomeIndex=0;
-function renderWelcome(){
-  document.querySelectorAll("[data-welcome-slide]").forEach((slide,i)=>slide.hidden=i!==welcomeIndex);
-  const dots=$("welcomeDots");if(dots)dots.querySelectorAll("span").forEach((dot,i)=>dot.classList.toggle("active",i===welcomeIndex));
-  $("welcomeBack").hidden=welcomeIndex===0;
-  $("welcomeNext").innerHTML=welcomeIndex===2?'ابدأ التجربة <span>←</span>':'التالي <span>←</span>';
-}
-function openWelcome(){
-  let seen=false;try{seen=localStorage.getItem("rukn_welcome_seen_v2")==="1";}catch(e){}
-  if(seen)return;
-  welcomeIndex=0;renderWelcome();$("welcomeTour").hidden=false;
-}
-function closeWelcome(){
-  $("welcomeTour").hidden=true;
-  try{localStorage.setItem("rukn_welcome_seen_v2","1");}catch(e){}
-}
-$("welcomeNext").onclick=()=>{if(welcomeIndex<2){welcomeIndex++;renderWelcome();}else closeWelcome();};
-$("welcomeBack").onclick=()=>{if(welcomeIndex>0){welcomeIndex--;renderWelcome();}};
-$("welcomeSkip").onclick=closeWelcome;
-setAuth("login");showAuth();loadPublicConfig();openWelcome();
-(async()=>{
-  try{const data=await apiCall("me",{},false);if(typeof data.sportsEnabled==="boolean")C.settings.sportsEnabled=data.sportsEnabled;csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
-  catch(e){showAuth();}
-})();
-setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
