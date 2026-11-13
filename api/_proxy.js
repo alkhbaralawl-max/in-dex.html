@@ -1,9 +1,11 @@
-const UPSTREAM_BASE = "https://qoeefydvmkdigixsbpuy.supabase.co/functions/v1";
+const UPSTREAM_BASE = "https://ffovnyfpxdzsbszzivua.supabase.co/functions/v1";
 const ALLOWED_ORIGINS = new Set([
   "https://rukn-algharb-main.vercel.app",
-  "https://rukn-algharb-main-alkhbaralawl-4273.vercel.app"
+  "https://rukn-algharb-main-alkhbaralawl-4273.vercel.app",
+  "https://rukn-algharb-main-live.vercel.app",
+  "https://rukn-algharb-main-live-alkhbaralawl-4273.vercel.app"
 ]);
-const PUBLIC_KEY = "sb_publishable_buyanIYkhiKL8rQPw2mZpg_J7c4bXAn";
+const PUBLIC_KEY = "sb_publishable_If3JGOuGTIlZf4yMSHKXhA_cVT6F3HQ";
 
 function originOf(req) {
   const origin = String(req.headers.origin || "");
