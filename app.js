@@ -1416,6 +1416,9 @@ async function crSettle(mode){
     }
   }
 }
+// Bind the airplane to the original live Crash curve, not the checkpoint prototype.
+ENG.rocket=crashEng;
+
 /* ======== Lucky Dice ======== */
 ENG.dice={open(g,b){
   let choice="low";
