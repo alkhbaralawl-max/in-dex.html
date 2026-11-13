@@ -1350,6 +1350,8 @@ const crashEng={open(g,b){
   };
 }};
 ENG.crash=crashEng;
+// The airplane game uses the original curved Crash flight with server-side cashout.
+ENG.rocket=crashEng;
 async function crStart(g){
   if(busy||crLock||!U)return;
   const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
@@ -1419,12 +1421,12 @@ ENG.dice={open(g,b){
   let choice="low";
   b.innerHTML='<div class="dice-stage" id="diceStage"><div class="dice-pair"><div class="die-face" id="dieOne">⚄</div><div class="die-face" id="dieTwo">⚄</div></div><div class="dice-total">مجموع النرد <b id="diceSum">—</b></div></div>'+
     '<div class="gc"><div class="gmsg" id="gmsg">'+C.texts.msgStart+'</div><div class="game-choice-row" id="diceChoices">'+
-    '<button type="button" class="game-choice on" data-dice-choice="low">أقل من 7</button><button type="button" class="game-choice" data-dice-choice="seven">يساوي 7</button><button type="button" class="game-choice" data-dice-choice="high">أكبر من 7</button></div>'+
+    '<button type="button" class="game-choice on" data-dice-choice="low">أقل من 7</button><button type="button" class="game-choice" data-dice-choice="seven">يساوي 7</button><button type="button" class="game-choice" data-dice-choice="high">أكبر من 7</button></div><div class="dice-choice-help" id="diceChoiceHelp">أقل من 7 يعني أن مجموع حجرَي النرد سيكون من 2 إلى 6.</div>'+
     '<div class="bar"><button data-bv="h">½</button><button data-bv="d">×2</button><button data-bv="100">100</button><button data-bv="1000">1K</button><button data-bv="10000">10K</button></div>'+
     '<div class="fld"><label>قيمة الجولة الافتراضية</label><input id="bet" type="number" min="1" step="1" inputmode="decimal" value="'+C.settings.defBet+'"></div>'+
     '<button class="btn full" id="diceRoll">ارمِ النرد</button></div>'+rulesBox("اختر مجموع حجرَي النرد، ثم ارمِهما. النتيجة تُحسب من الخادم وتظهر في سجل الألعاب.")+histBox;
   bindBet(b);
-  b.querySelectorAll("[data-dice-choice]").forEach(btn=>btn.onclick=()=>{choice=btn.dataset.diceChoice;b.querySelectorAll("[data-dice-choice]").forEach(x=>x.classList.toggle("on",x===btn));});
+  b.querySelectorAll("[data-dice-choice]").forEach(btn=>btn.onclick=()=>{choice=btn.dataset.diceChoice;b.querySelectorAll("[data-dice-choice]").forEach(x=>x.classList.toggle("on",x===btn));const help={low:"أقل من 7: مجموع النرد من 2 إلى 6.",seven:"يساوي 7: لازم يكون مجموع الحجرين 7 بالضبط.",high:"أكبر من 7: مجموع النرد من 8 إلى 12."};$("diceChoiceHelp").textContent=help[choice];});
   safeClick($("diceRoll"),async()=>{
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;const stage=$("diceStage");stage.classList.add("rolling");$("diceRoll").disabled=true;gmsg("النرد بيتحرك...");
@@ -1492,7 +1494,7 @@ function wheelDraw(g){
 }
 ENG.wheel={open(g,b){
   wRot=0;
-  b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div>'+
+  b.innerHTML='<div class="wheelwrap"><div class="pointer">▼</div><div class="wrot" id="wrot"><canvas id="wcv" width="320" height="320"></canvas></div></div><div class="wheel-hint" id="wheelHint">المؤشر موجود أعلى العجلة. راقب القطاع الذي يتوقف عنده لمعرفة نتيجة الجولة.</div>'+
     betBox("",'<button class="btn y full" id="wgo">'+C.texts.btnSpinWheel+'</button>')+
     rulesBox(tpl(C.texts.ruleWheel,{cap:8,rtp:rtpOf(g),edge:r2(100-rtpOf(g))}))+histBox;
   wheelDraw(g);bindBet(b);safeClick($("wgo"),()=>wheelSpin(g));
@@ -1505,6 +1507,7 @@ async function wheelSpin(g){
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
     const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
     $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
+    if($("wheelHint"))$("wheelHint").textContent="النتيجة: القطاع رقم "+(index+1)+" — قيمة القطاع ×"+Number(data.outcome.multiplier).toFixed(2);
     U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
