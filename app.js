@@ -42,8 +42,8 @@ function capOf(g){
 
 
 const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,dice:94};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#125b78","#4fd5e8","#062438"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],dice:["#194b45","#56d1a1","#061b20"]};
-const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",dice:"🎲"};
+const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#45320f","#f1ca68","#160f05"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],dice:["#194b45","#56d1a1","#061b20"]};
+const EMO={slot:"🎰",apple:"🍎",rocket:"✈️",crash:"📈",wheel:"🎡",dice:"🎲"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
 {id:"apple",name:"Apple Of Fortune",desc:"اختار تفاحة آمنة وكمّل لأعلى مضاعف",engine:"apple",cat:"تفاح",tag:"تفاح",order:2},
@@ -155,7 +155,7 @@ function gcard(g){
   if(isUrl(g.img)){art.style.backgroundImage='url("'+String(g.img).replace(/["()\s]/g,"")+'")';art.style.backgroundSize="cover";art.style.backgroundPosition="center";}
   else{art.style.background="radial-gradient(circle at 50% 35%,"+th[1]+",#110d06 72%)";const icon=el("span","game-art-icon",EMO[g.engine]||"🎮");icon.setAttribute("aria-hidden","true");art.appendChild(icon);}
   art.appendChild(el("span","tag",g.tag||g.cat||"لعبة"));
-  const gi=el("div","gi");gi.appendChild(el("b","",g.name));gi.appendChild(el("p","",g.desc||""));
+  const gi=el("div","gi");gi.appendChild(el("b","",g.name));const description=g.id==="rocket"?"تابع ارتفاع الطيارة على المنحنى المتصاعد واسحب قبل الانفجار":(g.desc||"");gi.appendChild(el("p","",description));
   const bb=el("button","btn","ابدأ اللعبة");gi.appendChild(bb);
   d.appendChild(art);d.appendChild(gi);d.onclick=()=>openGame(g.id);return d;
 }
@@ -1108,36 +1108,64 @@ function genCp(g){
   return c;
 }
 function drawRocketScene(x,W,H,t,m,st,limit){
-  const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#071d35");bg.addColorStop(.5,"#0e5270");bg.addColorStop(1,"#061522");
+  const bg=x.createLinearGradient(0,0,0,H);
+  bg.addColorStop(0,"#090a0b");bg.addColorStop(.55,"#171307");bg.addColorStop(1,"#050504");
   x.fillStyle=bg;x.fillRect(0,0,W,H);
-  const glow=x.createRadialGradient(W*.72,H*.38,2,W*.72,H*.38,W*.62);glow.addColorStop(0,"rgba(80,220,245,.26)");glow.addColorStop(1,"rgba(80,220,245,0)");x.fillStyle=glow;x.fillRect(0,0,W,H);
-  STARS.forEach((a,i)=>{const sx=(a[0]*W+(t*10*(i%4+1)))%W,sy=a[1]*H*.72;x.fillStyle="rgba(220,248,255,"+(a[2]/3.4)+")";x.beginPath();x.arc(sx,sy,Math.max(.6,a[2]*.75),0,Math.PI*2);x.fill();});
-  x.strokeStyle="rgba(165,235,245,.16)";x.lineWidth=1;
-  for(let r=0;r<5;r++){const yy=H*.22+r*H*.13;x.beginPath();x.moveTo(0,yy);x.lineTo(W,yy);x.stroke();}
+  const glow=x.createRadialGradient(W*.72,H*.32,2,W*.72,H*.32,W*.72);
+  glow.addColorStop(0,"rgba(221,174,73,.24)");glow.addColorStop(1,"rgba(221,174,73,0)");
+  x.fillStyle=glow;x.fillRect(0,0,W,H);
+  STARS.forEach((a,i)=>{
+    const sx=(a[0]*W+(t*7*(i%3+1)))%W,sy=a[1]*H*.76;
+    x.fillStyle="rgba(255,222,153,"+(a[2]/4)+")";x.beginPath();x.arc(sx,sy,Math.max(.5,a[2]*.65),0,Math.PI*2);x.fill();
+  });
+  x.strokeStyle="rgba(221,174,73,.11)";x.lineWidth=1;
+  for(let r=0;r<5;r++){const yy=H*.2+r*H*.13;x.beginPath();x.moveTo(0,yy);x.lineTo(W,yy);x.stroke();}
   const progress=Math.max(0,Math.min(1,Math.log(Math.max(1,m))/Math.log(Math.max(2,limit))));
-  const rx=W*(.52+.12*Math.sin(t*.38)),ry=H*(.68-progress*.48);
-  // planet horizon and distant launch landscape
-  x.fillStyle="#071b24";x.beginPath();x.moveTo(0,H*.82);x.quadraticCurveTo(W*.25,H*.72,W*.47,H*.86);x.quadraticCurveTo(W*.76,H*.7,W,H*.83);x.lineTo(W,H);x.lineTo(0,H);x.closePath();x.fill();
-  x.fillStyle="rgba(9,35,45,.92)";for(let i=0;i<9;i++){const bx=i*W/8,bh=H*(.05+(i%3)*.018);x.fillRect(bx,H*.84-bh,W/14,bh);}
-  x.strokeStyle="rgba(106,228,244,.6)";x.lineWidth=2;x.beginPath();x.moveTo(W*.1,H*.9);x.lineTo(W*.9,H*.9);x.stroke();
-  // altitude trail
-  x.setLineDash([5,7]);x.strokeStyle="rgba(111,235,246,.45)";x.lineWidth=2;x.beginPath();x.moveTo(W*.52,H*.85);x.quadraticCurveTo(W*.68,H*.6,rx,ry+34);x.stroke();x.setLineDash([]);
+  const rx=W*(.13+.72*progress),ry=H*(.82-.6*progress);
+  // A rising curved flight path, matching the original cash-out airplane game.
+  x.strokeStyle="rgba(238,190,91,.13)";x.lineWidth=13;x.lineCap="round";
+  x.beginPath();x.moveTo(W*.12,H*.83);x.quadraticCurveTo(W*.43,H*.76,rx,ry+2);x.stroke();
+  const pathGlow=x.createLinearGradient(W*.12,H*.83,rx,ry);
+  pathGlow.addColorStop(0,"#8f6825");pathGlow.addColorStop(1,"#ffe3a0");
+  x.strokeStyle=pathGlow;x.lineWidth=3;x.setLineDash([7,7]);
+  x.beginPath();x.moveTo(W*.12,H*.83);x.quadraticCurveTo(W*.43,H*.76,rx,ry+2);x.stroke();x.setLineDash([]);
+  // Low desert horizon with a restrained gold rim.
+  x.fillStyle="#090805";x.beginPath();x.moveTo(0,H*.88);x.quadraticCurveTo(W*.23,H*.78,W*.47,H*.89);
+  x.quadraticCurveTo(W*.76,H*.78,W,H*.87);x.lineTo(W,H);x.lineTo(0,H);x.closePath();x.fill();
+  x.strokeStyle="rgba(218,172,78,.38)";x.lineWidth=2;x.beginPath();x.moveTo(0,H*.88);x.quadraticCurveTo(W*.23,H*.78,W*.47,H*.89);
+  x.quadraticCurveTo(W*.76,H*.78,W,H*.87);x.stroke();
   if(st==="crash"){
-    x.save();x.translate(rx,ry);const radius=20+Math.min(26,(Date.now()/80)%24);const flame=x.createRadialGradient(0,0,2,0,0,radius);flame.addColorStop(0,"#fff7b4");flame.addColorStop(.3,"#ffb14e");flame.addColorStop(1,"rgba(244,64,47,0)");x.fillStyle=flame;x.beginPath();x.arc(0,0,radius,0,Math.PI*2);x.fill();x.restore();
+    x.save();x.translate(rx,ry);
+    const radius=23+Math.min(30,(Date.now()/85)%25);
+    const blast=x.createRadialGradient(0,0,2,0,0,radius);
+    blast.addColorStop(0,"#fff9d8");blast.addColorStop(.28,"#ffd06d");blast.addColorStop(.62,"#e9752e");blast.addColorStop(1,"rgba(181,48,18,0)");
+    x.fillStyle=blast;x.beginPath();x.arc(0,0,radius,0,Math.PI*2);x.fill();
+    x.strokeStyle="#ffe0a0";x.lineWidth=2;
+    for(let i=0;i<8;i++){const a=i*Math.PI/4,rr=radius*.7;x.beginPath();x.moveTo(Math.cos(a)*rr,Math.sin(a)*rr);x.lineTo(Math.cos(a)*(rr+13),Math.sin(a)*(rr+13));x.stroke();}
+    x.restore();
   }else{
-    x.save();x.translate(rx,ry);x.rotate(-.18);
-    const tail=x.createLinearGradient(0,15,0,58);tail.addColorStop(0,"#fff4a9");tail.addColorStop(.42,"#ff9d47");tail.addColorStop(1,"rgba(255,93,38,0)");x.fillStyle=tail;x.beginPath();x.moveTo(-8,14);x.quadraticCurveTo(0,38,0,58);x.quadraticCurveTo(9,33,8,14);x.closePath();x.fill();
-    x.shadowColor="#7bf4ff";x.shadowBlur=22;x.fillStyle="#edfaff";x.strokeStyle="#58cde2";x.lineWidth=2;x.beginPath();x.moveTo(0,-36);x.quadraticCurveTo(15,-10,11,16);x.lineTo(24,27);x.lineTo(23,34);x.lineTo(7,28);x.lineTo(0,34);x.lineTo(-7,28);x.lineTo(-23,34);x.lineTo(-24,27);x.lineTo(-11,16);x.quadraticCurveTo(-15,-10,0,-36);x.closePath();x.fill();x.stroke();
-    x.fillStyle="#1c7892";x.beginPath();x.ellipse(0,-4,5,9,0,0,Math.PI*2);x.fill();x.shadowBlur=0;x.restore();
+    x.save();x.translate(rx,ry);x.rotate(-.24);
+    // Side-view aircraft: nose to the right, main wings and tail clearly visible.
+    const trail=x.createLinearGradient(-64,0,-24,0);
+    trail.addColorStop(0,"rgba(239,194,104,0)");trail.addColorStop(1,"rgba(255,231,170,.9)");
+    x.strokeStyle=trail;x.lineWidth=5;x.lineCap="round";x.beginPath();x.moveTo(-66,0);x.lineTo(-31,0);x.stroke();
+    x.shadowColor="#e7bf68";x.shadowBlur=20;x.fillStyle="#fff3d2";x.strokeStyle="#d6a84e";x.lineWidth=2;
+    x.beginPath();x.moveTo(39,0);x.quadraticCurveTo(28,-5,12,-5);x.lineTo(-18,-5);
+    x.lineTo(-31,-20);x.lineTo(-38,-19);x.lineTo(-31,-4);x.lineTo(-43,-1);
+    x.lineTo(-43,1);x.lineTo(-31,4);x.lineTo(-38,19);x.lineTo(-31,20);
+    x.lineTo(-18,5);x.lineTo(12,5);x.quadraticCurveTo(28,5,39,0);x.closePath();x.fill();x.stroke();
+    x.fillStyle="#9e742e";x.beginPath();x.ellipse(13,0,7,2.5,0,0,Math.PI*2);x.fill();
+    x.shadowBlur=0;x.restore();
   }
-  x.fillStyle="rgba(4,18,31,.72)";x.beginPath();x.roundRect(18,15,190,48,13);x.fill();
-  x.textAlign="left";x.textBaseline="middle";x.font="bold 11px Tahoma";x.fillStyle="#83dbe7";x.fillText("FLIGHT TELEMETRY",31,30);
-  x.font="bold 15px Tahoma";x.fillStyle="#fff";x.fillText("ALTITUDE  "+Math.round(progress*100)+"%",31,48);
+  x.fillStyle="rgba(8,7,5,.82)";x.beginPath();x.roundRect(17,14,206,53,13);x.fill();
+  x.strokeStyle="rgba(213,168,78,.65)";x.lineWidth=1;x.stroke();
+  x.textAlign="left";x.textBaseline="middle";x.font="bold 11px Tahoma";x.fillStyle="#d9b76c";x.fillText("FLIGHT ALTITUDE",31,30);
+  x.font="bold 15px Tahoma";x.fillStyle="#fff0c9";x.fillText(Math.round(progress*100)+"%",31,49);
   x.textAlign="center";x.font="900 "+Math.min(50,Math.max(34,W*.085))+"px Tahoma";
-  x.fillStyle=st==="crash"?"#ff7b6c":"#efffff";x.shadowColor=st==="crash"?"#ff513e":"#3edff5";x.shadowBlur=18;
-  x.fillText(st==="crash"?"انتهت الرحلة":"×"+Number(m).toFixed(2),W*.72,H*.2);x.shadowBlur=0;
-  x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ffb1a5":st==="pending"?"#ffe0a2":"#c0f4fa";
-  x.fillText(st==="crash"?"تم رصد نقطة التوقف":st==="pending"?"جارٍ تأكيد الهبوط":"اسحب الرصيد قبل نهاية الرحلة",W*.72,H*.2+31);
+  x.fillStyle=st==="crash"?"#ff9d71":"#fff1cf";x.shadowColor=st==="crash"?"#ff693f":"#e9bc63";x.shadowBlur=18;
+  x.fillText(st==="crash"?"انفجرت الطيارة":"×"+Number(m).toFixed(2),W*.72,H*.2);x.shadowBlur=0;
+  x.font="bold 14px Tahoma";x.fillStyle=st==="crash"?"#ffc0a5":st==="pending"?"#ffe3aa":"#e8d5ab";
+  x.fillText(st==="crash"?"انتهت الجولة":st==="pending"?"جارٍ تأكيد السحب":"اسحب قبل الانفجار",W*.72,H*.2+31);
 }
 function drawCr(skin,t,m,st,limit=CAP){
   const cv=$("cv");if(!cv)return;
@@ -1311,7 +1339,7 @@ function crLoop(){
 const crashEng={open(g,b){
   const flight=g.engine==="rocket";
   b.innerHTML=(flight
-    ?'<div class="gc rocket-console"><div class="rocket-console-head"><div><small>SKY CONTROL / 01</small><b>مركز قيادة الرحلة</b></div><span>🚀 جاهز للإقلاع</span></div><canvas id="cv" width="960" height="540"></canvas><div class="rocket-console-foot"><span>ALTITUDE <b id="rocketAltitude">0%</b></span><span>FLIGHT STATUS <b id="rocketStatus">STANDBY</b></span></div></div>'
+    ?'<div class="gc rocket-console"><div class="rocket-console-head"><div><small>FLIGHT CONTROL / 01</small><b>مؤشر الطيارة</b></div><span>✈️ جاهزة للإقلاع</span></div><canvas id="cv" width="960" height="540"></canvas><div class="rocket-console-foot"><span>ALTITUDE <b id="rocketAltitude">0%</b></span><span>FLIGHT STATUS <b id="rocketStatus">STANDBY</b></span></div></div>'
     :'<div class="gc crash-console"><div class="crash-console-head"><span>LIVE MULTIPLIER</span><b>مؤشر الكراش</b></div><canvas id="cv" width="720" height="420"></canvas></div>')+
     '<div class="strip" id="cstrip"></div>'+
     betBox('<div><label>سحب تلقائي عند ×</label><input id="auto" type="number" inputmode="decimal" placeholder="اختياري"></div>','<div class="two"><button class="btn y" id="cgo">'+C.texts.btnStart+'</button><button class="btn ok" id="ccash" disabled>'+C.texts.btnCash+'</button></div>')+
