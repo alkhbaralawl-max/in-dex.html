@@ -702,6 +702,109 @@ textarea.fi{min-height:88px;padding:10px}.plb,.sports-modal-card label,.chain-st
 @media(max-height:720px){.welcome-art{height:31vh;min-height:205px}.welcome-copy h1{font-size:25px}.welcome-copy p{font-size:12px}.welcome-bottom{margin-top:5px}.welcome-dots{margin-bottom:10px}}
 @media(max-width:380px){.welcome-tour{padding-left:14px;padding-right:14px}.welcome-art-two{gap:7px;padding:13px}.welcome-game-tile{border-radius:13px}.welcome-game-tile small{font-size:9px}.welcome-copy h1{font-size:25px}.auth-hero h2{font-size:24px}.games-home-grid,.games-list{gap:8px}}
 
+
+/* Rukn Al-Gharb responsive desktop + mobile refresh */
+:root{--gold:#efc76a;--gold2:#9c742f;--night:#070b11;--panel:#121a25;--panel2:#192536;--ink:#f4ead4}
+body{min-height:100vh;background:radial-gradient(ellipse at 50% -10%,#263a45 0%,#0a1118 42%,#05080d 100%)}
+.app{width:min(100%,1500px)!important;max-width:1500px!important;min-height:100dvh;margin:0 auto;background:linear-gradient(180deg,#0d141c 0%,#080d13 100%);border-left:1px solid #6e562c66;border-right:1px solid #6e562c66;box-shadow:0 12px 60px #0009}
+.top{padding:12px clamp(14px,2.5vw,36px);background:linear-gradient(100deg,#121e2a,#21394a 60%,#152333);border-bottom:1px solid #a27e3d66}
+#shell{width:100%;max-width:none;padding-bottom:100px}
+.ban{border:1px solid #b38a43;border-radius:24px;background:radial-gradient(circle at 78% 18%,#89652b88,transparent 34%),linear-gradient(120deg,#172c3c,#101923 60%,#090e14);box-shadow:0 14px 35px #0007}
+.card,.gcard,.gc,.gd,.detail-card,.match-card,.matches-empty{border-color:#65532f;background:linear-gradient(145deg,#1a2632,#101821 72%);box-shadow:0 10px 26px #0005,inset 0 1px #ffffff0b}
+.gcard .gi b,.feat .gcard .gi b,.games-home-grid .gi b{color:#f7d98f}
+.btn,.btn.y{background:linear-gradient(135deg,#d7ac55,#8f6729);color:#111923;border:1px solid #f0d48c;box-shadow:0 5px 15px #0005}
+.btn.ok{background:linear-gradient(135deg,#31b58b,#14664f);color:#fff;border-color:#70e0b9}
+.btn.er{background:linear-gradient(135deg,#d65b55,#842c32);color:#fff}
+.nav{width:min(calc(100% - 28px),1380px);max-width:1380px;padding:4px 10px env(safe-area-inset-bottom);border:1px solid #8c6c34;border-bottom:0;border-radius:18px 18px 0 0;box-shadow:0 -8px 32px #0009}
+.gbody{width:min(100%,1180px);max-width:1180px;padding:16px clamp(12px,2vw,26px) calc(30px + env(safe-area-inset-bottom));gap:15px}
+#v_home,#v_games,#v_sup,#v_act,#v_me,#v_more,#v_pay,#v_withdraw{width:100%;max-width:1440px;margin-inline:auto}
+.dice-arena{position:relative;overflow:hidden;text-align:center;padding:clamp(20px,4vw,44px);border-radius:24px;background:radial-gradient(ellipse at 50% 10%,#276b66aa,transparent 55%),linear-gradient(145deg,#123936,#0a191d 78%);border:1px solid #4aa892}
+.dice-arena-kicker{font-size:12px;letter-spacing:2px;color:#8fe3c8;font-weight:900}
+.dice-arena-kicker span{letter-spacing:0}
+.dice-score{margin:14px auto 6px;font-weight:800;font-size:clamp(17px,2.2vw,27px);color:#f2fffa}
+.dice-pair{display:flex;justify-content:center;gap:clamp(18px,4vw,38px);padding:20px 0}
+.dice-pair span{display:grid;place-items:center;width:clamp(78px,10vw,126px);aspect-ratio:1;border-radius:24px;background:linear-gradient(145deg,#fff,#d9e7df);color:#102f2b;font-family:serif;font-size:clamp(56px,8vw,88px);box-shadow:0 12px 25px #0008,inset 0 2px #fff}
+.dice-pair.rolling span{animation:dice-shake .13s linear infinite alternate}
+@keyframes dice-shake{from{transform:translateY(-5px) rotate(-6deg)}to{transform:translateY(5px) rotate(7deg)}}
+.dice-total{display:inline-flex;align-items:center;gap:12px;padding:8px 18px;border-radius:50px;background:#061b1b;color:#b8e8d9;border:1px solid #3c927e}
+.dice-total b{font-size:24px;color:#fff}
+.dice-range{margin-top:12px;color:#c5dfd7;font-size:13px}
+.dice-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;padding:10px}
+.dice-pick{min-width:0;border:1px solid #476b63;border-radius:18px;padding:14px 8px;background:#111f22;color:#e8f5ee;display:flex;flex-direction:column;align-items:center;gap:6px}
+.dice-pick small{font-size:11px;color:#a8c7bc}
+.dice-pick b{font-size:clamp(13px,1.5vw,17px)}
+.dice-pick strong{color:#8ee2c5;font-size:18px}
+.dice-pick.selected{background:linear-gradient(145deg,#1f5b4e,#112b2a);border-color:#72d7b6;box-shadow:0 0 0 2px #72d7b633,inset 0 1px #fff2}
+.dice-roll-btn{min-height:54px;font-size:17px}
+.rocket-console{overflow:hidden;padding:0;border:1px solid #3a9cae;border-radius:24px;background:linear-gradient(145deg,#102b3e,#071521);box-shadow:0 16px 36px #0008}
+.rocket-console-head,.crash-console-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#071825;color:#d9f7fa}
+.rocket-console-head div{display:grid;gap:4px;text-align:right}
+.rocket-console-head small,.crash-console-head span{font-size:10px;color:#68c9d8;letter-spacing:1.5px}
+.rocket-console-head b,.crash-console-head b{font-size:16px}
+.rocket-console-head>span{font-size:11px;padding:8px 12px;border-radius:40px;background:#0f3c4d;color:#8ee8f0}
+.rocket-console canvas,.crash-console canvas{display:block;width:100%;height:auto;aspect-ratio:16/9}
+.rocket-console-foot{display:flex;justify-content:space-between;gap:10px;padding:12px 18px;background:#071825;color:#8abdc7;font-size:11px}
+.rocket-console-foot b{display:inline-block;margin-inline-start:6px;color:#e8fbfd}
+.crash-console{overflow:hidden;border-radius:20px;border:1px solid #315273;background:#07172a}
+.crash-console canvas{aspect-ratio:12/7}
+.games-list{grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr));gap:15px;margin:0 clamp(12px,2vw,30px) 20px}
+.games-list .gcard{grid-template-columns:130px minmax(0,1fr);min-height:150px}
+.games-list .art{min-height:150px;border-radius:0}
+.games-list .gi{padding:16px}
+.games-list .gi b{font-size:16px}
+.games-list .gi p{font-size:12px}
+.games-home-grid,.feat{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-inline:clamp(12px,2vw,30px)}
+.home-types{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-inline:clamp(12px,2vw,30px)}
+input,button,select,textarea{max-width:100%}
+#v_pay .card,#v_withdraw .card{max-width:900px;margin-inline:auto}
+@media(min-width:760px){
+  .top{min-height:72px}
+  .app{padding-bottom:0}
+  #shell{padding-bottom:116px}
+  .ban{margin:22px auto;max-width:1360px;min-height:210px;padding:28px 34px}
+  .feat,.games-home-grid,.home-types{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-inline:clamp(22px,3vw,50px)}
+  .games-list{grid-template-columns:repeat(2,minmax(0,1fr));margin-inline:clamp(22px,3vw,50px)}
+  .gh{margin:22px clamp(22px,3vw,50px)}
+  .search,.games-cats{margin-inline:clamp(22px,3vw,50px)}
+  .card{margin-inline:clamp(16px,2vw,32px);padding:20px}
+  .nav{bottom:12px;border:1px solid #8c6c34;border-radius:18px;padding:5px 12px;backdrop-filter:blur(14px)}
+  .gl .gtop{width:min(100%,1180px);margin-inline:auto}
+  .gl .gbody{max-width:1180px}
+  .gtop{padding-inline:22px}
+  .gbody{grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr)}
+  .dice-arena,.rocket-console,.crash-console{grid-column:1/-1}
+  .dice-picks{grid-column:1/-1}
+  .dice-roll-btn{grid-column:1/-1}
+  .gd,.gbody>.gc:last-child{grid-column:1/-1}
+}
+@media(min-width:1100px){
+  .feat,.games-home-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .games-list{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .home-types{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .rocket-console canvas{max-height:590px}
+}
+@media(max-width:600px){
+  .app{border:0}
+  .top{padding:8px 10px}
+  .ban{margin:10px;border-radius:18px;padding:16px}
+  .games-list{grid-template-columns:minmax(0,1fr);margin-inline:10px}
+  .games-list .gcard{grid-template-columns:104px minmax(0,1fr);min-height:126px}
+  .games-list .art{min-height:126px}
+  .games-list .gi{padding:10px}
+  .dice-picks{gap:6px;padding:6px}
+  .dice-pick{padding:10px 5px;border-radius:13px}
+  .dice-pick small{font-size:9px}
+  .dice-pick b{font-size:12px}
+  .dice-pick strong{font-size:15px}
+  .rocket-console-head{padding:11px 12px}
+  .rocket-console-foot{padding:10px 12px;font-size:9px}
+  .rocket-console canvas{aspect-ratio:1/1}
+  .nav{width:calc(100% - 12px);bottom:0;border-radius:15px 15px 0 0}
+  .gl .gtop{width:100%}
+  .gbody{max-width:none}
+}
+@media(prefers-reduced-motion:reduce){.dice-pair.rolling span{animation:none}}
+
 </style>
 <style id="rukn-mobile-touch-targets">
 /* Consistent, comfortable touch targets for mobile screens. */
