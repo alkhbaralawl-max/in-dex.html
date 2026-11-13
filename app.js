@@ -79,7 +79,7 @@ ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط �
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 rulePlinko:"الكرة بتنزل من فوق وتتنطط يمين أو شمال 8 مرات، وتستقر في خانة لها مضاعف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
-scaleNote:"",
+
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
 btnDrop:"🎯 أسقط الكرة",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
 };
@@ -105,7 +105,7 @@ const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
 let U=null,name=null,ref=null,view="home",busy=false,hold=false,authMode="login",cur=null,cat="الكل",gameCat="الكل",apLast=null,crLock=false,crFinal=null,crFlight=null,raf=0,crPollTimer=0,betSet=false,toastT=0,ovT=0,wRot=0,payM="",payImg="",plAnimating=false,lastAction=Date.now(),chatOn=false,sportsPick=null,sportsChainDraft=[],sportsChainStake=0,sportsSettleBusy=false,sportsSettleQueued=false,sportScoreStarted=false,sportScoreTimer=0,chatPollTimer=0;
-const scU=()=>1;
+
 const histArr=()=>Array.isArray(U.hist)?U.hist:Object.values(U.hist||{});
 function toast(t){const e=$("toast");e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>e.hidden=true,2800);}
 function tpl(s,o){o=o||{};return String(s||"").replace(/\{(\w+)\}/g,(_,k)=>o[k]!=null?o[k]:"");}
@@ -752,7 +752,6 @@ function renderMe(){
   $("m1").textContent=U.rounds||0;$("m2").textContent=U.wins||0;$("m3").textContent=U.losses||0;
   $("m4").textContent=f(w);$("m5").textContent=f(r);$("m6").textContent=f(Math.max(0,w-r));
   $("mrtp").textContent=tpl(C.texts.rtpNote,{rtp:(w?(r/w*100).toFixed(1):"—")+"%"});
-  const sc=scU(),n=$("mscn");n.hidden=sc>=1;n.textContent=tpl(C.texts.scaleNote,{pct:Math.round((1-sc)*100)});
   const av=$("profileAvatar");
   if(av){
     av.innerHTML="";
