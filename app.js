@@ -42,7 +42,7 @@ function capOf(g){
 
 
 const BASE={slot:93,apple:94,rocket:93,crash:93,wheel:94.5,dice:94};
-const THEME={slot:["#8a4b08","#f0b429","#2a1808"],apple:["#1d6f3a","#5ac46a","#0e3a21"],rocket:["#125b78","#4fd5e8","#062438"],crash:["#0B1E3A","#1677D2","#08162b"],wheel:["#4b2a8a","#a56bff","#1d1040"],dice:["#194b45","#56d1a1","#061b20"]};
+const THEME={slot:["#7b4b22","#ffd778","#2a1234"],apple:["#2f6f52","#5bdb9b","#102b22"],rocket:["#52216f","#b65bff","#180b2a"],crash:["#42205b","#a83cff","#160b24"],wheel:["#4b2a8a","#a56bff","#1d1040"],dice:["#194b45","#56d1a1","#061b20"]};
 const EMO={slot:"🎰",apple:"🍎",rocket:"🚀",crash:"📈",wheel:"🎡",dice:"🎲"};
 const DEFG=[
 {id:"wwg",name:"Wild West Gold",desc:"سلوت غربي بثلاث بكرات ورموز نادرة صعبة",engine:"slot",cat:"سلوت",tag:"سلوت",order:1},
@@ -84,13 +84,15 @@ riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",
 rtpNote:"عائدك الفعلي: {rtp} من كل ما راهنت به. ومهما كسبت في جولات، المنصة بتكسب على المدى الطويل.",
 btnRollDice:"🎲 ارْمِ النرد",btnSpinSlot:"🎰 لف",btnSpinWheel:"🎡 لف",btnStart:"▶ ابدأ",btnCash:"اسحب"
 };
-const DEFCOL={b:"#1677D2",bd:"#0B1E3A",b2:"#245A91",bg:"#F3F6FA",ok:"#20A464",er:"#E5484D",yl:"#FFC83D"};
+const DEFCOL={b:"#A83CFF",bd:"#160B24",b2:"#4A1C69",bg:"#100819",ok:"#35D69A",er:"#F05B88",yl:"#FFD778"};
 const DEFS={initial:100000,newZero:false,registration:true,minBet:1,maxBet:0,defBet:1000,sportsEnabled:true};
 let C={texts:DEFT,colors:DEFCOL,settings:DEFS,games:{},pages:{},matches:{}};
 function merge(c){
   c=c||{};
   const t=Object.assign({},DEFT,c.texts||{});
   ["notice","ruleSlot","ruleApple","ruleCrash","ruleRocket","ruleWheel","ruleDice"].forEach(k=>{if(!String(t[k]||"").trim())t[k]=DEFT[k];});
+  if(!String(t.subtitle||"").trim())t.subtitle="تجربة ألعاب افتراضية";
+  if(!String(t.banD||"").trim())t.banD="استمتع بألعاب ركن الغرب برصيد افتراضي للتجربة فقط.";
   C={texts:t,colors:Object.assign({},DEFCOL,c.colors||{}),settings:Object.assign({},DEFS,c.settings||{}),games:c.games||{},pages:c.pages||{},matches:c.matches||{}};
 }
 function games(){
@@ -98,6 +100,7 @@ function games(){
   const m={};DEFG.forEach(g=>m[g.id]=Object.assign({},g));
   const o=C.games||{};
   for(const id in o)if(allowed.has(id))m[id]=Object.assign(m[id]||{id:id},o[id],{id:id});
+  if(m.rocket)m.rocket.desc="تابع صعود الطيارة في منحنى واسحب قبل الانفجار.";
   return Object.values(m).filter(g=>allowed.has(g.id)&&g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
 }
 const gOn=g=>g.on!==false;
