@@ -1010,7 +1010,7 @@ async function slotSpin(g,scale){
   const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[secureClientSymbol()][0];},90));
   rs.forEach(r=>{r.classList.remove("reel-stop");r.classList.add("spin");});gmsg("جارٍ تنفيذ الجولة بأمان...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const data=await playWithRecovery({gameId:g.id,stake:bet});
     const symbols=data.outcome.symbols||[0,0,0];
     for(let i=0;i<3;i++){
       await sleep(520);
@@ -1430,7 +1430,7 @@ ENG.dice={open(g,b){
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;const stage=$("diceStage");stage.classList.add("rolling");$("diceRoll").disabled=true;gmsg("النرد بيتحرك...");
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const data=await playWithRecovery({gameId:g.id,stake:bet,choice}),o=data.outcome||{};
       stage.classList.remove("rolling");const faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
       $("dieOne").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[0])||1))-1];
       $("dieTwo").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[1])||1))-1];
@@ -1456,7 +1456,7 @@ ENG.cards={open(g,b){
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;$("drawCard").disabled=true;$("playingCard").className="playing-card playing-card-back";$("cardOutcome").textContent="جاري كشف الورقة...";
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const data=await playWithRecovery({gameId:g.id,stake:bet,choice}),o=data.outcome||{};
       const rank=Number(o.rank)||1,symbol=String(o.suit||"♠"),rankLabel=({1:"A",11:"J",12:"Q",13:"K"})[rank]||String(rank);
       $("playingCard").className="playing-card "+(o.red?"red":"black");$("playingCard").textContent=rankLabel+symbol;
       $("cardOutcome").textContent=o.won?"اختيار صحيح • ×"+Number(o.multiplier||0).toFixed(2):"اختيار غير مطابق • "+(o.red?"أحمر":"أسود");
@@ -1503,7 +1503,7 @@ async function wheelSpin(g){
   if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   lastAction=Date.now();busy=true;hold=true;$("wgo").disabled=true;gmsg("العجلة بتلف...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const data=await playWithRecovery({gameId:g.id,stake:bet});
     const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
     $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
     if($("wheelHint"))$("wheelHint").textContent="النتيجة: القطاع رقم "+(index+1)+" — قيمة القطاع ×"+Number(data.outcome.multiplier).toFixed(4);
@@ -1554,7 +1554,7 @@ ENG.rocket={open(g,b){
     $("flightStatus").textContent="المحركات تعمل... جارٍ طلب مسار الرحلة من الخادم";
     $("flightPlane").classList.add("flight-moving");drawRoute();
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,pick:stages,idempotencyKey:crypto.randomUUID()});
+      const data=await playWithRecovery({gameId:g.id,stake:bet,pick:stages});
       const o=data.outcome||{},path=Array.isArray(o.path)?o.path:[],total=Math.max(1,Number(o.stages)||stages);
       for(let i=0;i<path.length;i++){
         drawRoute(o,i+1);
@@ -1600,7 +1600,7 @@ async function diceRoll(g,pick){
   $("dicePair").classList.add("rolling");
   gmsg("جارٍ تنفيذ الرمية والتحقق من نتيجتها على الخادم...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,pick,idempotencyKey:crypto.randomUUID()});
+    const data=await playWithRecovery({gameId:g.id,stake:bet,pick});
     const outcome=data.outcome||{},dice=Array.isArray(outcome.dice)?outcome.dice:[1,1],total=Number(outcome.total)||dice.reduce((a,x)=>a+Number(x),0);
     $("dicePair").classList.remove("rolling");
     $("dicePair").innerHTML=dice.map(x=>'<span>'+DICE_FACE[Math.max(0,Math.min(5,Number(x)-1))]+'</span>').join("");
@@ -1688,3 +1688,71 @@ setAuth("login");applyCfg();loadPublicConfig();
   catch(e){showAuth();}
 })();
 setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
+
+/* ---------- استعادة الطلبات الفردية بعد انقطاع الاتصال ---------- */
+const PENDING_PLAY_KEY = "rukn_pending_game_play_v1:";
+function pendingPlayKey(){
+  return PENDING_PLAY_KEY + String(U?.userId || name || "anonymous");
+}
+function readPendingPlay(){
+  try {
+    const raw=localStorage.getItem(pendingPlayKey());
+    if(!raw)return null;
+    const value=JSON.parse(raw);
+    if(!value || typeof value.key!=="string" || !value.payload || typeof value.payload!=="object")return null;
+    return value;
+  } catch { return null; }
+}
+function writePendingPlay(value){
+  try { localStorage.setItem(pendingPlayKey(),JSON.stringify(value)); }
+  catch(e){ console.warn("pending game request could not be persisted",e); }
+}
+function clearPendingPlay(){
+  try { localStorage.removeItem(pendingPlayKey()); } catch {}
+}
+function samePlayPayload(a,b){
+  return JSON.stringify(a)===JSON.stringify(b);
+}
+async function replayPendingPlay(pending){
+  const data=await apiCall("play",{...pending.payload,idempotencyKey:pending.key});
+  clearPendingPlay();
+  U.balance=Number(data.balance??U.balance);
+  await refreshMe(false).catch(()=>{});
+  render();
+  toast("تم استرجاع نتيجة الجولة السابقة وتحديث الرصيد والسجل.");
+  return data;
+}
+async function playWithRecovery(payload){
+  if(!U?.userId)throw new ApiError("انتهت الجلسة. سجّل الدخول مرة أخرى.",401);
+  const pending=readPendingPlay();
+  if(pending){
+    if(!samePlayPayload(pending.payload,payload)){
+      try { await replayPendingPlay(pending); }
+      catch(e){
+        if(e.status>0 && e.status<500)clearPendingPlay();
+        throw new ApiError("هناك جولة سابقة لم يصل تأكيدها بعد. أعد المحاولة لاسترجاعها أولًا؛ لم نبدأ جولة جديدة.",409);
+      }
+      throw new ApiError("تم استرجاع الجولة السابقة وتحديث سجل النشاط. اضغط مرة أخرى لبدء الجولة الجديدة.",409);
+    }
+    try {
+      const data=await apiCall("play",{...payload,idempotencyKey:pending.key});
+      clearPendingPlay();
+      return data;
+    } catch(e) {
+      if(e.status>0 && e.status<500)clearPendingPlay();
+      throw e;
+    }
+  }
+  const request={key:crypto.randomUUID(),payload:{...payload},createdAt:Date.now()};
+  writePendingPlay(request);
+  try {
+    const data=await apiCall("play",{...payload,idempotencyKey:request.key});
+    clearPendingPlay();
+    return data;
+  } catch(e) {
+    // Keep the same key only for an ambiguous network/server failure.
+    // A later retry will replay the identical request instead of charging twice.
+    if(e.status>0 && e.status<500)clearPendingPlay();
+    throw e;
+  }
+}
