@@ -1614,3 +1614,77 @@ async function diceRoll(g,pick){
     $("dicePair").classList.remove("rolling");hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");
   }
 }
+
+/* Restored application bootstrap and session recovery (ported from the server-migration baseline). */
+/* ---------- الحسابات والاتصال الآمن بالخادم ---------- */
+function mapAccount(data){
+  const a=data.user||{},w=data.wallet||{};
+  const bets={};(data.sportsBets||[]).forEach(b=>{bets[b.id]={id:b.id,matchId:b.match_id,matchTitle:b.matchTitle,team1:b.team1,team2:b.team2,marketId:b.market_id,marketTitle:b.marketTitle,optionId:b.option_id,optionLabel:b.optionLabel,stake:Number(b.stake),odds:Number(b.odds),status:b.status,payout:Number(b.payout),createdAt:new Date(b.created_at).getTime()};});
+  const active=data.active||null;
+  return {
+    id:a.legacyUserId||a.id,userId:a.id,username:a.username,displayName:a.displayName,role:a.role,closed:false,
+    scale:Number(a.scale)||100,balance:Number(w.balance)||0,rounds:Number(w.rounds)||0,wins:Number(w.wins)||0,losses:Number(w.losses)||0,
+    wagered:Number(w.wagered)||0,returned:Number(w.returned)||0,
+    hist:(data.history||[]).map(x=>({g:x.g,bet:Number(x.bet),win:Number(x.win),t:Number(x.t),i:x.i})),sportsBets:bets,
+    ap:active&&active.gameId==="apple"?{k:active.gameId,bet:active.stake,level:active.level,picks:active.picks||[],safeN:active.safeN,hazards:active.revealedHazards||[],roundId:active.id,version:active.version}:null,
+    cr:active&&(active.gameId==="crash"||active.gameId==="rocket")?{k:active.gameId,bet:active.stake,t0:active.startedAt,auto:active.auto,roundId:active.id,version:active.version}:null,
+    creditRequest:null
+  };
+}
+async function refreshMe(shouldRender=true){
+  if(!name)return null;
+  const data=await apiCall("me",{},false);
+  csrfToken=data.csrfToken||csrfToken;
+  U=mapAccount(data);
+  if(shouldRender&&!hold&&!plAnimating)render();
+  if(U.cr&&cur&&cur.g.id===U.cr.k)crLoop();
+  return U;
+}
+async function loadPublicConfig(){
+  try{const cfg=await apiCall("public_config",{},false);merge(cfg);applyCfg();if(U)render();}
+  catch(e){console.warn("site config unavailable",e);}
+}
+function attach(n){
+  name=n;ref=true;
+  refreshMe(false).then(()=>{showApp();render();settleUserSportsBets();initSportScoreFeed();}).catch(e=>{logout(e.message||"سجّل دخول من جديد");});
+}
+async function logout(t){
+  if(chatPollTimer)clearInterval(chatPollTimer);chatPollTimer=0;crStop();
+  try{if(csrfToken)await apiCall("logout",{});}catch(e){console.warn("logout",e);}
+  ref=null;name=null;U=null;csrfToken="";hold=false;busy=false;chatOn=false;
+  localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");show("home");showAuth(t);
+}
+function setAuth(m){
+  authMode=m;$("p2").hidden=m!=="reg";
+  $("t_login").className=m==="login"?"on":"";$("t_reg").className=m==="reg"?"on":"";
+  $("agb").textContent=m==="reg"?C.texts.btnReg:C.texts.btnLogin;$("aerr").textContent="";
+}
+async function auth(){
+  const reg=authMode==="reg",n=nd($("u").value).trim().toLowerCase(),p=$("p").value,err=t=>$("aerr").textContent=t;
+  if(!/^[a-z0-9_]{3,20}$/.test(n))return err("اسم المستخدم من 3 إلى 20 حرف إنجليزي أو أرقام أو _ بدون مسافات");
+  if(reg&&p.length<10)return err("كلمة السر الجديدة يجب أن تكون 10 أحرف على الأقل");
+  if(!reg&&p.length<1)return err("اكتب كلمة السر");
+  if(reg){if(p===n)return err("كلمة السر لازم تختلف عن اسم المستخدم");if(p!==$("p2").value)return err("كلمتا السر غير متطابقتين");}
+  err("جارٍ التحقق...");$("agb").disabled=true;
+  try{
+    const data=await authCall(reg?"register":"login",{username:n,password:p});
+    csrfToken=data.csrfToken||"";$("p").value="";$("p2").value="";localStorage.removeItem(SESS);localStorage.removeItem("ws_sess3");
+    err("");attach(n);
+  }catch(e){err(e.message||C.texts.errNet);}
+  finally{$("agb").disabled=false;}
+}
+$("t_login").onclick=()=>setAuth("login");$("t_reg").onclick=()=>setAuth("reg");
+$("agb").onclick=auth;
+$("p").onkeydown=$("p2").onkeydown=e=>{if(e.key==="Enter")auth();};
+$("forgot").onclick=()=>{$("aerr").style.color="var(--tx)";$("aerr").textContent=C.texts.forgotMsg;setTimeout(()=>$("aerr").style.color="",5000);};
+$("mout").onclick=()=>logout();
+$("pgback").onclick=()=>show("more");
+$("gamesQ").oninput=renderGames;
+$("banbtn").onclick=()=>show("games");
+document.querySelectorAll(".nav button").forEach(b=>b.onclick=()=>show(b.dataset.v));
+setAuth("login");applyCfg();loadPublicConfig();
+(async()=>{
+  try{const data=await apiCall("me",{},false);csrfToken=data.csrfToken||"";name=data.user.username;U=mapAccount(data);ref=true;showApp();render();initSportScoreFeed();if(U.cr)crLoop();}
+  catch(e){showAuth();}
+})();
+setInterval(()=>{if(U&&name&&!busy&&!hold&&document.visibilityState!=="hidden")refreshMe(true).catch(()=>{});},12000);
