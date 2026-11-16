@@ -637,6 +637,9 @@ async function main(req:Request) {
     if(action==="apple_pick") {
       const round=await getActiveRound(db,user.id,String(body.roundId||""));
       if(round.game_id!=="apple") throw new HttpError(400,"wrong_game");
+      const expectedVersion=Number(body.expectedVersion);
+      if(!Number.isSafeInteger(expectedVersion)||expectedVersion!==Number(round.version))
+        throw new HttpError(409,"game_state_conflict");
       const s=round.state||{},cell=Number(body.cell),level=Number(s.level)||0;
       if(!Number.isInteger(cell)||cell<0||cell>4||level<0||level>=5) throw new HttpError(400,"invalid_pick");
       const picks=Array.isArray(s.picks)?s.picks:[];
@@ -669,7 +672,13 @@ async function main(req:Request) {
       return response({ok:true,safe:true,active:publicActive(fresh),balance:Number((await walletFor(db,user.id)).balance)});
     }
     if(action==="apple_cash") {
-      const round=await getActiveRound(db,user.id,String(body.roundId||""));
+      const roundId=String(body.roundId||"");
+      const completed=await completedActiveSettlement(db,user.id,roundId);
+      if(completed) return response({
+        ok:true,payout:Number(completed.payout),multiplier:Number(completed.outcome?.multiplier)||0,
+        stake:Number(completed.stake),balance:Number(completed.balance),active:null,duplicate:true
+      });
+      const round=await getActiveRound(db,user.id,roundId);
       if(round.game_id!=="apple") throw new HttpError(400,"wrong_game");
       const s=round.state||{},level=Number(s.level)||0;
       if(level<1) throw new HttpError(400,"cash_requires_safe_pick");
