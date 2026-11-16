@@ -1086,7 +1086,7 @@ async function apPick(g,c){
   if(busy||!U?.ap)return;busy=true;hold=true;lastAction=Date.now();
   document.querySelectorAll("#aboard .ap.act").forEach(x=>{x.textContent="·";x.disabled=true;});$("acash").disabled=true;
   try{
-    const a=U.ap,data=await apiCall("apple_pick",{roundId:a.roundId,cell:c});
+    const a=U.ap,data=await apiCall("apple_pick",{roundId:a.roundId,cell:c,expectedVersion:a.version});
     U.balance=Number(data.balance);hold=false;busy=false;
     if(data.lost){apLast={row:data.row,col:data.cell,picks:data.picks,hazards:data.hazards,safeN:a.safeN,bet:a.bet};U.ap=null;render();result(0,a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
     else if(data.won){apLast=null;U.ap=null;render();result(Number(data.payout),a.bet);refreshMe(false).then(()=>render()).catch(()=>{});}
