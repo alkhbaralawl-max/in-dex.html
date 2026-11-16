@@ -104,7 +104,7 @@ function games(){
   return Object.values(m).filter(g=>allowed.has(g.id)&&g.name&&BASE[g.engine]!=null).sort((a,b)=>(a.order||99)-(b.order||99));
 }
 const gOn=g=>g.on!==false;
-const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=1&&v<=99.9?v:BASE[g.engine];};
+const rtpOf=g=>{const v=parseFloat(g.rtp);return v>=93&&v<=96?v:BASE[g.engine];};
 const gById=id=>games().find(g=>g.id===id);
 function pagesList(){const o=C.pages||{};return Object.keys(o).map(id=>Object.assign({id:id},o[id])).filter(p=>p.title&&p.on!==false).sort((a,b)=>(a.order||99)-(b.order||99));}
 
@@ -1102,7 +1102,7 @@ async function apCash(g){
 }
 
 /* ======== Crash / Red Rocket ======== */
-const K=0.06;
+const K=0.03;
 const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
 function genCp(g){
   const r=rnd();
@@ -1383,14 +1383,13 @@ async function crSettle(mode){
   }
   if(c.crashDetectedAt)return;
   if(c.cashPromise||c.cashPending)return c.cashPromise;
-  const clickAt=Date.now()+Number(c.serverOffset||0);
   c.cashPending=true;lastAction=Date.now();upd();
   c.cashPromise=(async()=>{
     let lastError=null;
     for(let attempt=0;attempt<2;attempt++){
       let timer;
       try{
-        const request=apiCall("crash_cash",{roundId:c.roundId,cashClickAt:clickAt});
+        const request=apiCall("crash_cash",{roundId:c.roundId});
         const data=await Promise.race([
           request,
           new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("cashout_timeout")),5200);})
