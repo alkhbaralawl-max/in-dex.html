@@ -23,6 +23,40 @@ async function sendApi(url,action,payload={},useCsrf=true){
 }
 const apiCall=(action,payload={},useCsrf=true)=>sendApi(APP_API,action,payload,useCsrf);
 const authCall=(action,payload={})=>sendApi(AUTH_API,action,payload,false);
+const pendingRoundMemory=new Map();
+function pendingRoundRecord(scope,payload){
+  const storageKey="rukn_pending_round_v1:"+scope;
+  const fingerprint=JSON.stringify(payload);
+  let record=null;
+  try{record=JSON.parse(sessionStorage.getItem(storageKey)||"null");}catch{}
+  if(!record)record=pendingRoundMemory.get(storageKey)||null;
+  if(record&&record.fingerprint!==fingerprint)
+    throw new ApiError("هناك طلب جولة سابق لم يصل تأكيده. أعد نفس قيمة الرهان والاختيار لاسترجاع نتيجته أولًا.",409);
+  if(!record){
+    record={key:crypto.randomUUID(),fingerprint};
+    pendingRoundMemory.set(storageKey,record);
+    try{sessionStorage.setItem(storageKey,JSON.stringify(record));}catch{}
+  }
+  return {storageKey,record};
+}
+function clearPendingRound(storageKey){
+  pendingRoundMemory.delete(storageKey);
+  try{sessionStorage.removeItem(storageKey);}catch{}
+}
+async function apiCallIdempotent(action,scope,payload={},useCsrf=true){
+  const pending=pendingRoundRecord(scope,payload);
+  try{
+    const result=await apiCall(action,{...payload,idempotencyKey:pending.record.key},useCsrf);
+    clearPendingRound(pending.storageKey);
+    return result;
+  }catch(error){
+    // Network/timeout/5xx and auth/CSRF/409 responses are ambiguous; retain the
+    // original key so a retry can only retrieve or complete the same operation.
+    if(error.status>=400&&error.status<500&&![401,403,409,429].includes(error.status))
+      clearPendingRound(pending.storageKey);
+    throw error;
+  }
+}
 const $=id=>document.getElementById(id);
 const nd=s=>String(s==null?"":s).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632).replace(/[۰-۹]/g,d=>d.charCodeAt(0)-1776);
 const f=n=>Number(n).toLocaleString("en",{maximumFractionDigits:2});
@@ -35,9 +69,11 @@ const lines=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
 const isUrl=s=>/^https?:\/\//i.test(String(s||"").trim());
 const SESS="ws_sess4";
 const CAP=20;
+const ENGINE_CAPS={slot:20,apple:8,rocket:20,crash:20,wheel:8,dice:20};
 function capOf(g){
+  const hard=ENGINE_CAPS[g?.engine]||CAP;
   const configured=Number(g?.maxMultiplier);
-  return configured>=1&&configured<=100?configured:CAP;
+  return configured>=1&&Number.isFinite(configured)?Math.min(configured,hard):hard;
 }
 
 
@@ -74,9 +110,9 @@ msgWin:"كسبت {amount} 🎉",msgLost:"خسرت {amount}",msgTie:"تعادل: 
 errNet:"تعذر الاتصال، تأكد من الإنترنت وجرّب تاني",errStuck:"حصل تأخير، حاول تاني",errBusy:"عندك جولة شغالة",errBetVal:"اكتب رهان صحيح",
 msgStart:"حط رهانك واضغط ابدأ",
 ruleSlot:"سلوت عالي التقلب: أغلب اللفات فاضية تمامًا، وتطابق الرموز النادرة بيدي مكسب كبير. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
-ruleApple:"5 صفوف، كل صف فيه 5 تفاحات وواحدة فاسدة (فرصة نجاة {p}% لكل صف). اسحب في أي وقت بعد أول صف. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
+ruleApple:"5 صفوف، في كل صف 4 اختيارات آمنة واختيار واحد خاسر (فرصة النجاة 80% لكل صف). اسحب بعد أي صف آمن. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleCrash:"اضغط ابدأ فيبدأ المضاعف يرتفع، واضغط اسحب في أي لحظة. أغلب الجولات بتنهار بدري. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
-ruleRocket:"اختار عدد نقاط العبور من 1 إلى 5. كل نقطة لها فرصة اجتياز 80%. لازم تكمل كل النقاط عشان تهبط بسلام وتحصل على العائد المعروض. النتيجة تعتمد من الخادم. العائد النظري {rtp}%.",
+ruleRocket:"تبدأ الطيارة بمنحنى صاعد تدريجيًا. نقطة الانهيار تُحدد على الخادم قبل الجولة، واسحب قبل وصول المنحنى إليها. أقصى مضاعف ×{cap}. العائد النظري {rtp}%.",
 ruleWheel:"20 خانة بمضاعفات مختلفة. أغلبها خسارة كاملة أو جزئية، وخانات نادرة بمكاسب كبيرة. أقصى مضاعف ×{cap}. العائد النظري {rtp}% (أفضلية المنصة {edge}%).",
 ruleDice:"اختار أقل من 7 أو 7 بالضبط أو أعلى من 7. يتم رمي نردين عشوائيًا على الخادم، وتظهر نتيجة الرمية بعد اعتمادها. العائد النظري {rtp}%.",
 riskLoseLbl:"⚠️ لو غلطت تخسر",riskWinLbl:"لو نجحت تكسب",riskCashLbl:"لو سحبت الآن",riskSurvLbl:"فرصة النجاة في كل صف",riskOneWrong:"غلطة واحدة وتخسر رهانك كله",
@@ -1010,7 +1046,7 @@ async function slotSpin(g,scale){
   const iv=rs.map(r=>setInterval(()=>{r.textContent=SYM[secureClientSymbol()][0];},90));
   rs.forEach(r=>{r.classList.remove("reel-stop");r.classList.add("spin");});gmsg("جارٍ تنفيذ الجولة بأمان...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet});
     const symbols=data.outcome.symbols||[0,0,0];
     for(let i=0;i<3;i++){
       await sleep(520);
@@ -1077,7 +1113,7 @@ async function apStart(g){
   if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   busy=true;lastAction=Date.now();gmsg("جارٍ بدء الجولة على الخادم...");
   try{
-    const data=await apiCall("active_start",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const data=await apiCallIdempotent("active_start","active-start",{gameId:g.id,stake:bet});
     U.balance=Number(data.balance);U.ap={k:g.id,bet:bet,level:data.active.level||0,picks:data.active.picks||[],safeN:data.active.safeN||4,hazards:data.active.revealedHazards||[],roundId:data.active.id,version:data.active.version};
     apLast=null;busy=false;render();
   }catch(e){busy=false;gmsg(e.message||C.texts.errNet,"er");}
@@ -1355,7 +1391,7 @@ async function crStart(g){
   let auto=parseFloat(nd($("auto").value));if(!(auto>=1.01))auto=0;
   lastAction=Date.now();busy=true;gmsg("جارٍ بدء الجولة على الخادم...");
   try{
-    const sentAt=Date.now(),data=await apiCall("active_start",{gameId:g.id,stake:bet,auto,idempotencyKey:crypto.randomUUID()}),receivedAt=Date.now();
+    const sentAt=Date.now(),data=await apiCallIdempotent("active_start","active-start",{gameId:g.id,stake:bet,auto}),receivedAt=Date.now();
     U.balance=Number(data.balance);
     const offset=Number.isFinite(Number(data.serverNow))?Number(data.serverNow)-(sentAt+receivedAt)/2:0;
     U.cr={k:g.id,bet,t0:Number(data.active.startedAt),auto:Number(data.active.auto)||0,roundId:data.active.id,version:data.active.version,
@@ -1430,7 +1466,7 @@ ENG.dice={open(g,b){
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;const stage=$("diceStage");stage.classList.add("rolling");$("diceRoll").disabled=true;gmsg("النرد بيتحرك...");
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet,choice}),o=data.outcome||{};
       stage.classList.remove("rolling");const faces=["⚀","⚁","⚂","⚃","⚄","⚅"];
       $("dieOne").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[0])||1))-1];
       $("dieTwo").textContent=faces[Math.max(1,Math.min(6,Number(o.dice?.[1])||1))-1];
@@ -1456,7 +1492,7 @@ ENG.cards={open(g,b){
     if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
     lastAction=Date.now();busy=true;hold=true;$("drawCard").disabled=true;$("playingCard").className="playing-card playing-card-back";$("cardOutcome").textContent="جاري كشف الورقة...";
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,choice,idempotencyKey:crypto.randomUUID()}),o=data.outcome||{};
+      const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet,choice}),o=data.outcome||{};
       const rank=Number(o.rank)||1,symbol=String(o.suit||"♠"),rankLabel=({1:"A",11:"J",12:"Q",13:"K"})[rank]||String(rank);
       $("playingCard").className="playing-card "+(o.red?"red":"black");$("playingCard").textContent=rankLabel+symbol;
       $("cardOutcome").textContent=o.won?"اختيار صحيح • ×"+Number(o.multiplier||0).toFixed(2):"اختيار غير مطابق • "+(o.red?"أحمر":"أسود");
@@ -1503,7 +1539,7 @@ async function wheelSpin(g){
   if(busy||!U)return;const bet=getBet();if(!(bet>0))return gmsg(C.texts.errBetVal,"er");
   lastAction=Date.now();busy=true;hold=true;$("wgo").disabled=true;gmsg("العجلة بتلف...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
+    const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet});
     const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
     $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
     if($("wheelHint"))$("wheelHint").textContent="النتيجة: القطاع رقم "+(index+1)+" — قيمة القطاع ×"+Number(data.outcome.multiplier).toFixed(4);
@@ -1554,7 +1590,7 @@ ENG.rocket={open(g,b){
     $("flightStatus").textContent="المحركات تعمل... جارٍ طلب مسار الرحلة من الخادم";
     $("flightPlane").classList.add("flight-moving");drawRoute();
     try{
-      const data=await apiCall("play",{gameId:g.id,stake:bet,pick:stages,idempotencyKey:crypto.randomUUID()});
+      const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet,pick:stages});
       const o=data.outcome||{},path=Array.isArray(o.path)?o.path:[],total=Math.max(1,Number(o.stages)||stages);
       for(let i=0;i<path.length;i++){
         drawRoute(o,i+1);
@@ -1600,7 +1636,7 @@ async function diceRoll(g,pick){
   $("dicePair").classList.add("rolling");
   gmsg("جارٍ تنفيذ الرمية والتحقق من نتيجتها على الخادم...");
   try{
-    const data=await apiCall("play",{gameId:g.id,stake:bet,pick,idempotencyKey:crypto.randomUUID()});
+    const data=await apiCallIdempotent("play","instant:"+g.id,{gameId:g.id,stake:bet,pick});
     const outcome=data.outcome||{},dice=Array.isArray(outcome.dice)?outcome.dice:[1,1],total=Number(outcome.total)||dice.reduce((a,x)=>a+Number(x),0);
     $("dicePair").classList.remove("rolling");
     $("dicePair").innerHTML=dice.map(x=>'<span>'+DICE_FACE[Math.max(0,Math.min(5,Number(x)-1))]+'</span>').join("");
