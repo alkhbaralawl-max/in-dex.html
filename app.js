@@ -991,7 +991,7 @@ function slotExact(g){
   return (lo+hi)/2;
 }
 function slotPayoutOf(g,a,b,c,scale){
-  return r2(Math.min(slotRawPay(a,b,c)*scale,CAP));
+  return Math.round(Math.min(slotRawPay(a,b,c)*scale,CAP)*10000)/10000;
 }
 function pickSym(){const r=rnd();let a=0;for(let i=0;i<6;i++){a+=SYM[i][1];if(r<a)return i;}return 5;}
 ENG.slot={open(g,b){
@@ -1028,7 +1028,7 @@ const AP_ROWS=5,AP_COLS=5,AP_REAL_P=.8,AP_CAP=8;
 function apSafeCount(){return 4;}
 function apMult(g,k,safeN){
   const chance=Math.max(1,Math.min(AP_COLS,Number(safeN)||apSafeCount()))/AP_COLS;
-  return r2(Math.min(Math.pow(1/chance,k)*(rtpOf(g)/100),AP_CAP));
+  return Math.round(Math.min(Math.pow(1/chance,k)*(rtpOf(g)/100),AP_CAP)*10000)/10000;
 }
 ENG.apple={open(g,b){
   const safeN=apSafeCount();
@@ -1104,12 +1104,6 @@ async function apCash(g){
 /* ======== Crash / Red Rocket ======== */
 const K=0.03;
 const STARS=Array.from({length:45},()=>[Math.random(),Math.random(),Math.random()*1.6+.4]);
-function genCp(g){
-  const r=rnd();
-  let c=Math.ceil((rtpOf(g)/100)/(1-r)*100)/100;
-  if(c<1)c=1;if(c>capOf(g))c=capOf(g);
-  return c;
-}
 function drawRocketScene(x,W,H,t,m,st,limit){
   const bg=x.createLinearGradient(0,0,0,H);bg.addColorStop(0,"#071d35");bg.addColorStop(.5,"#0e5270");bg.addColorStop(1,"#061522");
   x.fillStyle=bg;x.fillRect(0,0,W,H);
@@ -1493,7 +1487,7 @@ function wheelDraw(g){
     x.beginPath();x.moveTo(c,c);x.arc(c,c,R,-Math.PI/2+i*a,-Math.PI/2+(i+1)*a);x.closePath();
     x.fillStyle=WC[WH[i]]||"#245A91";x.fill();x.strokeStyle="#0b1623";x.lineWidth=2;x.stroke();
     x.save();x.translate(c,c);x.rotate(-Math.PI/2+(i+.5)*a);x.fillStyle="#fff";x.font="bold 14px Tahoma";x.textAlign="right";x.textBaseline="middle";
-    x.fillText(V[i]?"×"+V[i]:"0",R-12,0);x.restore();
+    x.fillText(V[i]?"×"+Number(V[i]).toFixed(4):"0",R-12,0);x.restore();
   }
   x.beginPath();x.arc(c,c,26,0,7);x.fillStyle="#0B1E3A";x.fill();x.lineWidth=4;x.strokeStyle="#FFC83D";x.stroke();
 }
@@ -1512,8 +1506,8 @@ async function wheelSpin(g){
     const data=await apiCall("play",{gameId:g.id,stake:bet,idempotencyKey:crypto.randomUUID()});
     const index=Number(data.outcome.index)||0,V=wv(g);wRot=(Math.floor(wRot/360)+5)*360+(360-(index*18+9))+(Math.random()*10-5);
     $("wrot").style.transform="rotate("+wRot+"deg)";await new Promise(resolve=>{const wheel=$("wrot");let finished=false;const finish=()=>{if(finished)return;finished=true;clearTimeout(fallback);resolve();};const fallback=setTimeout(finish,4300);wheel.addEventListener("transitionend",finish,{once:true});});
-    if($("wheelHint"))$("wheelHint").textContent="النتيجة: القطاع رقم "+(index+1)+" — قيمة القطاع ×"+Number(data.outcome.multiplier).toFixed(2);
-    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(2));refreshMe(false).then(()=>render()).catch(()=>{});
+    if($("wheelHint"))$("wheelHint").textContent="النتيجة: القطاع رقم "+(index+1)+" — قيمة القطاع ×"+Number(data.outcome.multiplier).toFixed(4);
+    U.balance=Number(data.balance);hold=false;busy=false;render();result(Number(data.payout),bet,"×"+Number(data.outcome.multiplier).toFixed(4));refreshMe(false).then(()=>render()).catch(()=>{});
   }catch(e){hold=false;busy=false;upd();gmsg(e.message||C.texts.errNet,"er");}
 }
 
